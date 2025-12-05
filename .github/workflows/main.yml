@@ -48,8 +48,13 @@ jobs:
 
       - name: Push new tag
         run: |
-          git tag ${{ steps.generate_tag.outputs.release_tag }}
-          git push origin ${{ steps.generate_tag.outputs.release_tag }}
+          TAG=${{ steps.generate_tag.outputs.release_tag }}
+          if git ls-remote --tags origin | grep -q "$TAG"; then
+            echo "Tag $TAG already exists, skipping push."
+          else
+            git tag $TAG
+            git push origin $TAG
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
