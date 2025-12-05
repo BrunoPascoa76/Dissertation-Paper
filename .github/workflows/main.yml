@@ -16,22 +16,32 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+
+      - name: Install tex requirements
+        run: sudo apt-get update && sudo apt-get install -y texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
       
-      - name: Install GitHub CLI and pygments
-        run: sudo apt update && sudo apt install gh -y
-
-      - name: Install Python dependencies
+      - name: Install GitHub CLIs
+        run: sudo apt install gh -y
+      
+      - name: Set up Python venv
         run: |
-          python -m pip install --upgrade pip
-          pip install --user -r requirements.txt
-
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install Pygments
+        shell: bash
+      
       - name: Run Make setup
-        run: make setup
+        run: |
+          source .venv/bin/activate
+          make setup
 
       - name: Build PDF
         run: |
-          export PATH="$(python -m site --user-base)/bin:$PATH"
+          source .venv/bin/activate
           make build
+        shell: bash
 
       - name: Bump version from commits
         id: semver
