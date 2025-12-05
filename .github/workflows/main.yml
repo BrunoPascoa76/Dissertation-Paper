@@ -53,26 +53,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
-      - name: Draft release with commits
-        uses: release-drafter/release-drafter@v5
-        with:
-          version: ${{ steps.generate_tag.outputs.release_tag }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Get draft release body
-        id: get_body
+      - name: Generate release notes from commits
+        id: release_notes
         run: |
-          body=$(gh release view $(gh release list --draft --json tagName -q '.[0].tagName') --json body -q '.body')
-          echo "body=$body" >> $GITHUB_OUTPUT
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Get commits since last tag
+          notes=$(git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:"- %s")
+          echo "notes=$notes" >> $GITHUB_OUTPUT
       
       - name: Create Github release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.generate_tag.outputs.next_release_tag }}
-          body: ${{ steps.get_body.outputs.body }}
+          tag_name: ${{ steps.generate_tag.outputs.release_tag }}
+          body: ${{ steps.release_notes.outputs.notes }}
           files: build/thesis.pdf
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

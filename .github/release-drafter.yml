@@ -1,9 +1,0 @@
-name-template: "v$NEXT_PATCH_VERSION - $(date +'%Y-%m-%d')"
-tag-template: "v$NEXT_PATCH_VERSION"
-categories:
-  - title: "Changes in this release"
-    label: ""
-change-template: "- $TITLE"
-template: |
-  ## Changes
-  $CHANGES
