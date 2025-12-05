@@ -18,7 +18,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install tex requirements
-        run: sudo apt-get update && sudo apt-get install -y texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
+        run: sudo apt-get update && sudo apt-get install -y texlive-full
       
       - name: Install GitHub CLIs
         run: sudo apt install gh -y
