@@ -118,3 +118,5 @@ tramp
 *.swp
 *~
 .DS_Store
+
+_minted-thesis/*
