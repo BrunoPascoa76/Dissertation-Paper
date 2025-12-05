@@ -1,0 +1,70 @@
+name: Build Thesis PDF
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Install GitHub CLI
+        run: sudo apt update && sudo apt install gh -y
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Make setup
+        run: make setup
+
+      - name: Build PDF
+        run: make build
+
+      - name: Bump version from commits
+        id: semver
+        uses: issue-ops/semver@v0.1.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          default_bump: patch
+
+      - name: Push new tag
+        run: |
+          git tag ${{ steps.semver.outputs.new_version }}
+          git push origin ${{ steps.semver.outputs.new_version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Draft release with commits
+        uses: release-drafter/release-drafter@v5
+        with:
+          version: ${{ steps.semver.outputs.new_version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Get draft release body
+        id: get_body
+        run: |
+          body=$(gh release view $(gh release list --draft --json tagName -q '.[0].tagName') --json body -q '.body')
+          echo "body=$body" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Github release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.semver.outputs.new_version }}
+          body: ${{ steps.get_body.outputs.body }}
+          files: build/thesis.pdf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
