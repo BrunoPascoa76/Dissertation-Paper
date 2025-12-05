@@ -17,30 +17,23 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install tex requirements
+      - name: Install TeX requirements
         run: sudo apt-get update && sudo apt-get install -y texlive-full
-      
-      - name: Install GitHub CLIs
-        run: sudo apt install gh -y
-      
-      - name: Install Python + Pygments
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3 python3-pygments
 
-      - name: Ensure pygmentize is discoverable
-        run: sudo ln -s /usr/bin/pygmentize /usr/local/bin/pygmentize || true
+      - name: Install GitHub CLI
+        run: sudo apt install gh -y
+
+      - name: Install Pygments
+        run: pip install Pygments
 
       - name: Prepare minted directory
         run: mkdir -p build/_minted-thesis
       
       - name: Run Make setup
-        run: |
-          make setup
+        run: make setup
 
       - name: Build PDF
-        run: |
-          make build
+        run: make build
         shell: bash
 
       - name: Bump version from commits
@@ -69,14 +62,5 @@ jobs:
         run: |
           body=$(gh release view $(gh release list --draft --json tagName -q '.[0].tagName') --json body -q '.body')
           echo "body=$body" >> $GITHUB_OUTPUT
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Github release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ steps.semver.outputs.new_version }}
-          body: ${{ steps.get_body.outputs.body }}
-          files: build/thesis.pdf
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
