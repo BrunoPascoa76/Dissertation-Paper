@@ -23,23 +23,15 @@ jobs:
       - name: Install GitHub CLIs
         run: sudo apt install gh -y
       
-      - name: Set up Python venv
-        run: |
-          python -m venv .venv
-          source .venv/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install Pygments
-        shell: bash
+      - name: Install python packages
+        run: sudo apt install -y python3-pygments python3-proselint
       
       - name: Run Make setup
         run: |
-          source .venv/bin/activate
           make setup
 
       - name: Build PDF
         run: |
-          source .venv/bin/activate
           make build
         shell: bash
 
