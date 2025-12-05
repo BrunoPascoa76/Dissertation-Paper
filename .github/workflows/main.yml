@@ -23,14 +23,14 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install --user -r requirements.txt
 
       - name: Run Make setup
         run: make setup
 
       - name: Build PDF
         run: |
-          export PATH="$HOME/.local/bin:$PATH"
+          export PATH="$(python -m site --user-base)/bin:$PATH"
           make build
 
       - name: Bump version from commits
