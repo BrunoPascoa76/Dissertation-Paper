@@ -26,8 +26,9 @@ jobs:
       - name: Prepare minted directory
         run: mkdir -p build/_minted-thesis
 
-      - name: Check pygmentize
-        run: which pygmentize
+      - name: Add pygmentize to PATH
+        run: echo "/opt/hostedtoolcache/Python/3.11.14/x64/bin" >> $GITHUB_PATH
+
 
       - name: Install TeX requirements
         run: sudo apt-get update && sudo apt-get install -y texlive-full
