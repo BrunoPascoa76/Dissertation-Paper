@@ -17,9 +17,6 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install TeX requirements
-        run: sudo apt-get update && sudo apt-get install -y texlive-full
-
       - name: Install GitHub CLI
         run: sudo apt install gh -y
 
@@ -28,7 +25,13 @@ jobs:
 
       - name: Prepare minted directory
         run: mkdir -p build/_minted-thesis
-      
+
+      - name: Check pygmentize
+        run: which pygmentize
+
+      - name: Install TeX requirements
+        run: sudo apt-get update && sudo apt-get install -y texlive-full
+
       - name: Run Make setup
         run: make setup
 
