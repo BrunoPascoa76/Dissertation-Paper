@@ -12,13 +12,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
       
-      - name: Install GitHub CLI
-        run: sudo apt update && sudo apt install gh -y
-      
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+      
+      - name: Install GitHub CLI and pygments
+        run: sudo apt update && sudo apt install gh -y
 
       - name: Install Python dependencies
         run: |
@@ -29,7 +29,9 @@ jobs:
         run: make setup
 
       - name: Build PDF
-        run: make build
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          make build
 
       - name: Bump version from commits
         id: semver
