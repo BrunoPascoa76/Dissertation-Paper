@@ -18,7 +18,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install GitHub CLI
-        run: sudo apt install gh -y
+        run: sudo apt-get update && sudo apt install gh -y
 
       - name: Install Pygments
         run: pip install Pygments
@@ -31,7 +31,7 @@ jobs:
 
 
       - name: Install TeX requirements
-        run: sudo apt-get update && sudo apt-get install -y texlive-full
+        run: sudo apt-get install -y texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
 
       - name: Run Make setup
         run: make setup
@@ -40,24 +40,23 @@ jobs:
         run: make build
         shell: bash
 
-      - name: Bump version from commits
-        id: semver
-        uses: issue-ops/semver@v0.1.0
+      - name: Auto Generate Next Release Tag by Date
+        id: generate_tag
+        uses: alexvingg/next-release-tag@v1.0.4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          default_bump: patch
 
       - name: Push new tag
         run: |
-          git tag ${{ steps.semver.outputs.new_version }}
-          git push origin ${{ steps.semver.outputs.new_version }}
+          git tag ${{ steps.generate_tag.outputs.release_tag }}
+          git push origin ${{ steps.generate_tag.outputs.release_tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
       - name: Draft release with commits
         uses: release-drafter/release-drafter@v5
         with:
-          version: ${{ steps.semver.outputs.new_version }}
+          version: ${{ steps.generate_tag.outputs.release_tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
@@ -66,5 +65,14 @@ jobs:
         run: |
           body=$(gh release view $(gh release list --draft --json tagName -q '.[0].tagName') --json body -q '.body')
           echo "body=$body" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Create Github release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.generate_tag.outputs.next_release_tag }}
+          body: ${{ steps.get_body.outputs.body }}
+          files: build/thesis.pdf
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
