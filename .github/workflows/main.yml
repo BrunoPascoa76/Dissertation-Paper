@@ -23,8 +23,16 @@ jobs:
       - name: Install GitHub CLIs
         run: sudo apt install gh -y
       
-      - name: Install python packages
-        run: sudo apt install -y python3-pygments python3-proselint
+      - name: Install Python + Pygments
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pygments
+
+      - name: Ensure pygmentize is discoverable
+        run: sudo ln -s /usr/bin/pygmentize /usr/local/bin/pygmentize || true
+
+      - name: Prepare minted directory
+        run: mkdir -p build/_minted-thesis
       
       - name: Run Make setup
         run: |
