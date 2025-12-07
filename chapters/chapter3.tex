@@ -7,6 +7,35 @@ Este capítulo descreve a visão geral da arquitetura definida, as medidas de se
 
 \section{Visão geral da arquitetura}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figs/Dissertation_arquitecture.png}
+    \caption{Visão geral da arquitetura do sistema}
+    \label{fig:sys_arq}
+\end{figure}
+
+O sistema prezente na Figura~\ref{fig:sys_arq} possui uma arquitetura descentralizada à base de eventos, que pode ser divido em 2 secções: \textbf{componentes locais} (que são executados no computador ou wearable do próprio utilizador) e \textbf{componentes externos} que vão ser executados através de Docker Swarm de modo a simular um ambiente distribuído em cloud.
+
+\begin{itemize}
+    \item \textbf{Componentes locais:}
+    \begin{itemize}
+        \item \textbf{App para Desktop:} Esta app feita em Python será o principal ponto de acesso por parte do utilizador e permitirá ao utilizador não só controlar todos os sensores de forma centralizada (iniciar ou parar uma sessão e definir que sensores serão utilizados em cada sessão), mas também ver os valores medidos pelos sensores e a evolução do seu nível de atenção ao longo de cada sessão
+        \item \textbf{Plugins para sensores locais:} Cada sensor presente no computador do utilizador (teclado e câmara) terá o seu próprio plugin responsável por recolher os dados do respetivo sensor, remover informação irrelevante e enviar as medições para o Kafka. Estes plugins serão controlados diretamente pelo utilizador através da app.
+        \item \textbf{Broker MQTT local:} Este broker (nativo do próprio python) servirá para comunicação entre a app e o smartwatch (visto que o smartwatch disponibilizado pelo orientador não expõe uma interface \ac{BLE}), permitindo o envio de comandos e a troca de informação entre estes.
+        \item \textbf{App para WearOS:} Esta app em Kotlin permitirá a medição de \ac{HRV} (extrapolado através dos batimentos por minuto) e o envio destes para o Kafka (através do REST Proxy).
+    \end{itemize}
+    \item \textbf{Componentes externos:}
+    \begin{itemize}
+        \item \textbf{Kafka:} O Kafka permite gerir o fluxo de dados entre os plugins e os respetivos consumidores, garantindo a entrega de mensagens de forma escalável e tolerante a falhas.
+        \begin{itemize}
+            \item \textbf{Kafka REST Proxy:} Adaptador que permite o acesso ao Kafka através duma interface \ac{REST}. Este adaptador é utilizado pela app para WearOS, visto que a versão de Kotlin para WearOS e Android não possui uma biblioteca de sistema (Management) necessária para o uso da biblioteca de Kafka.
+        \end{itemize}
+        \item \textbf{Nós Consumidores:} Estes nós escritos em Python têm como objetivo receber os dados enviados pelos sensores (através de Kafka) e processá-los antes de os inserir no InfluxDB. Cada nó processa um tipo de sensor diferente, permitindo assim escalar horizontalmente estes componentes de forma independente.
+        \item \textbf{InfluxDB:} Base de dados Time Series onde os dados são armazenados após serem processados e alimenta a app para desktop e o componente preditivo. InfluxDB em particular foi escolhido visto ser a base de dados Time Series com a melhor documentação e suporte que encontrei até agora.
+        \item \textbf{Modelo de previsão do estado psicológico:} Componente responsável por utilizar os dados presentes no InfluxDB de modo a estimar o estado psicológico do utilizador. Devido ao facto de que o modelo em si não é o foco do trabalho, bem como do esforço necessário para recolher os dados necessários, este componente não irá utilizar um modelo de Inteligência artificial, mas sim um modelo comparativo.
+    \end{itemize}
+\end{itemize}
+
 \section{Plano de trabalho}
 
 
