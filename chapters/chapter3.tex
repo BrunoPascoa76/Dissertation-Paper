@@ -1,9 +1,37 @@
-\chapter{Proposta de arquitetura e plano de trabalho}
+\chapter{Especificação e Arquitetura do Sistema}
 \label{chap:metodos}
 
 \begin{introduction}
-Este capítulo descreve a visão geral da arquitetura definida, as medidas de segurança tomadas para proteger este sistema e o plano de trabalho para esta dissertação
+Este capítulo descreve os requisitos (funcionais e não funcionais) que o sistema precisa de seguir, bem como uma descrição da sua arquitetura
 \end{introduction}
+
+\section{Requisitos do Sistema}
+
+\subsection{Requisitos Funcionais}
+
+\begin{enumerate}
+    \item[FR1] O sistema deve ser capaz de receber e agrupar dados de várias fontes associadas ao mesmo utilizador.
+    \item[FR2] O sistema deve ser capaz de receber e processar dados provindos do teclado, câmara ou smartwatch (WearOS).
+    \item[FR3] O sistema deve permitir ao utilizador visualizar os dados recolhidos tanto em tempo real como após a sessão terminar.
+    \item[FR4] O sistema deve permitir o controlo de todos os sensores associados ao utilizador de forma centralizada.
+    \item[FR5] O sistema deve ser capaz de identificar os sensores disponíveis e monitorizar em tempo real que sensores estão a enviar dados.
+    \item[FR6] O sistema deve ser capaz de detetar falhas em sensores.
+    \item[FR7] O sistema deve ser capaz de gerar uma estimativa do nível de atenção do utilizador num dado momento com base nos dados disponíveis.
+    \item[FR8] O sistema deve indicar visualmente nos gráficos os intervalos de tempo em que um dado sensor não esteve a enviar dados.
+\end{enumerate}
+
+\subsection{Requisitos Não Funcionais}
+
+\begin{enumerate}
+    \item[NFR1] O sistema deve funcionar corretamente mesmo quando apenas um subconjunto dos sensores é utilizado.
+    \item[NFR2] Cada nó consumidor deve ser capaz de ingerir pelo menos 10 mensagens por segundo.
+    \item[NFR3] Todos os componentes não locais devem poder escalar horizontalmente e/ou verticalmente se necessário.
+    \item[NFR4] O sistema deve detetar e reportar uma falha num sensor em menos de 1 segundo.
+    \item[NFR5] O sistema deve permitir a adição de mais sensores sem modificar a estrutura pré-existente.
+    \item[NFR6] Os plugins de cada sensor devem recolher e enviar dados de forma autónoma, sem depender do funcionamento de outros plugins.
+    \item[NFR7] O sistema deve permitir a substituição do modelo preditivo sem que isto altere o funcionamente do resto do sistema.
+    \item[NFR8] O modelo preditivo deve gerar uma previsão (mesmo que menos precisa) mesmo que os dados de um ou mais sensores estejam em falta.
+\end{enumerate}
 
 \section{Visão geral da arquitetura}
 
@@ -19,7 +47,7 @@ O sistema prezente na Figura~\ref{fig:sys_arq} possui uma arquitetura descentral
 \begin{itemize}
     \item \textbf{Componentes locais:}
     \begin{itemize}
-        \item \textbf{App para Desktop:} Esta app feita em Python será o principal ponto de acesso por parte do utilizador e permitirá ao utilizador não só controlar todos os sensores de forma centralizada (iniciar ou parar uma sessão e definir que sensores serão utilizados em cada sessão), mas também ver os valores medidos pelos sensores e a evolução do seu nível de atenção ao longo de cada sessão
+        \item \textbf{App para Desktop:} Esta app feita em Python será o principal ponto de acesso por parte do utilizador e permitirá ao utilizador não só controlar todos os sensores de forma centralizada (iniciar ou parar uma sessão e definir que sensores serão utilizados em cada sessão), mas também ver os valores medidos pelos sensores e a evolução do seu nível de atenção ao longo de cada sessão.
         \item \textbf{Plugins para sensores locais:} Cada sensor presente no computador do utilizador (teclado e câmara) terá o seu próprio plugin responsável por recolher os dados do respetivo sensor, remover informação irrelevante e enviar as medições para o Kafka. Estes plugins serão controlados diretamente pelo utilizador através da app.
         \item \textbf{Broker MQTT local:} Este broker (nativo do próprio python) servirá para comunicação entre a app e o smartwatch (visto que o smartwatch disponibilizado pelo orientador não expõe uma interface \ac{BLE}), permitindo o envio de comandos e a troca de informação entre estes.
         \item \textbf{App para WearOS:} Esta app em Kotlin permitirá a medição de \ac{HRV} (extrapolado através dos batimentos por minuto) e o envio destes para o Kafka (através do REST Proxy).
