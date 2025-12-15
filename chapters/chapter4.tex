@@ -1,4 +1,4 @@
-\chapter{Plano de trabalho}
+\chapter{Plano de Trabalho}
 \label{chap:planotrabalho}
 
 \begin{introduction}
@@ -7,8 +7,9 @@ Este capítulo detalha o trabalho preliminar já realizado e apresenta o plano d
 
 \section{Trabalho Preliminar}
 
-De forma a minimizar possíveis pontos de falha futuros, foram desenvolvidos protótipos para testar a comunicação entre componentes. 
-Em particular, foi validado o seguinte fluxo de dados:
+\subsection{Protótipos}
+De forma a minimizar possíveis pontos de falha futuros, eu desenvolvi protótipos de modo a testar a comunicação entre componentes. 
+Em particular, eu consegui validar o seguinte fluxo de dados:
 
 \begin{enumerate}
     \item Recolha de dados provenientes do teclado e dos sensores do smartwatch;
@@ -17,7 +18,51 @@ Em particular, foi validado o seguinte fluxo de dados:
     \item Inserção dos dados processados no InfluxDB.
 \end{enumerate}
 
-Apesar de estes protótipos serem feitos de forma intencionalmente simples, a sua estrutura modular permite a sua integração no sistema final após algumas adaptações.
+Apesar de ter desenvolvido estes protótipos de forma intencionalmente simples, tive a atenção de manter uma estrutura que permitirá a integração destes protótipos no sistema final com apenas algumas alterações.
+
+\subsection{Resultados Preliminares}
+
+Através do desenvolvimento destes protótipos, consegui identificar 2 problemas referentes à comunicação envolvendo o smartwatch: um no uso de \ac{BLE} para a troca de informações com o computador do utilizador e outro no envio dos dados para o Kafka (Tabela~\ref{tab:prob_identificados}). Estes problemas levaram ao reestruturação da arquitetura de forma a utilizar métodos de comunicação alternativos.
+
+\begin{table}[H]
+    \centering
+    \caption{Problemas identificados durante o desenvolvimento dos protótipos.}
+    \label{tab:prob_identificados}
+    \begin{tabularx}{\textwidth}{X X X}
+        \hline
+        \textbf{Problema} & \textbf{Causa do problema} & \textbf{Solução encontrada} \\
+        \hline
+        Dificuldades no uso de \ac{BLE} para comunicação local. & O smartwatch disponível para uso (Xiaomi Watch 2) possui uma API \ac{BLE} que não está exposta para uso por desenvolvedores \cite[p.~72, Fig.~26]{blexiaomi}. & Comunicação local será realizada através de um broker \ac{MQTT} (conexão inicial será realizada através de um código de emparelhamento). \\
+        \addlinespace[0.5em]
+        Dificuldades no envio de dados para o Kafka & A biblioteca de Kafka para Kotlin utiliza uma biblioteca de sistema do Java (\texttt{java.management}) que está ausente da versão para Android e WearOS do Kotlin & O smartwatch irá enviar os dados para o Kafka através de um adaptador \ac{REST} (Kafka REST Proxy). \\
+        \hline
+    \end{tabularx}
+\end{table}
 
 
+\section{Plano de Trabalho}
 
+O trabalho a resolver durante o segundo semestre seguirá uma abordagem iterativa, organizada em cinco fases principais. Estas fases incluem a adaptação dos protótipos, a integração de dados da câmara, o desenvolvimento da aplicação desktop, o desenvolvimento do modelo preditivo e a validação e recolha de resultados.
+
+\subsection{Fase 1: Adaptação dos Protótipos}
+
+Nesta primeira fase, irei reutilizar o código já existente nos protótipos, adaptando-os apenas para poderem receber informação (como \ac{UUID}) e comandos da aplicação desktop (que será realizada na \hyperref[sec:fase3]{fase 3}).
+
+\subsection{Fase 2: Integração dos Dados da Câmara}
+
+Nesta segunda fase, irei desenvolver o plugin que recolhe os dados faciais (que, por limitações de tempo, não teve um protótipo inicial), bem como o nó que consome os dados do Kafka, processa-os e insere-os no InfluxDB.
+
+\subsection{Fase 3: Desenvolvimento da Aplicação Desktop}
+\label{sec:fase3}
+
+Nesta terceira fase, irei desenvolver, a aplicação desktop. Neste fase será consolidada a deteção de falhas, o controlo dos sensores e a visualização da informação.
+
+\subsection{Fase 4: Desenvolvimento do Modelo Preditivo}
+
+Na quarta fase, irei definir e implementar um algoritmo que consiga utilizar os dados disponibilizados pelos sensores de forma a estimar o nível de atenção do utilizador num dado intervalo de tempo. 
+
+Devido à dificuldade em obter dados de treino, e visto que este modelo não é o foco desta dissertação, este modelo não irá ser baseado em Machine Learning, mas sim numa abordagem determinística que será definida nesta fase.
+
+\subsection{Fase 5: Validação e Recolha de resultados}
+
+Na fase final, irei-me focar principalmente na recolha de resultados pertinentes e métricas finais de performance. Adicionalmente, planeio validar o meu sistema ao realizar testes de carga e ao simular falha de componentes, de forma a comprovar que o sistema cumpre com os requisitos não funcionais pré-estabelecidos.
