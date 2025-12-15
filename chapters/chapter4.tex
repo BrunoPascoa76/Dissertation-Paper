@@ -32,7 +32,7 @@ Através do desenvolvimento destes protótipos, consegui identificar 2 problemas
         \hline
         \textbf{Problema} & \textbf{Causa do problema} & \textbf{Solução encontrada} \\
         \hline
-        Dificuldades no uso de \ac{BLE} para comunicação local. & O smartwatch disponível para uso (Xiaomi Watch 2) possui uma API \ac{BLE} que não está exposta para uso por desenvolvedores \cite[p.~72, Fig.~26]{blexiaomi}. & Comunicação local será realizada através de um broker \ac{MQTT} (conexão inicial será realizada através de um código de emparelhamento). \\
+        Dificuldades no uso de \ac{BLE} para comunicação local. & O smartwatch disponível para uso (Xiaomi Watch 2) possui uma API \ac{BLE} que não está exposta para uso por desenvolvedores~\cite[p.~72, Fig.~26]{blexiaomi}. & Comunicação local será realizada através de um broker \ac{MQTT} (conexão inicial será realizada através de um código de emparelhamento). \\
         \addlinespace[0.5em]
         Dificuldades no envio de dados para o Kafka & A biblioteca de Kafka para Kotlin utiliza uma biblioteca de sistema do Java (\texttt{java.management}) que está ausente da versão para Android e WearOS do Kotlin & O smartwatch irá enviar os dados para o Kafka através de um adaptador \ac{REST} (Kafka REST Proxy). \\
         \hline
