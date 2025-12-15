@@ -1,0 +1,23 @@
+\chapter{Plano de trabalho}
+\label{chap:planotrabalho}
+
+\begin{introduction}
+Este capítulo detalha o trabalho preliminar já realizado e apresenta o plano de trabalho futuro.
+\end{introduction}
+
+\section{Trabalho Preliminar}
+
+De forma a minimizar possíveis pontos de falha futuros, foram desenvolvidos protótipos para testar a comunicação entre componentes. 
+Em particular, foi validado o seguinte fluxo de dados:
+
+\begin{enumerate}
+    \item Recolha de dados provenientes do teclado e dos sensores do smartwatch;
+    \item Envio dos dados recolhidos para o Kafka;
+    \item Consumo e processamento dos dados por nós dedicados;
+    \item Inserção dos dados processados no InfluxDB.
+\end{enumerate}
+
+Apesar de estes protótipos serem feitos de forma intencionalmente simples, a sua estrutura modular permite a sua integração no sistema final após algumas adaptações.
+
+
+
