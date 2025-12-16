@@ -2,25 +2,32 @@
 \label{chap:introduction}
 
 \begin{introduction}
-Este capítulo foi criado por um modelo de Inteligência Artificial para demonstrar as várias funcionalidades disponíveis neste template de \LaTeX{}.
+Este capítulo apresenta uma introdução ao tema da dissertação ao contextualizar a sua motivação e descrever os objetivos e metodologia.
 \end{introduction}
 
-\section{Introdução}
-Este trabalho apresenta um estudo detalhado sobre [tema do trabalho], abordando os principais desafios e propondo soluções inovadoras. Através de uma análise rigorosa e da implementação de [métodos/tecnologias], conseguimos alcançar resultados significativos que contribuem para o avanço do conhecimento na área de [área de estudo].
+\section{Contexto e Motivação}
 
+Atualmente, dispositivos pessoais como computadores, smartphones ou smartwatches possuem diversos sensores que permitem recolher informações úteis para inferir os hábitos e o estado psicológico do utilizador. Estes sensores registam não só dados biométricos, como a frequência cardíaca, mas também informações sobre como o utilizador interage com estes dispositivos, como padrões do uso teclado ou de movimento do rato, permitindo monitorização do estado psicológico do utilizador em tempo real.
 \section{Objetivos}
-Os principais objetivos deste trabalho incluem a investigação de [tema específico], o desenvolvimento de [ferramentas/métodos] e a validação das soluções propostas através de [experimentos/estudos de caso]. Espera-se que os resultados obtidos possam ser aplicados em contextos práticos, beneficiando tanto a comunidade académica como a indústria.
+Os principais objetivos deste trabalho consistem em desenvolver um sistema modular capaz de recolher dados de vários sensores, processá-los em streaming e disponibilizar essa informação para visualização ou para estimar automaticamente o estado psicológico do utilizador.
 
-\section{Contribuições}
-Este trabalho contribui para a área de [área de estudo] ao propor [novas metodologias/tecnologias], apresentar uma análise comparativa de [ferramentas/métodos existentes] e fornecer insights valiosos sobre [aspectos específicos do tema]. Resultou na criação de [ferramentas/software] que podem ser utilizados por outros investigadores e profissionais na área. Foram publicados artigos em conferências e revistas de renome, destacando a relevância e o impacto do trabalho realizado:
-\begin{itemize}
-    \item Referência do Artigo 1
-    \item Referência do Artigo 2
-    \item Referência do Artigo 3
-\end{itemize}
+Apesar de trabalhos anteriores estabelecerem relações entre um (ou mais) sensor e o estado psicológico do utilizador, estes sistemas limitavam-se à recolha de dados em cada sessão, carecendo da escalabilidade e de mecanismo de gestão de sensores que seriam esperados num protótipo funcional capaz de integrar múltiplas sessões e sensores de forma contínua.
 
-\section{Estrutura do Documento}
-Este documento está organizado em X capítulos. O Capítulo~\ref{chap:introduction} apresenta \ldots
+Neste contexto, o presente trabalho propõe o desenvolvimento de um sistema modular escalável baseado em streaming capaz de recolher dados de vários sensores de forma contínua, gerir automaticamente estes dispostivos e integrar facilmente novos sensores ou módulos.
+
+\section{Metodologia}
+
+Neste trabalho irei adotar uma metodologia baseada na monitorização do estado psicológico do utilizador (particularmente o nível de atenção) durante o uso do computador. Neste cenário, dados serão recolhidos através de sensores do próprio computador (teclado e câmara), bem como sensores externos (\ac{HRV} via smartwatch). Estes dados serão processados numa solução à base de stream compatível com cloud.
+
+O sistema será projetado de forma a ser escalável e extensível, com mecanismo de gestão e monitorização automática de dispositivos e mantendo a possibilidade de integração de novos componentes sem que isto afete o restante sistema.
+
+\section{Estrutura do Documento} %TODO: atualizar quando houver mais capítulos
+Este documento está organizado em seis capítulos. O Capítulo~\ref{chap:introduction} apresenta uma introdução, contextualizando a sua motivação, descrevendo os objetivos pretendidos e a metodologia adotada para os atingir.
+O Capítulo~\ref{chap:estadodaarte} apresenta o estado da arte atual, bem como trabalhos relacionados a esta dissertação.
+O Capítulo~\ref{chap:metodos} especifica a arquitetura e requisitos funcionais e não funcionais do sistema.
+O Capítulo~\ref{chap:planotrabalho} detalha o trabalho preliminar realizado no primeiro semestro e os seus resultados, bem como uma proposta de plano de trabalho para o segundo semestre.
+O Capítulo~\ref{chap:resultados} descreve os resultados obtidos, bem como o processo de validação da solução final.
+Finalmente, o Capítulo~\ref{chap:conclusions} sumariza as contribuições, discute as limitações e sugere direções para trabalhos futuros.
 
 
 
