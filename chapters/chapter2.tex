@@ -7,8 +7,18 @@ Este capítulo descreve o estado da arte atual relativamente à monitorização 
 
 \section{Sensores e Monitorização do Estado Emocional}
 
-\section{Lacuna Identificada}
-Apesar dos progressos identificados acima na monitorização do estado emocional do utilizador através de sensores, eu pude verificar que a maioria das soluções referidas concentram-se na recolha pontual de dados. Até à data, não encontrei exemplos concretos de soluções que permitam a recolha de dados de vários sensores de forma contínua e escalável.
+Ao longo dos anos, diversos trabalhos foram realizados tentaram correlacionar dados obtidos por sensores com o estado emocional do utilizar. Entre os mais comuns estão estudos que tentam utilizar dispositivos que os utilizadores já possuem (como teclado, rato ou câmara, por exemplo).
+Estes estudos utilizam várias abordagens para estabelecer estas correlações, contudo tendem a ser limitados em termos de análise contínua e escalabilidade das suas soluções de processamento de dados.
+
+Diversos estudos conseguiram estabelecer uma correlação entre o uso do teclado e o nível de atenção e frustração do utilizador. Em particular, apesar de ambos terem considerado útil a frequência do uso de backspace, Maalej e Kallel~\cite{keyboard_speed_study} focaram-se mais na duração de cada tecla e intervalos entre teclas, enquanto que Epp \textit{et al.}~\cite{keyboard_correction_study} focaram-se mais no tipo de caracters (incluindo o número de caracteres especiais).
+
+Para além do teclado, existem também estudos que exploram dados de \ac{HRV} (obtido via smartwatch) e dados faciais para estimar o estado emocional do utilizador. Em particular, um estudo realizado por Quiroz \textit{et al.}~\cite{facial_hrv_study} integra dados de landmarks faciais obtidos por webcam com valores de \ac{HRV} obtidos via smartwatch enquanto os utilizadores assistiam a filmes ou ouviam música (com o objetivo de despoletar certas emoções). Os resultados obtidos demonstram a eficácia de combinar dados de vários sensores para prever o estado emocional do utilizador de forma mais precisa.
+
+\section{Principal Lacuna Identificada nos Estudos}
+
+Apesar de, como exemplificado acima, existirem diversos estudos que relacionam dados de sensores (ou até uma combinação de sensores) ao estado emocional do utilizador, uma lacuna presente em todos os estudos é a falta de estudos de longo prazo, focando-se principalmente na recolha de dados numa sessão em particular.
+
+Esta lacuna aparenta surgir devido à falta de soluções que permitam a recolha de dados de sensores de vários utilizadores de forma remota e a longo prazo, algo que pretendo corrigir com esta dissertação ao apresentar uma base extensível e modular que poderá ser adaptada para uso em estudos a longo prazo com vários sensores.
 
 \section{Arquiteturas de Processamento Contínuo de Dados (Streaming)}
 
@@ -28,3 +38,11 @@ Bases de Dados Time-Series são base de dados NO-SQL conhecidas por serem otimiz
 Neste caso, a base de dados mais relevante para este contexto é o InfluxDB, visto ter sido desenhada de raiz para lidar com elevados volumes de dados temporais~\cite{time_series_comparison}, sendo por isso o ideal para armazenamento de dados de sensores.
 
 \subsection{Processamento de Dados em Paralelo}
+
+Para além dos componentes centrais à ingestão de dados, alguns sistemas de streaming necessitam de processamento durante a própria ingestão de modo a tornar o seu armazenamento e uso mais eficiente. Frameworks como o Apache Flink e Kafka Streams ou bibliotecas como o Faust permitem executar este processamento em paralelo (e de forma stateful), processando os dados para uma forma mais compacta antes da sua inserção.
+
+O Apache Flink é um framework de processamento distribuído em tempo real, concebido para lidar com grandes volumes de dados de forma eficiente e tolerante a falhas.
+
+Por outro lado, Kafka Streams é uma framework de processamento stateful escrita em Java que está integrado no próprio Kafka, podendo, por isso, tirar vantagem dos próprios mecanismos de resiliência e tolerância a falhas do próprio Kafka.
+
+Finalmente, o Faust é uma biblioteca de Python inspirada em Kafka Streams, combinando os conceitos de processamento stateful por chave e de pipelines de dados do Kafka Streams com a facilidade de uso e integração do Python.
