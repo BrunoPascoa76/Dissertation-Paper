@@ -1,66 +1,68 @@
-\chapter{Especificação e Arquitetura do Sistema}
-\label{chap:metodos}
+\chapter{Plano de Trabalho}
+\label{chap:planotrabalho}
 
 \begin{introduction}
-Este capítulo descreve os requisitos (funcionais e não funcionais) que o sistema precisa de seguir, bem como uma descrição da sua arquitetura.
+Este capítulo detalha o trabalho preliminar já realizado e apresenta o plano de trabalho futuro.
 \end{introduction}
 
-\section{Requisitos do Sistema}
+\section{Trabalho Preliminar}
 
-\subsection{Requisitos Funcionais}
-
-\begin{enumerate}
-    \item[FR1] O sistema deve ser capaz de receber e agrupar dados de várias fontes associadas ao mesmo utilizador.
-    \item[FR2] O sistema deve ser capaz de receber e processar dados provindos do teclado, câmara ou smartwatch (WearOS).
-    \item[FR3] O sistema deve permitir ao utilizador visualizar os dados recolhidos tanto em tempo real como após a sessão terminar.
-    \item[FR4] O sistema deve permitir o controlo de todos os sensores associados ao utilizador de forma centralizada.
-    \item[FR5] O sistema deve ser capaz de identificar os sensores disponíveis e monitorizar em tempo real que sensores estão a enviar dados.
-    \item[FR6] O sistema deve ser capaz de detetar falhas em sensores.
-    \item[FR7] O sistema deve ser capaz de gerar uma estimativa do nível de atenção do utilizador num dado momento com base nos dados disponíveis.
-    \item[FR8] O sistema deve indicar visualmente nos gráficos os intervalos de tempo em que um dado sensor não esteve a enviar dados.
-\end{enumerate}
-
-\subsection{Requisitos Não Funcionais}
+\subsection{Protótipos}
+De forma a minimizar possíveis pontos de falha futuros, eu desenvolvi protótipos de modo a testar a comunicação entre componentes. 
+Em particular, eu consegui validar o seguinte fluxo de dados:
 
 \begin{enumerate}
-    \item[NFR1] O sistema deve funcionar corretamente mesmo quando apenas um subconjunto dos sensores é utilizado.
-    \item[NFR2] Cada nó consumidor deve ser capaz de ingerir pelo menos 10 mensagens por segundo.
-    \item[NFR3] Todos os componentes não locais devem poder escalar horizontalmente e/ou verticalmente se necessário.
-    \item[NFR4] O sistema deve detetar e reportar uma falha num sensor em menos de 1 segundo.
-    \item[NFR5] O sistema deve permitir a adição de mais sensores sem modificar a estrutura pré-existente.
-    \item[NFR6] Os plugins de cada sensor devem recolher e enviar dados de forma autónoma, sem depender do funcionamento de outros plugins.
-    \item[NFR7] O sistema deve permitir a substituição do modelo preditivo sem que isto altere o funcionamente do resto do sistema.
-    \item[NFR8] O modelo preditivo deve gerar uma previsão (mesmo que menos precisa) mesmo que os dados de um ou mais sensores estejam em falta.
+    \item Recolha de dados provenientes do teclado e dos sensores do smartwatch;
+    \item Envio dos dados recolhidos para o Kafka;
+    \item Consumo e processamento dos dados por nós dedicados;
+    \item Inserção dos dados processados no InfluxDB.
 \end{enumerate}
 
-\section{Visão geral da arquitetura}
+Apesar de ter desenvolvido estes protótipos de forma intencionalmente simples, tive a atenção de manter uma estrutura que permitirá a integração destes protótipos no sistema final com apenas algumas alterações.
 
-O sistema presente na Figura~\ref{fig:sys_arq} possui uma arquitetura descentralizada à base de eventos, que pode ser divido em 2 secções: \textbf{componentes locais} (que são executados no computador ou wearable do próprio utilizador) e \textbf{componentes externos} que vão ser executados através de Docker Swarm de modo a simular um ambiente distribuído em cloud.
+\subsection{Resultados Preliminares}
 
-\begin{itemize}
-    \item \textbf{Componentes locais:}
-    \begin{itemize}
-        \item \textbf{App para Desktop:} Esta app feita em Python será o principal ponto de acesso por parte do utilizador e permitirá ao utilizador não só controlar todos os sensores de forma centralizada (iniciar ou parar uma sessão e definir que sensores serão utilizados em cada sessão), mas também ver os valores medidos pelos sensores e a evolução do seu nível de atenção ao longo de cada sessão.
-        \item \textbf{Plugins para sensores locais:} Cada sensor presente no computador do utilizador (teclado e câmara) terá o seu próprio plugin responsável por recolher os dados do respetivo sensor, remover informação irrelevante e enviar as medições para o Kafka. Estes plugins serão controlados diretamente pelo utilizador através da app.
-        \item \textbf{Broker MQTT local:} Este broker irá correr localmente no computador do próprio utilizador e servirá não só como meio de comunicação entre os sensores e o programa principal, mas também servirá como buffer dos dados, permitindo o envio eventual dos dados mesmo que o cluster kafka esteja em baixo.
-        \item \textbf{App para WearOS:} Esta app em Kotlin permitirá a medição de \ac{HRV} (extrapolado através dos batimentos por minuto) e o envio destes para o broker \ac{MQTT} local.
-    \end{itemize}
-    \item \textbf{Componentes externos:}
-    \begin{itemize}
-        \item \textbf{Kafka Connect:} O Kafka Connect estabelece a ligação entre o broker \ac{MQTT} local e o Kafka, permitindo ingestão de dados de forma automática e assíncrona e eliminando a necessidade de os integrar de foram manual.
-        \item \textbf{Kafka:} O Kafka permite gerir o fluxo de dados entre os plugins e os respetivos consumidores, garantindo a entrega de mensagens de forma escalável e tolerante a falhas.
-        \item \textbf{Nós Consumidores:} Estes nós escritos em Python têm como objetivo receber os dados enviados pelos sensores (através de Kafka) e processá-los antes de os inserir no InfluxDB. Cada nó processa um tipo de sensor diferente, permitindo assim escalar horizontalmente estes componentes de forma independente.
-        \item \textbf{InfluxDB:} Base de dados Time Series onde os dados são armazenados após serem processados e alimenta a app para desktop e o componente preditivo. InfluxDB em particular foi escolhido visto ser a base de dados Time Series com a melhor documentação e suporte que encontrei até agora.
-        \item \textbf{Modelo de previsão do estado psicológico:} Componente responsável por utilizar os dados presentes no InfluxDB de modo a estimar o estado psicológico do utilizador. Devido ao facto de que o modelo em si não é o foco do trabalho, bem como do esforço necessário para recolher os dados necessários, este componente não irá utilizar um modelo de Inteligência artificial, mas sim um modelo comparativo.
-    \end{itemize}
-\end{itemize}
+Através do desenvolvimento destes protótipos, consegui identificar 2 problemas referentes à comunicação envolvendo o smartwatch: um no uso de \ac{BLE} para a troca de informações com o computador do utilizador e outro no envio dos dados para o Kafka (Tabela~\ref{tab:prob_identificados}). Estes problemas levaram ao reestruturação da arquitetura de forma a utilizar métodos de comunicação alternativos.
 
-\begin{figure}[H]
+\begin{table}[H]
     \centering
-    \includegraphics[width=\linewidth]{figs/Dissertation_arquitecture.png}
-    \caption{Visão geral da arquitetura do sistema}
-    \label{fig:sys_arq}
-\end{figure}
+    \caption{Problemas identificados durante o desenvolvimento dos protótipos.}
+    \label{tab:prob_identificados}
+    \begin{tabularx}{\textwidth}{X X X}
+        \hline
+        \textbf{Problema} & \textbf{Causa do problema} & \textbf{Solução encontrada} \\
+        \hline
+        Dificuldades no uso de \ac{BLE} para comunicação local. & O smartwatch disponível para uso (Xiaomi Watch 2) possui uma API \ac{BLE} que não está exposta para uso por desenvolvedores~\cite[p.~72, Fig.~26]{blexiaomi}. & Comunicação local será realizada através de um broker \ac{MQTT} (conexão inicial será realizada através de um código de emparelhamento). \\
+        \addlinespace[0.5em]
+        Dificuldades no envio de dados para o Kafka & A biblioteca de Kafka para Kotlin utiliza uma biblioteca de sistema do Java (\texttt{java.management}) que está ausente da versão para Android e WearOS do Kotlin & O smartwatch irá enviar os dados para o Kafka através de um adaptador \ac{REST} (Kafka REST Proxy). \\
+        \hline
+    \end{tabularx}
+\end{table}
 
 
+\section{Plano de Trabalho}
 
+O trabalho a resolver durante o segundo semestre seguirá uma abordagem iterativa, organizada em cinco fases principais. Estas fases incluem a adaptação dos protótipos, a integração de dados da câmara, o desenvolvimento da aplicação desktop, o desenvolvimento do modelo preditivo e a validação e recolha de resultados.
+
+\subsection{Fase 1: Adaptação dos Protótipos}
+
+Nesta primeira fase, irei reutilizar o código já existente nos protótipos, adaptando-os apenas para poderem receber informação (como \ac{UUID}) e comandos da aplicação desktop (que será realizada na \hyperref[sec:fase3]{fase 3}).
+
+\subsection{Fase 2: Integração dos Dados da Câmara}
+
+Nesta segunda fase, irei desenvolver o plugin que recolhe os dados faciais (que, por limitações de tempo, não teve um protótipo inicial), bem como o nó que consome os dados do Kafka, processa-os e insere-os no InfluxDB.
+
+\subsection{Fase 3: Desenvolvimento da Aplicação Desktop}
+\label{sec:fase3}
+
+Nesta terceira fase, irei desenvolver, a aplicação desktop. Neste fase será consolidada a deteção de falhas, o controlo dos sensores e a visualização da informação.
+
+\subsection{Fase 4: Desenvolvimento do Modelo Preditivo}
+
+Na quarta fase, irei definir e implementar um algoritmo que consiga utilizar os dados disponibilizados pelos sensores de forma a estimar o nível de atenção do utilizador num dado intervalo de tempo. 
+
+Devido à dificuldade em obter dados de treino, e visto que este modelo não é o foco desta dissertação, este modelo não irá ser baseado em Machine Learning, mas sim numa abordagem determinística que será definida nesta fase.
+
+\subsection{Fase 5: Validação e Recolha de resultados}
+
+Na fase final, irei-me focar principalmente na recolha de resultados pertinentes e métricas finais de performance. Adicionalmente, planeio validar o meu sistema ao realizar testes de carga e ao simular falha de componentes, de forma a comprovar que o sistema cumpre com os requisitos não funcionais pré-estabelecidos.

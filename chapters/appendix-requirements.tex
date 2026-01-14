@@ -1,0 +1,36 @@
+\chapter{Requisitos Funcionais e Não Funcionais}
+\label{chap:appendix-requirements}
+
+\begin{introduction}
+Este apêndice foi criado para fornecer mais detalhes sobre a lista de requisitos funcionais e não funcionais elaborada no início da dissertação
+\end{introduction}
+
+\section{Requisitos Funcionais}
+
+\begin{enumerate}
+    \item[FR1] O sistema deve ser capaz de receber e agrupar dados de várias fontes associadas ao mesmo utilizador.
+    \item[FR2] O sistema deve ser capaz de receber e processar dados de diferentes sensores associados a um mesmo utilizador em simultâneo.
+    \item[FR3] O sistema deve permitir ao utilizador visualizar os dados recolhidos durante e após a sessão, de modo a identificar eventos relevantes como falhas nos sensores ou na recolha de dados.
+    \item[FR4] O sistema deve permitir o controlo de todos os sensores associados ao utilizador de forma centralizada.
+    \item[FR5] O sistema deve ser capaz de identificar os sensores disponíveis e monitorizar durante a sessão que sensores estão a enviar dados.
+    \item[FR6] O sistema deve ser capaz de detetar falhas na recolha ou no envio de dados e informar o utilizador através de indicadores visuais ou alertas.
+    \item[FR7] O sistema deve ser capaz de gerar uma estimativa do nível de atenção do utilizador utilizando os dados recolhidos durante a sessão.
+    \item[FR8] O sistema deve indicar visualmente nos gráficos os intervalos de tempo em que um dado sensor não esteve a enviar dados.
+    \item[FR9] O modelo preditivo deve gerar uma previsão (mesmo que menos precisa) mesmo que os dados de um ou mais sensores estejam em falta.
+\end{enumerate}
+
+\section{Requisitos Não Funcionais}
+
+\begin{enumerate}
+    \item[NFR1] O sistema deve funcionar corretamente mesmo quando apenas um subconjunto dos sensores é utilizado.
+    \item[NFR2] Cada nó consumidor deve ser capaz de ingerir pelo menos 10 mensagens por segundo.
+    \item[NFR3] O sistema deve permitir que os recursos sejam ajustados com base na dimensão do estudo e no número de utilizadores e sensores.
+    \item[NFR4] O sistema deve detetar falhas em sensores em até 1 segundo após a interrupção no envio de dados, de forma que o utilizador seja informado sobre a falha.
+    \item[NFR5] O sistema deve permitir a adição de mais sensores sem modificar a estrutura pré-existente.
+    \item[NFR6] Os plugins de cada sensor devem recolher e enviar dados de forma autónoma, sem depender do funcionamento de outros plugins.
+    \item[NFR7] O sistema deve permitir a substituição do modelo preditivo sem que isto altere o funcionamente do resto do sistema.
+    \item[NFR8] O modelo preditivo deve gerar uma previsão (mesmo que menos precisa) mesmo que os dados de um ou mais sensores estejam em falta.
+\end{enumerate}
+
+
+
