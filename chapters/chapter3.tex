@@ -7,18 +7,27 @@ Este capítulo detalha o trabalho preliminar já realizado e apresenta o plano d
 
 \section{Trabalho Preliminar}
 
-\subsection{Protótipos}
-De forma a minimizar possíveis pontos de falha futuros, eu desenvolvi protótipos de modo a testar a comunicação entre componentes. 
-Em particular, eu consegui validar o seguinte fluxo de dados:
+\subsection{Protótipo}
 
-\begin{enumerate}
-    \item Recolha de dados provenientes do teclado e dos sensores do smartwatch;
-    \item Envio dos dados recolhidos para o Kafka;
-    \item Consumo e processamento dos dados por nós dedicados;
-    \item Inserção dos dados processados no InfluxDB.
-\end{enumerate}
+De modo a validar a comunicação e de modo a identificar antecipadamente possíveis entraves no desenvolvimento, eu desenvolvi um protótipo da pipeline inicial, que entretanto foi expandida com a adição de um broker \ac{MQTT} e o componente Kafka Connect).
+As comunicações implementadas e testadas estão resumidas na Tabela~\ref{tab:comunicacoes-prototipo}, mostrando a origem, destino, tecnologias utilizadas e o aspecto da arquitetura explorado em cada etapa.
 
-Apesar de ter desenvolvido estes protótipos de forma intencionalmente simples, tive a atenção de manter uma estrutura que permitirá a integração destes protótipos no sistema final com apenas algumas alterações.
+\begin{table}[H]
+    \centering
+    \caption{Comunicações testadas nos protótipos da pipeline inicial.}
+    \label{tab:comunicacoes-prototipo}
+    \begin{tabularx}{\textwidth}{c|l|X|l|X}
+        \hline
+        Nº & Comunicação & Origem → Destino & Tecnologias / Protocolo & Aspecto da Arquitetura Validado \\
+        \hline
+        1 & Sensor → Broker & Teclado / Smartwatch → Kafka & Python, WearOS, Kafka & Recolha de dados, envio para o Kafka \\
+        2 & Kafka → Consumidores & Kafka → Nós consumidores Python & Kafka & Modularidade e escalabilidade do processamento \\
+        3 & Consumidores → InfluxDB & Nós consumidores → InfluxDB & Python, InfluxDB & Persistência e integridade dos dados \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+Para além dos problemas identificados em baixo, cheguei também à conclusão que o envio de dados diretamente para o Kafka poderia levar à perda de dados caso o Kafka esteja indisponível ou exista algum problema de conexão. Por esta razão, decidi expandir a arquitetura de modo a utilizar o broker \ac{MQTT} como buffer local, sendo que a conexão entre este e o Kafka é assegurado de forma assíncrona pelo Kafka Connect. Esta nova arquitetura é descrevida em detalhe no Apêndice~\ref{appendix-architecture}.
 
 \subsection{Resultados Preliminares}
 
@@ -28,13 +37,13 @@ Através do desenvolvimento destes protótipos, consegui identificar 2 problemas
     \centering
     \caption{Problemas identificados durante o desenvolvimento dos protótipos.}
     \label{tab:prob_identificados}
-    \begin{tabularx}{\textwidth}{X X X}
+    \begin{tabularx}{\textwidth}{X|X|X}
         \hline
         \textbf{Problema} & \textbf{Causa do problema} & \textbf{Solução encontrada} \\
         \hline
         Dificuldades no uso de \ac{BLE} para comunicação local. & O smartwatch disponível para uso (Xiaomi Watch 2) possui uma API \ac{BLE} que não está exposta para uso por desenvolvedores~\cite[p.~72, Fig.~26]{blexiaomi}. & Comunicação local será realizada através de um broker \ac{MQTT} (conexão inicial será realizada através de um código de emparelhamento). \\
         \addlinespace[0.5em]
-        Dificuldades no envio de dados para o Kafka & A biblioteca de Kafka para Kotlin utiliza uma biblioteca de sistema do Java (\texttt{java.management}) que está ausente da versão para Android e WearOS do Kotlin & O smartwatch irá enviar os dados para o Kafka através de um adaptador \ac{REST} (Kafka REST Proxy). \\
+        Dificuldades no envio de dados para o Kafka & A biblioteca de Kafka para Kotlin utiliza uma biblioteca de sistema do Java (\texttt{java.management}) que está ausente da versão para Android e WearOS do Kotlin & O smartwatch irá enviar os dados para o broker \ac{MQTT}, que por sua vez enviará para o Kafka (via Kafka Connect). \\
         \hline
     \end{tabularx}
 \end{table}
