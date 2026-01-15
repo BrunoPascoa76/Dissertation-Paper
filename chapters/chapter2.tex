@@ -36,13 +36,3 @@ Por outro lado, o Kafka é um message broker que utiliza um esquema distribuído
 
 Bases de Dados Time-Series são base de dados NO-SQL conhecidas por serem otimizadas para indexarem dados num certo momento no tempo, sendo por isso a escolha mais apropriada para registar valores medidos por sensor.
 Neste caso, a base de dados mais relevante para este contexto é o InfluxDB, visto ter sido desenhada de raiz para lidar com elevados volumes de dados temporais~\cite{time_series_comparison}, sendo por isso o ideal para armazenamento de dados de sensores.
-
-\subsection{Processamento de Dados em Paralelo}
-
-Para além dos componentes centrais à ingestão de dados, alguns sistemas de streaming necessitam de processamento durante a própria ingestão de modo a tornar o seu armazenamento e uso mais eficiente. Frameworks como o Apache Flink e Kafka Streams ou bibliotecas como o Faust permitem executar este processamento em paralelo (e de forma stateful), processando os dados para uma forma mais compacta antes da sua inserção.
-
-O Apache Flink é um framework de processamento distribuído em tempo real, concebido para lidar com grandes volumes de dados de forma eficiente e tolerante a falhas.
-
-Por outro lado, Kafka Streams é uma framework de processamento stateful escrita em Java que está integrado no próprio Kafka, podendo, por isso, tirar vantagem dos próprios mecanismos de resiliência e tolerância a falhas do próprio Kafka.
-
-Finalmente, o Faust é uma biblioteca de Python inspirada em Kafka Streams, combinando os conceitos de processamento stateful por chave e de pipelines de dados do Kafka Streams com a facilidade de uso e integração do Python.

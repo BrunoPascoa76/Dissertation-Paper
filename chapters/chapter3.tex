@@ -51,27 +51,12 @@ Através do desenvolvimento destes protótipos, consegui identificar 2 problemas
 
 \section{Plano de Trabalho}
 
-O trabalho a resolver durante o segundo semestre seguirá uma abordagem iterativa, organizada em cinco fases principais. Estas fases incluem a adaptação dos protótipos, a integração de dados da câmara, o desenvolvimento da aplicação desktop, o desenvolvimento do modelo preditivo e a validação e recolha de resultados.
+De modo a alcançar os objetivos propostos na Secção~\ref{sec:objectives}, o trabalho foi organizado nas seguintes etapas:
 
-\subsection{Fase 1: Adaptação dos Protótipos}
-
-Nesta primeira fase, irei reutilizar o código já existente nos protótipos, adaptando-os apenas para poderem receber informação (como \ac{UUID}) e comandos da aplicação desktop (que será realizada na \hyperref[sec:fase3]{fase 3}).
-
-\subsection{Fase 2: Integração dos Dados da Câmara}
-
-Nesta segunda fase, irei desenvolver o plugin que recolhe os dados faciais (que, por limitações de tempo, não teve um protótipo inicial), bem como o nó que consome os dados do Kafka, processa-os e insere-os no InfluxDB.
-
-\subsection{Fase 3: Desenvolvimento da Aplicação Desktop}
-\label{sec:fase3}
-
-Nesta terceira fase, irei desenvolver, a aplicação desktop. Neste fase será consolidada a deteção de falhas, o controlo dos sensores e a visualização da informação.
-
-\subsection{Fase 4: Desenvolvimento do Modelo Preditivo}
-
-Na quarta fase, irei definir e implementar um algoritmo que consiga utilizar os dados disponibilizados pelos sensores de forma a estimar o nível de atenção do utilizador num dado intervalo de tempo. 
-
-Devido à dificuldade em obter dados de treino, e visto que este modelo não é o foco desta dissertação, este modelo não irá ser baseado em Machine Learning, mas sim numa abordagem determinística que será definida nesta fase.
-
-\subsection{Fase 5: Validação e Recolha de resultados}
-
-Na fase final, irei-me focar principalmente na recolha de resultados pertinentes e métricas finais de performance. Adicionalmente, planeio validar o meu sistema ao realizar testes de carga e ao simular falha de componentes, de forma a comprovar que o sistema cumpre com os requisitos não funcionais pré-estabelecidos.
+\begin{itemize}
+    \item \textbf{Recolha de dados de sensores:} Implementar a recolha contínua de dados provenientes dos três sensores.
+    \item \textbf{Transmissão e ingestão de dados:} Assegurar a transmissão, processamento e armazenamento dos dados.
+    \item \textbf{Previsão e visualização dos dados:} Implementar mecanismos de visualização dos dados e utilizar esses dados para a previsão do estado psicológico do utilizador.
+    \item \textbf{Avaliação de desempenho e resiliência:} Avaliar o desempenho do sistema face a diversas cargas, bem como a sua capacidade para lidar com componentes em falha, verificando o cumprimento dos requisitos não funcionais pré-estabelecidos. 
+    \item \textbf{Análise e apresentação dos resultados:} Analisar os resultados obtidos e apresentar as conclusões finais do trabalho.
+\end{itemize}
