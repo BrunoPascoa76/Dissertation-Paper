@@ -20,19 +20,19 @@ Apesar de, como exemplificado acima, existirem diversos estudos que relacionam d
 
 Esta lacuna aparenta surgir devido à falta de soluções que permitam a recolha de dados de sensores de vários utilizadores de forma remota e a longo prazo, contudo o meu objetivo com este trabalho não é criar uma arquitetura que me permita realizar um estudo a longo prazo, mas sim criar uma base tecnológica que facilite a execução destes estudos por outros investigadores.
 
-\section{Arquiteturas de Processamento Contínuo de Dados (Streaming)}
+\section{Plataformas de Recolha de Dados de Sensores}
 
-O processamento contínuo de dados, ou streaming, consiste na ingestão, análise e armazenamento de dados à medida que são gerados (ao contrário de processamento em batch, no qual os dados são processados apenas após o final de uma sessão ou período pré-definido), permitindo monitorizar e analisar estes dados em tempo real. Nas subsecções seguintes serão apresentados alguns dos componentes utilizados no streaming de dados que serão relevantes para esta dissertação.
+Adicionalmente, para além de estudos científicos, existem também plataformas já estabelecidas que permitem a recolha e tratamento de dados de sensores, destacando-se em particular o RADAR-base~\cite{radarbase} e a AWARE~Framework~\cite{aware}.
 
-\subsection{Message Brokers}
+\subsection{RADAR-base}
 
-Message Brokers são sistemas que permitem a receção de mensagens em filas divididas por tópicos, permitindo assim uma comunicação por eventos entre produtores (que enviam os dados) e consumidores (que os enviam e recebem). Entre as tecnologias mais usadas destacam-se o \ac{MQTT} (utilizado em brokers como \href{https://mosquitto.org/documentation/}{Eclipse Mosquitto}, por exemplo) e o Apache Kafka.
+A RADAR-base~\cite{radarbase} é uma plataforma open source que permite a recolha de dados para estudos clínicos não só utilizando sensores do telemóvel a partir de uma app Android ou iOS, mas também sensores externos como wearables ou sensores \ac{IoT}, possuindo suporte oficial para diversos modelos de sensores.
+Para além disso, esta plataforma oferece também a opção de acompanhar os dados com um questionário preenchido por cada utilizador.
 
-O \ac{MQTT} é um protocolo de mensagens publish-subscribe conhecido pela sua simplicidade, sendo muitas vezes utilizado em sistemas \ac{IoT} devido ao baixo consumo de energia e largura de banda, permitindo uma comunicação eficiente mesmo em sistemas embutidos com recursos limitados~\cite{MQTT_IOT}.
+\subsection{AWARE Framework}
 
-Por outro lado, o Kafka é um message broker que utiliza um esquema distribuído em clusters de modo a proporcionar alta performance, escalabilidade e tolerância a falhas~\cite{kafka_aws,kafka_datapeaker}. O Kafka Connect, componente integrado no próprio Kafka, permite também importar e exportar dados entre o Kafka e outras fontes de dados (incluindo MQTT), permitindo a transmissão de dados de forma fluida e eficiente~\cite{kafka_connect_docs}.
+De forma similar à RADAR-base, a AWARE Framework é uma plataforma de recolha de dados para estudos científicos que permite recolher dados dos sensores internos de um telemóvel Android ou iOS, bem como a realização de questionários. Contudo, apesar de ambos utilizarem um sistema baseado em plugins, a AWARE Framework não possui (até à data) capacidade de recolha de sensores externos ao telemóvel e suportando oficialmente um número menor de sensores do próprio telemóvel.
 
-\subsection{Time-Series Databases}
+\section{Principais Lacunas Identifcadas nas Plataformas}
 
-Bases de Dados Time-Series são base de dados NO-SQL conhecidas por serem otimizadas para indexarem dados num certo momento no tempo, sendo por isso a escolha mais apropriada para registar valores medidos por sensor.
-Neste caso, a base de dados mais relevante para este contexto é o InfluxDB, visto ter sido desenhada de raiz para lidar com elevados volumes de dados temporais~\cite{time_series_comparison}, sendo por isso o ideal para armazenamento de dados de sensores.
+Apesar destas plataformas oferecerem soluções robustas, fáceis de utilizar e com funcionalidades complementares valiosas (como os questionários), estas soluções não são livremente extensíveis, não sendo possível o uso de sensores para além dos oficialmente suportados, sendo essa lacuna ainda mais evidente por nenhum destes proporcionar suporte parta o computador e respetivos dispositivos de input. 
