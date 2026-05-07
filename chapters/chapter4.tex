@@ -21,13 +21,15 @@ As comunicações implementadas e testadas estão resumidas na Tabela~\ref{tab:c
         Nº & Comunicação & Origem → Destino & Tecnologias / Protocolo & Aspecto da Arquitetura Validado \\
         \hline
         1 & Sensor → Broker & Teclado / Smartwatch → Kafka & Python, WearOS, Kafka & Recolha de dados, envio para o Kafka \\
-        2 & Kafka → Consumidores & Kafka → Nós consumidores Python & Kafka & Modularidade e escalabilidade do processamento \\
+        2 & Kafka → Consumidores~\footnotemark & Kafka → Nós consumidores Python & Kafka & Modularidade e escalabilidade do processamento \\
         3 & Consumidores → InfluxDB & Nós consumidores → InfluxDB & Python, InfluxDB & Persistência e integridade dos dados \\
         \hline
     \end{tabularx}
 \end{table}
 
-Para além dos problemas identificados em baixo, cheguei também à conclusão que o envio de dados diretamente para o Kafka poderia levar à perda de dados caso o Kafka esteja indisponível ou exista algum problema de conexão. Por esta razão, decidi expandir a arquitetura de modo a utilizar o broker \ac{MQTT} como buffer local, sendo que a conexão entre este e o Kafka é assegurado de forma assíncrona pelo Kafka Connect. Esta nova arquitetura é descrevida em detalhe no Apêndice~\ref{appendix-architecture}.
+\footnotetext{{Os nós consumidores descritos acima tinha como responsabilidade o processamento e inserção dos dados. Esta responsabilidade foi absorvida na versão final pelo Kafka Connect de modo a tornar o servidor mais agnóstico.\label{nota-consumidores}}}
+
+Para além dos problemas identificados em baixo, cheguei também à conclusão que o envio de dados diretamente para o Kafka poderia levar à perda de dados caso o Kafka esteja indisponível ou exista algum problema de conexão. Por esta razão, decidi expandir a arquitetura de modo a utilizar o broker \ac{MQTT} como buffer local, sendo que a conexão entre este e o Kafka é assegurado de forma assíncrona pelo Kafka Connect.
 
 \subsection{Resultados Preliminares}
 
