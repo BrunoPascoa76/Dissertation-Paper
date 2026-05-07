@@ -1,69 +1,62 @@
-\chapter{Plano de Trabalho}
-\label{chap:planotrabalho}
+\chapter{Requisitos e Arquitetura}
+\label{chap:requisitosarquitetura}
 
 \begin{introduction}
-Este capítulo detalha o trabalho preliminar já realizado e apresenta o plano de trabalho futuro.
+Este capítulo detalha os requisitos funcionais e não funcionais estabelecidos, bem como a arquitetura criada a partir destes requisitos.
 \end{introduction}
 
-\section{Trabalho Preliminar}
+\section{Requisitos Funcionais e Não Funcionais}
 
-\subsection{Protótipo}
+De modo a guiar a criação deste trabalho, foi estabelecido um conjunto de requisitos funcionais e não funcionais que a solução deve respeitar.
 
-De modo a validar a comunicação e de modo a identificar antecipadamente possíveis entraves no desenvolvimento, eu desenvolvi um protótipo da pipeline inicial, que entretanto foi expandida com a adição de um broker \ac{MQTT} e o componente Kafka Connect).
-As comunicações implementadas e testadas estão resumidas na Tabela~\ref{tab:comunicacoes-prototipo}, mostrando a origem, destino, tecnologias utilizadas e o aspecto da arquitetura explorado em cada etapa.
+\subsection{Requisitos Funcionais}
 
-\begin{table}[H]
-    \centering
-    \caption{Comunicações testadas nos protótipos da pipeline inicial.}
-    \label{tab:comunicacoes-prototipo}
-    \begin{tabularx}{\textwidth}{c|l|X|l|X}
-        \hline
-        Nº & Comunicação & Origem → Destino & Tecnologias / Protocolo & Aspecto da Arquitetura Validado \\
-        \hline
-        1 & Sensor → Broker & Teclado / Smartwatch → Kafka & Python, WearOS, Kafka & Recolha de dados, envio para o Kafka \\
-        2 & Kafka → Consumidores & Kafka → Nós consumidores Python & Kafka & Modularidade e escalabilidade do processamento \\
-        3 & Consumidores → InfluxDB & Nós consumidores → InfluxDB & Python, InfluxDB & Persistência e integridade dos dados \\
-        \hline
-    \end{tabularx}
-\end{table}
+\begin{enumerate}
+    \item[FR1] O sistema deve ser capaz de receber e agrupar dados de várias fontes associadas ao mesmo utilizador.
+    \item[FR2] O sistema deve ser capaz de receber e processar dados de diferentes sensores associados a um mesmo utilizador em simultâneo.
+    \item[FR3] O sistema deve permitir ao utilizador visualizar os dados recolhidos em tempo real e com uma janela temporal de pelo menos 1 minuto, de modo a permitir identicar falhas nos sensores.
+    \item[FR4] O sistema deve permitir o controlo de todos os sensores associados ao utilizador de forma centralizada.
+    \item[FR5] O sistema deve ser capaz de identificar os sensores disponíveis e monitorizar durante a sessão que sensores estão a enviar dados.
+    \item[FR6] O sistema deve ser capaz de detetar falhas na recolha ou no envio de dados e permitir ao utilizador detetar o momento da falha.
+    \item[FR7] O sistema deve ser capaz de gerar uma estimativa do nível de atenção do utilizador em tempo real utilizando os dados dos sensores disponíveis.
+\end{enumerate}
 
-Para além dos problemas identificados em baixo, cheguei também à conclusão que o envio de dados diretamente para o Kafka poderia levar à perda de dados caso o Kafka esteja indisponível ou exista algum problema de conexão. Por esta razão, decidi expandir a arquitetura de modo a utilizar o broker \ac{MQTT} como buffer local, sendo que a conexão entre este e o Kafka é assegurado de forma assíncrona pelo Kafka Connect. Esta nova arquitetura é descrevida em detalhe no Apêndice~\ref{appendix-architecture}.
+\subsection{Requisitos Não Funcionais}
 
-\subsection{Resultados Preliminares}
+\begin{enumerate}
+    \item[NFR1] O sistema deve funcionar corretamente mesmo quando apenas um subconjunto dos sensores é utilizado.
+    \item[NFR2] Cada nó consumidor deve ser capaz de ingerir pelo menos 10 mensagens por segundo.
+    \item[NFR3] O sistema deve permitir que os recursos sejam ajustados com base na dimensão do estudo e no número de utilizadores e sensores.
+    \item[NFR4] O sistema deve detetar falhas em sensores em até 1 segundo após a interrupção no envio de dados, de forma que o utilizador seja informado sobre a falha.
+    \item[NFR5] O sistema deve permitir a adição de mais sensores sem modificar a estrutura pré-existente.
+    \item[NFR6] Os plugins de cada sensor devem recolher e enviar dados de forma autónoma, sem depender do funcionamento de outros plugins.
+    \item[NFR7] O modelo preditivo deve gerar uma previsão (mesmo que menos precisa) mesmo que os dados de um ou mais sensores estejam em falta.
+\end{enumerate}
 
-Através do desenvolvimento destes protótipos, consegui identificar 2 problemas referentes à comunicação envolvendo o smartwatch: um no uso de \ac{BLE} para a troca de informações com o computador do utilizador e outro no envio dos dados para o Kafka (Tabela~\ref{tab:prob_identificados}). Estes problemas levaram ao reestruturação da arquitetura de forma a utilizar métodos de comunicação alternativos.
+\section{Arquitetura do Sistema}
 
-\begin{table}[H]
-    \centering
-    \caption{Problemas identificados durante o desenvolvimento dos protótipos.}
-    \label{tab:prob_identificados}
-    \begin{tabularx}{\textwidth}{X|X|X}
-        \hline
-        \textbf{Problema} & \textbf{Causa do problema} & \textbf{Solução encontrada} \\
-        \hline
-        Dificuldades no uso de \ac{BLE} para comunicação local. & O smartwatch disponível para uso (Xiaomi Watch 2) possui uma API \ac{BLE} que não está exposta para uso por desenvolvedores~\cite[p.~72, Fig.~26]{blexiaomi}. & Comunicação local será realizada através de um broker \ac{MQTT} (conexão inicial será realizada através de um código de emparelhamento). \\
-        \addlinespace[0.5em]
-        Dificuldades no envio de dados para o Kafka & A biblioteca de Kafka para Kotlin utiliza uma biblioteca de sistema do Java (\texttt{java.management}) que está ausente da versão para Android e WearOS do Kotlin & O smartwatch irá enviar os dados para o broker \ac{MQTT}, que por sua vez enviará para o Kafka (via Kafka Connect). \\
-        \hline
-    \end{tabularx}
-\end{table}
-
-
-\section{Plano de Trabalho}
-
-De modo a alcançar os objetivos propostos na Secção~\ref{sec:objectives}, o trabalho foi organizado nas seguintes etapas:
+O sistema presente na Figura~\ref{fig:sys_arq} possui uma arquitetura descentralizada à base de eventos, que pode ser divido em 2 secções: \textbf{componentes locais} (que são executados no computador ou wearable do próprio utilizador) e \textbf{componentes externos} que serão executados de forma remota num servidor ou na cloud.
 
 \begin{itemize}
-    \item \textbf{Recolha de dados de sensores:} Implementar a recolha contínua de dados provenientes dos três sensores.
-    \item \textbf{Transmissão e ingestão de dados:} Assegurar a transmissão, processamento e armazenamento dos dados.
-    \item \textbf{Previsão e visualização dos dados:} Implementar mecanismos de visualização dos dados e utilizar esses dados para a previsão do estado psicológico do utilizador.
-    \item \textbf{Avaliação de desempenho e resiliência:} Avaliar o desempenho do sistema face a diversas cargas, bem como a sua capacidade para lidar com componentes em falha, verificando o cumprimento dos requisitos não funcionais pré-estabelecidos. 
-    \item \textbf{Análise e apresentação dos resultados:} Analisar os resultados obtidos e apresentar as conclusões finais do trabalho.
+    \item \textbf{Componentes locais:}
+    \begin{itemize}
+        \item \textbf{App para Desktop:} Esta app feita em Python será o principal ponto de acesso por parte do utilizador e permitirá ao utilizador não só controlar todos os sensores de forma centralizada (iniciar ou parar uma sessão e definir que sensores serão utilizados em cada sessão), mas também ver os valores medidos pelos sensores e a evolução do seu nível de atenção ao longo de cada sessão.
+        \item \textbf{Plugins para sensores locais:} Cada sensor presente no computador do utilizador (teclado e câmara) terá o seu próprio plugin responsável por recolher os dados do respetivo sensor, remover informação irrelevante e enviar as medições para o Kafka. Estes plugins serão controlados diretamente pelo utilizador através da app.
+        \item \textbf{Broker MQTT local:} Este broker irá correr localmente no computador do próprio utilizador e servirá não só como meio de comunicação entre os sensores e o programa principal, mas também servirá como buffer dos dados, permitindo o envio eventual dos dados, mesmo que o MQTT remoto esteja em baixo.
+        \item \textbf{App para WearOS:} Esta app em Kotlin permitirá a medição de \ac{HRV} (extrapolado através dos batimentos por minuto) e o envio destes para o broker \ac{MQTT} local.
+    \end{itemize}
+    \item \textbf{Componentes externos:}
+    \begin{itemize}
+        \item \textbf{Broker MQTT remoto:} Serve como intermediário entre o cliente e o Kafka. A adição deste componente melhora a escalabilidade e a segurança do sistema ao evitar que cada cliente necessite de estabelecer conectores entre o broker local e o Kafka.
+        \item \textbf{Kafka Connect:} O Kafka Connect estabelece conectores entre o broker \ac{MQTT} remoto e o Kafka, bem como a exportação destes dados para  a base de dados, permitindo uma ingestão automática e agnóstica ao tipo de sensor.
+        \item \textbf{Kafka:} O Kafka permite gerir o fluxo de dados entre os plugins e os respetivos consumidores, garantindo a entrega de mensagens de forma escalável e com uma persistência de dados melhor que o padrão \ac{MQTT}, levando a uma melhor tolerância a falhas ou atrasos.
+        \item \textbf{InfluxDB:} Base de dados Time Series onde os dados são armazenados após serem processados e alimenta a app para desktop. InfluxDB em particular foi escolhido visto ser a base de dados Time Series com a melhor documentação e suporte que encontrei até agora.
+    \end{itemize}
 \end{itemize}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{figs/timeline.png}
-    \caption{Cronograma proposto para a realização da dissertação}
-    \label{fig:timeline}
+    \includegraphics[width=\linewidth]{figs/Dissertation_arquitecture.png}
+    \caption{Visão geral da arquitetura do sistema}
+    \label{fig:sys_arq}
 \end{figure}
