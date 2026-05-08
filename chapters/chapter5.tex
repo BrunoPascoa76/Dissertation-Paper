@@ -5,6 +5,33 @@
 Este capítulo apresenta os resultados obtidos, bem como a validação do sistema final de modo a garantir que cumpre com os requisitos pré-estabelecidos.
 \end{introduction}
 
+\section{Estado final da solução}
+
+Após um período de desenvolvimento de vários meses, considero ter desenvolvido uma solução que cumpre com todos os objetivos e requisitos que defini no início deste projeto.
+
+A solução final pode ser subdividida em 3 ecossistemas principais que comunicam entre si: o servidor, a app desktop e a app para WearOS.
+
+\subsection{Servidor}
+
+O servidor consiste num ambiente de contentores (Docker Compose) que comunicam entre si, mantendo o isolamento necessário para que este sistema em cloud (caso desejado), ao mesmo tempo que permite a execução mais unificada do servidor em ambientes mais locais.
+
+O principal ponto de acesso para ingestão de dados é um broker Mosquitto (sendo que cada tópico com o prefixo \texttt{sensors/} é considerado um tipo de sensor diferente) que permite a ingestão unificada de dados de vários utilizadores. Estes registos são depois transferidos para o Kafka (que possui melhor resiliência de dados) de forma automática e agnóstica via Kafka Connect antes de serem inseridos de forma assíncrona na base de dados (novamente usando Kafka Connect), onde cada tópico \ac{MQTT} é inserido numa tabela (\textit{measurement}) distinta no InfluxDB. Esta abordagem agnóstica e aberta permite não só acrescentar sensores sem ter de modificar o servidor, mas também a possibilidade de integrar com sistemas pré-existentes (necessitando apenas de usar o prefixo "sensors/" no tópico e incluir uuid e timestamp na mensagem).
+
+O acesso da base de dados por parte dos clientes é gerido por uma API REST simples (escrita em FastAPI). O endpoint principal desta API é \texttt{/data/{sensor}}, que constroi uma query para um sensor específico a partir dos seguintes parâmetros:
+\begin{itemize}
+    \item \textbf{start e end}: janela temporal, em ms, para a qual queremos obter os dados.
+    \item \textbf{uuid}: o \ac{UUID} do utilizador a que pertecem os dados.
+    \item \textbf{agg}: o tipo de agregação (opcional) (MEAN, COUNT, SUM, MIN, MAX). Por defeito (ou se utilizar NONE), os valores não são agregados.
+    \item \textbf{field}: o campo (ou campos, separados por vírgula) a retornar. O valor por defeito é \texttt{value}.
+    \item \textbf{interval}: o intervalo de tempo (opcional) para agregação (deverá incluir o valor e a unidade de tempo, por exemplo \texttt{1s}). Se omitido os valores não são agregados por tempo.
+\end{itemize}
+O uso desta API e de parâmetros evita que agentes externos tenham acesso à base de dados, reduzindo por isso o risco de vulnerabilidades.
+
+\subsection{Cliente}
 
 
 
+\subsection{App de WearOS}
+
+
+\section{Validação de qualidade}
