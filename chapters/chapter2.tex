@@ -10,9 +10,9 @@ Este capítulo descreve o estado da arte atual relativamente à monitorização 
 Diversos estudos procuram explorar possíveis correlações entre um ou mais sensores (câmara, rato, teclado, entre outros) e o estado emocional do participante. Dentro destes, os mais comuns são os que utilizam sensores presentes em dispositivos que o utilizador comum já possui (como computador ou telemóvel), devido à sua utilidade prática.
 Estes estudos utilizam várias abordagens para estabelecer estas correlações, contudo tendem a ser limitados em termos de análise contínua e escalabilidade das suas soluções de processamento de dados.
 
-Diversos estudos conseguiram estabelecer uma correlação entre o uso do teclado e o nível de atenção e frustração do utilizador. Em particular, apesar de ambos terem considerado útil a frequência do uso de backspace, Maalej e Kallel~\cite{keyboard_speed_study} focaram-se mais na duração de cada tecla e intervalos entre teclas, enquanto que Epp et al.~\cite{keyboard_correction_study} focaram-se mais no tipo de caracteres (incluindo o número de caracteres especiais).
+Diversos estudos conseguiram estabelecer uma correlação entre o uso do teclado e o nível de atenção e frustração do utilizador. Em particular, apesar de ambos terem considerado útil a frequência do uso de \textit{backspace}, Maalej e Kallel~\cite{keyboard_speed_study} focaram-se mais na duração de cada tecla e intervalos entre teclas, enquanto que Epp et al.~\cite{keyboard_correction_study} focaram-se mais no tipo de caracteres (incluindo o número de caracteres especiais).
 
-Para além do teclado, existem também estudos que exploram dados de \ac{HRV} (obtido via smartwatch) e dados faciais para estimar o estado emocional do utilizador. Em particular, um estudo realizado por Quiroz et al.~\cite{facial_hrv_study} integra dados de landmarks faciais obtidos por webcam com valores de HRV obtidos via smartwatch enquanto os utilizadores assistiam a filmes ou ouviam música (com o objetivo de despoletar certas emoções). Os resultados obtidos demonstram a eficácia de combinar dados de vários sensores para prever o estado emocional do utilizador de forma mais precisa.
+Para além do teclado, existem também estudos que exploram dados de \ac{HRV} (obtido via \textit{smartwatch}) e dados faciais para estimar o estado emocional do utilizador. Em particular, um estudo realizado por Quiroz et al.~\cite{facial_hrv_study} integra dados de \textit{landmarks} faciais obtidos por \textit{webcam} com valores de HRV obtidos via \textit{smartwatch} enquanto os utilizadores assistiam a filmes ou ouviam música (com o objetivo de despoletar certas emoções). Os resultados obtidos demonstram a eficácia de combinar dados de vários sensores para prever o estado emocional do utilizador de forma mais precisa.
 
 \section{Principal Lacuna Identificada nos Estudos}
 
@@ -26,7 +26,7 @@ Adicionalmente, para além de estudos científicos, existem também plataformas 
 
 \subsection{RADAR-base}
 
-A RADAR-base~\cite{radarbase} é uma plataforma open source que permite a recolha de dados para estudos clínicos não só utilizando sensores do telemóvel a partir de uma app Android ou iOS, mas também sensores externos como wearables ou sensores \ac{IoT}, possuindo suporte oficial para diversos modelos de sensores.
+A RADAR-base~\cite{radarbase} é uma plataforma open source que permite a recolha de dados para estudos clínicos não só utilizando sensores do telemóvel a partir de uma app Android ou iOS, mas também sensores externos como \textit{wearables} ou sensores \ac{IoT}, possuindo suporte oficial para diversos modelos de sensores.
 Para além disso, esta plataforma oferece também a opção de acompanhar os dados com um questionário preenchido por cada utilizador.
 
 \subsection{AWARE Framework}
@@ -35,4 +35,4 @@ De forma similar à RADAR-base, a AWARE Framework é uma plataforma de recolha d
 
 \section{Principais Lacunas Identifcadas nas Plataformas}
 
-Apesar destas plataformas oferecerem soluções robustas, fáceis de utilizar e com funcionalidades complementares valiosas (como os questionários), estas soluções não são livremente extensíveis, não sendo possível o uso de sensores para além dos oficialmente suportados, sendo essa lacuna ainda mais evidente por nenhum destes proporcionar suporte parta o computador e respetivos dispositivos de input. 
+Apesar destas plataformas oferecerem soluções robustas, fáceis de utilizar e com funcionalidades complementares valiosas (como os questionários), estas soluções não são livremente extensíveis, não sendo possível o uso de sensores para além dos oficialmente suportados, sendo essa lacuna ainda mais evidente por nenhum destes proporcionar suporte parta o computador e respetivos dispositivos de \textit{input}. 

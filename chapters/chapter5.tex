@@ -9,15 +9,15 @@ Este capítulo apresenta os resultados obtidos, bem como a validação do sistem
 
 Após um período de desenvolvimento de vários meses, considero ter desenvolvido uma solução que cumpre com todos os objetivos e requisitos que defini no início deste projeto.
 
-A solução final pode ser subdividida em 3 ecossistemas principais que comunicam entre si: o servidor, a app desktop e a app para WearOS.
+A solução final pode ser subdividida em 3 ecossistemas principais que comunicam entre si: o servidor, a app para \textit{desktop} e a app para WearOS.
 
 \subsection{Servidor}
 
 O servidor consiste num ambiente de contentores (Docker Compose) que comunicam entre si, mantendo o isolamento necessário para que este sistema em cloud (caso desejado), ao mesmo tempo que permite a execução mais unificada do servidor em ambientes mais locais.
 
-O principal ponto de acesso para ingestão de dados é um broker Mosquitto (sendo que cada tópico com o prefixo \texttt{sensors/} é considerado um tipo de sensor diferente) que permite a ingestão unificada de dados de vários utilizadores. Estes registos são depois transferidos para o Kafka (que possui melhor resiliência de dados) de forma automática e agnóstica via Kafka Connect antes de serem inseridos de forma assíncrona na base de dados (novamente usando Kafka Connect), onde cada tópico \ac{MQTT} é inserido numa tabela (\textit{measurement}) distinta no InfluxDB. Esta abordagem agnóstica e aberta permite não só acrescentar sensores sem ter de modificar o servidor, mas também a possibilidade de integrar com sistemas pré-existentes (necessitando apenas de usar o prefixo "sensors/" no tópico e incluir uuid e timestamp na mensagem).
+O principal ponto de acesso para ingestão de dados é um \textit{broker} Mosquitto (sendo que cada tópico com o prefixo \texttt{sensors/} é considerado um tipo de sensor diferente) que permite a ingestão unificada de dados de vários utilizadores. Estes registos são depois transferidos para o Kafka (que possui melhor resiliência de dados) de forma automática e agnóstica via Kafka Connect antes de serem inseridos de forma assíncrona na base de dados (novamente usando Kafka Connect), onde cada tópico \ac{MQTT} é inserido numa tabela (\textit{measurement}) distinta no InfluxDB. Esta abordagem agnóstica e aberta permite não só acrescentar sensores sem ter de modificar o servidor, mas também a possibilidade de integrar com sistemas pré-existentes (necessitando apenas de usar o prefixo "sensors/" no tópico e incluir \texttt{uuid} e \texttt{timestamp} na mensagem).
 
-O acesso da base de dados por parte dos clientes é gerido por uma API REST simples (escrita em FastAPI). O endpoint principal desta API é \texttt{/data/{sensor}}, que constroi uma query para um sensor específico a partir dos seguintes parâmetros:
+O acesso da base de dados por parte dos clientes é gerido por uma API REST simples (escrita em FastAPI). O endpoint principal desta API é \texttt{/data/{sensor}}, que constroi uma \textit{query} para um sensor específico a partir dos seguintes parâmetros:
 \begin{itemize}
     \item \textbf{start e end}: janela temporal, em ms, para a qual queremos obter os dados.
     \item \textbf{uuid}: o \ac{UUID} do utilizador a que pertecem os dados.
@@ -28,6 +28,14 @@ O acesso da base de dados por parte dos clientes é gerido por uma API REST simp
 O uso desta API e de parâmetros evita que agentes externos tenham acesso à base de dados, reduzindo por isso o risco de vulnerabilidades.
 
 \subsection{Cliente}
+
+A aplicação para \textit{desktop} foi criada para ser simultaneamente uma demonstração das capacidades do sistema e de como interagir com este para quem deseje criar o seu próprio \textit{frontend}, mas também uma base funcional que permite integrar de forma célere novos tipos de sensores, conforme as necessidades de cada investigação.
+
+De modo a facilitar a extensão, a app utiliza um sistema de \textit{plugins} com uma interface pré-estabelicida, divididos em dois tipos principais: \textit{plugins} de sensores e \textit{plugins} de visualização.
+\begin{itemize}
+    \item \textbf{\textit{Plugins} de sensores:} são responsáveis pela interação direta (ou indireta no caso de sensores externos) com os sensores, recolhendo informações
+    \item \textbf{\textit{Plugins} de visualização:} atuam na camada da interface, sendo responsáveis por consumir os dados obtidos via API REST de um ou mais sensores e transformá-los em representação gráficos. No caso de gráficos de linha, será necessário apenas implementar métodos para a recolha e tratamento dos dados, sendo que a visualização destes já está estabelecida na classe que herdam
+\end{itemize}
 
 
 

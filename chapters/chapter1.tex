@@ -7,22 +7,20 @@
 
     \section{Contexto e Motivação}
 
-    Atualmente, a crescente predominância de sensores em dispositivos pessoais como telemóveis, computadores ou smartwatches, tem permitido observar e monitorizar o estado do utilizador durante o seu uso~\cite{facial_hrv_study,keyboard_speed_study,keyboard_correction_study}.
+    Atualmente, a crescente predominância de sensores em dispositivos pessoais como telemóveis, computadores ou \textit{smartwatches}, tem permitido observar e monitorizar o estado do utilizador durante o seu uso~\cite{facial_hrv_study,keyboard_speed_study,keyboard_correction_study}.
     Estes sensores podem recolher não só dados biométricos, como a frequência cardíaca e o \ac{HRV} ou expressões faciais~\cite{facial_hrv_study}, mas também dados sobre como o utilizador interage com estes dispositivos, como padrões  de digitação no teclado~\cite{keyboard_speed_study,keyboard_correction_study}.
 
     No entanto, no caso de estudos a longo prazo ou envolvando vários participantes, a quantidade de dados a armazenar, bem como a necessidade de os recolher de forma contínua, apresenta naturalmente um problema do ponto de vista tecnológico, visto que a maioria das soluções apresentadas acima não estão equipadas para a recolha contínua de grandes volumes de dados de sensores.
 
     Este trabalho visa mitigar este problema através de uma base extensível e reutilizável, adaptável às necessidades de cada investigador e de cada estudo.
 
+    \section{Objetivos}\label{sec:objectives}
 
-    \section{Objetivos}
-    \label{sec:objectives}
-
-    Os principais objetivos deste trabalho consistem em desenvolver um sistema modular capaz de recolher dados de vários sensores e de vários utilizadores em simultâneos, processá-los em streaming de forma contínua e disponibilizar essa informação para visualização ou para estimar automaticamente o nível de atenção do utilizador, mantendo o sistema extensível o suficiente para permitir a adição de outros sensores ou para estimar outros indicadores de interesse para futuros estudos.
+    Os principais objetivos deste trabalho consistem em desenvolver um sistema modular capaz de recolher dados de vários sensores e de vários utilizadores em simultâneos, processá-los em \textit{streaming} de forma contínua e disponibilizar essa informação para visualização ou para estimar automaticamente o nível de atenção do utilizador, mantendo o sistema extensível o suficiente para permitir a adição de outros sensores ou para estimar outros indicadores de interesse para futuros estudos.
 
     \section{Metodologia}
 
-    Neste trabalho, será monitorizado o estado psicológico do utilizador, com especial foco no nível de atenção durante o uso do computador. Para tal, serão recolhidos dados biométricos, como a frequência cardíaca e a variabilidade de batimentos (\ac{HRV}) através de um smartwatch, bem como dados de interação com o computador, incluindo padrões de digitação no teclado e expressões faciais capturadas pela câmara.
+    Neste trabalho, será monitorizado o estado psicológico do utilizador, com especial foco no nível de atenção durante o uso do computador. Para tal, serão recolhidos dados biométricos, como a frequência cardíaca e a variabilidade de batimentos (\ac{HRV}) através de um \textit{smartwatch}, bem como dados de interação com o computador, incluindo padrões de digitação no teclado e expressões faciais capturadas pela câmara.
 
     O objetivo da recolha destes dados não é produzir resultados sobre o estado psicológico do utilizador em si, mas sim validar a viabilidade e consistência da recolha e processamento de diferentes tipos de sensores, servindo como base para uma framework modular que possa ser adaptada e reutilizada em estudos futuros.
 
