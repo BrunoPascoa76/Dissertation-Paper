@@ -12,24 +12,24 @@ De modo a guiar a criação deste trabalho, foi estabelecido um conjunto de requ
 \subsection{Requisitos Funcionais}
 
 \begin{enumerate}
-    \item[FR1] O sistema deve ser capaz de receber e agrupar dados de várias fontes associadas ao mesmo utilizador.
-    \item[FR2] O sistema deve ser capaz de receber e processar dados de diferentes sensores associados a um mesmo utilizador em simultâneo.
-    \item[FR3] O sistema deve permitir ao utilizador visualizar os dados recolhidos em tempo real e com uma janela temporal de pelo menos 1 minuto, de modo a permitir identicar falhas nos sensores.
-    \item[FR4] O sistema deve permitir o controlo de todos os sensores associados ao utilizador de forma centralizada.
-    \item[FR5] O sistema deve ser capaz de identificar os sensores disponíveis e monitorizar durante a sessão que sensores estão a enviar dados.
-    \item[FR6] O sistema deve ser capaz de detetar falhas na recolha ou no envio de dados e permitir ao utilizador detetar o momento da falha.
-    \item[FR7] O sistema deve ser capaz de gerar uma estimativa do nível de atenção do utilizador em tempo real utilizando os dados dos sensores disponíveis.
+    \item[FR1]\label{fr:1} O sistema deve ser capaz de receber e agrupar dados de várias fontes associadas ao mesmo utilizador.
+    \item[FR2]\label{fr:2} O sistema deve ser capaz de receber e processar dados de diferentes sensores associados a um mesmo utilizador em simultâneo.
+    \item[FR3]\label{fr:3} O sistema deve permitir ao utilizador visualizar os dados recolhidos em tempo real e com uma janela temporal de pelo menos 1 minuto, de modo a permitir identicar falhas nos sensores.
+    \item[FR4]\label{fr:4} O sistema deve permitir o controlo de todos os sensores associados ao utilizador de forma centralizada.
+    \item[FR5]\label{fr:5} O sistema deve ser capaz de identificar os sensores disponíveis e monitorizar durante a sessão que sensores estão a enviar dados.
+    \item[FR6]\label{fr:6} O sistema deve ser capaz de detetar falhas na recolha ou no envio de dados e permitir ao utilizador detetar o momento da falha.
+    \item[FR7]\label{fr:7} O sistema deve ser capaz de gerar uma estimativa do nível de atenção do utilizador em tempo real utilizando os dados dos sensores disponíveis.
 \end{enumerate}
 
 \subsection{Requisitos Não Funcionais}
 
 \begin{enumerate}
-    \item[NFR1] O sistema deve funcionar corretamente mesmo quando apenas um subconjunto dos sensores é utilizado.
-    \item[NFR2] O sistema deve permitir que os recursos sejam ajustados com base na dimensão do estudo e no número de utilizadores e sensores.
-    \item[NFR3] O sistema deve detetar falhas em sensores em até 1 segundo após a interrupção no envio de dados, de forma que o utilizador seja informado sobre a falha.
-    \item[NFR4] O sistema deve permitir a adição de mais sensores sem modificar a estrutura pré-existente.
-    \item[NFR5] Os plugins de cada sensor devem recolher e enviar dados de forma autónoma, sem depender do funcionamento de outros plugins.
-    \item[NFR6] O modelo preditivo deve gerar uma previsão (mesmo que menos precisa) mesmo que os dados de um ou mais sensores estejam em falta.
+    \item[NFR1]\label{nfr:1} O sistema deve funcionar corretamente mesmo quando apenas um subconjunto dos sensores é utilizado.
+    \item[NFR2]\label{nfr:2} O sistema deve permitir que os recursos sejam ajustados com base na dimensão do estudo e no número de utilizadores e sensores.
+    \item[NFR3]\label{nfr:3} O sistema deve detetar falhas em sensores em até 1 segundo após a interrupção no envio de dados, de forma que o utilizador seja informado sobre a falha.
+    \item[NFR4]\label{nfr:4} O sistema deve permitir a adição de mais sensores sem modificar a estrutura pré-existente.
+    \item[NFR5]\label{nfr:5} Os plugins de cada sensor devem recolher e enviar dados de forma autónoma, sem depender do funcionamento de outros plugins.
+    \item[NFR6]\label{nfr:6} O modelo preditivo deve gerar uma previsão (mesmo que menos precisa) mesmo que os dados de um ou mais sensores estejam em falta.
 \end{enumerate}
 
 \section{Arquitetura do Sistema}
@@ -50,6 +50,7 @@ O sistema presente na Figura~\ref{fig:sys_arq} possui uma arquitetura descentral
         \item \textbf{Kafka Connect:} O Kafka Connect estabelece conectores entre o broker \ac{MQTT} remoto e o Kafka, bem como a exportação destes dados para  a base de dados, permitindo uma ingestão automática e agnóstica ao tipo de sensor.
         \item \textbf{Kafka:} O Kafka permite gerir o fluxo de dados entre os plugins e os respetivos consumidores, garantindo a entrega de mensagens de forma escalável e com uma persistência de dados melhor que o padrão \ac{MQTT}, levando a uma melhor tolerância a falhas ou atrasos.
         \item \textbf{InfluxDB:} Base de dados Time Series onde os dados são armazenados após serem processados e alimenta a app para desktop. InfluxDB em particular foi escolhido visto ser a base de dados Time Series com a melhor documentação e suporte que encontrei até agora.
+        \item \textbf{API REST:} API FastAPI que regula o acesso à base de dados e evita injeção de queries. Utiliza parâmetros para a construção da query, permitindo versatilidade na criação de queries sem por em risco a segurança do sistema.
     \end{itemize}
 \end{itemize}
 
