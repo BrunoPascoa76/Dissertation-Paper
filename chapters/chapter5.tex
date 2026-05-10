@@ -33,11 +33,27 @@ A aplicação para \textit{desktop} foi criada para ser simultaneamente uma demo
 
 De modo a facilitar a extensão, a app utiliza um sistema de \textit{plugins} com uma interface pré-estabelicida, divididos em dois tipos principais: \textit{plugins} de sensores e \textit{plugins} de visualização.
 \begin{itemize}
-    \item \textbf{\textit{Plugins} de sensores:} são responsáveis pela interação direta (ou indireta no caso de sensores externos) com os sensores, recolhendo informações
-    \item \textbf{\textit{Plugins} de visualização:} atuam na camada da interface, sendo responsáveis por consumir os dados obtidos via API REST de um ou mais sensores e transformá-los em representação gráficos. No caso de gráficos de linha, será necessário apenas implementar métodos para a recolha e tratamento dos dados, sendo que a visualização destes já está estabelecida na classe que herdam
+    \item \textbf{\textit{Plugins} de sensores:} são responsáveis pela interação direta (ou indireta no caso de sensores externos) com os sensores, recolhendo informações. Os sensores podem ser controlados de forma unificada (selecionar os sensores pretendidos e começar/parar a recolha de dados) a partir de um painel de controlo (ver Figura~\ref{fig:painel_controlo}). Para demonstrar a recolha de dados, foram criados 3 \textit{plugins} para sensores distintos (2 internos e 1 externo): um para controlo da app para WearOS (\ac{HRV}), um para obter direção do olhar e grau de abertura dos olhos via \textit{webcam} e outro para registar a cadência e o tipo de teclas premidas num teclado.
+    \item \textbf{\textit{Plugins} de visualização:} atuam na camada da interface, sendo responsáveis por consumir os dados obtidos via API REST de um ou mais sensores e transformá-los em representação gráficos (ver Figura~\ref{fig:hrv}). No caso de gráficos de linha, será necessário apenas implementar métodos para a recolha e tratamento dos dados, sendo que a visualização destes já está estabelecida na classe que herdam. Foram criados 3 \textit{plugins} de visualização: dois focados na visualização direta de dados de um sensor (\ac{HRV} e caracteres por minuto) e outro que utiliza os dados dos 3 sensores para estimar o nível de atenção.
 \end{itemize}
 
-
+\begin{figure}[H]
+     \centering
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/desktop_painel.png}
+         \caption{Painel de controlo dos sensores}
+         \label{fig:painel_controlo}
+     \end{subfigure}
+     \hfill % Cria um espaço elástico entre as duas imagens
+     \begin{subfigure}[b]{0.48\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/desktop_grafico_hrv.png}
+         \caption{Painel de visualização (hrv)}
+         \label{fig:hrv}
+     \end{subfigure}
+     \caption{Interface da aplicação para \textit{desktop}}
+\end{figure}
 
 \subsection{App de WearOS}
 
