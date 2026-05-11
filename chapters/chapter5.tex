@@ -41,14 +41,14 @@ De modo a facilitar a extensão, a app utiliza um sistema de \textit{plugins} co
      \centering
      \begin{subfigure}[b]{0.48\textwidth}
          \centering
-         \includegraphics[width=\linewidth]{figs/desktop_painel.png}
+         \includegraphics[width=\linewidth]{figs/desktop/desktop_painel.png}
          \caption{Painel de controlo dos sensores}
          \label{fig:painel_controlo}
      \end{subfigure}
      \hfill % Cria um espaço elástico entre as duas imagens
      \begin{subfigure}[b]{0.48\textwidth}
          \centering
-         \includegraphics[width=\linewidth]{figs/desktop_grafico_hrv.png}
+         \includegraphics[width=\linewidth]{figs/desktop/desktop_grafico_hrv.png}
          \caption{Painel de visualização (hrv)}
          \label{fig:hrv}
      \end{subfigure}
@@ -56,6 +56,54 @@ De modo a facilitar a extensão, a app utiliza um sistema de \textit{plugins} co
 \end{figure}
 
 \subsection{App de WearOS}
+
+A aplicação para WearOS foi criada para exemplificar a recolha de dados usando sensores externos (neste caso, um \textit{smartwatch}), a aplicação utiliza o \textit{broker} \ac{MQTT} local para comunicação e controlo (via um \textit{plugin} da app para \textit{desktop}), sendo que o funcionamento pode-se dividir em 5 etapas.
+\begin{enumerate}
+    \item \textbf{Emparelhamento} (Figura~\ref{fig:wearos_pairing}): Durante a primeira inicialização (ou quando mudar o endereço IP), o utilizador insere um código de 12 dígitos que contém informações sobre o endereço ip e porta aos quais vai ter de subscrever para receber comandos. Este código é gerado automaticamente pela app para \textit{desktop} através de Crockford Base64 (um método de codificação que elimina caracteres similares para reduzir erros de digitação) e está presente no painel de controlo da app.
+    \item \textbf{Estabelecimento de conexão} (Figura~\ref{fig:wearos_connecting}): Ecrã mostrado até ao estabelecimento da conexão com o \textit{broker} MQTT.
+    \item \textbf{Escuta de comandos} (Figura~\ref{fig:wearos_waiting}): Ecrã mostrado após a conexão, permanecendo ativo até à receção do sinal de início de sessão (ou após a interrupção da mesma).
+    \item \textbf{Inicialização de sensores} (Figura~\ref{fig:wearos_preparing}): Ecrã mostrado após o começo da sessão, caso os sensores ainda não estejam prontos. Como a preparação dos sensores começa ao iniciar a aplicação, esta fase é frequentemente omitida.
+    \item \textbf{Envio de dados} (Figura~\ref{fig:wearos_sending}): Ecrã mostrado durante o envio de dados, indicando também o valor a ser enviado (bem como o número de batimentos por minuto para referência). 
+\end{enumerate}
+
+\begin{figure}[H]
+     \centering
+     \begin{subfigure}[t]{0.19\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/wearos/wearos_pairing}
+         \caption{Emparelhamento}
+         \label{fig:wearos_pairing}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.19\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/wearos/wearos_connecting}
+         \caption{Estabelecimento de Conexão}
+         \label{fig:wearos_connecting}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.19\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/wearos/wearos_waiting}
+         \caption{Escuta de comandos}
+         \label{fig:wearos_waiting}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.19\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/wearos/wearos_preparing}
+         \caption{Inicialização de sensores}
+         \label{fig:wearos_preparing}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.19\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/wearos/wearos_sending}
+         \caption{Envio de dados}
+         \label{fig:wearos_sending}
+     \end{subfigure}     
+     \caption{Interface da aplicação para WearOS}
+\end{figure}
 
 
 \section{Validação de qualidade}
