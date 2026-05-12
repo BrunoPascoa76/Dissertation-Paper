@@ -1,11 +1,11 @@
-\chapter{Resultados e validação}
+\chapter{Resultados e Validação}
 \label{chap:resultados}
 
 \begin{introduction}
 Este capítulo apresenta os resultados obtidos, bem como a validação do sistema final de modo a garantir que cumpre com os requisitos pré-estabelecidos.
 \end{introduction}
 
-\section{Estado final da solução}
+\section{Estado Final da Solução}
 
 Após um período de desenvolvimento de vários meses, considero ter desenvolvido uma solução que cumpre com todos os objetivos e requisitos que defini no início deste projeto.
 
@@ -105,6 +105,37 @@ A aplicação para WearOS foi criada para exemplificar a recolha de dados usando
      \caption{Interface da aplicação para WearOS}
 \end{figure}
 
-\section{Validação e conformidade de requisitos}
+\section{Validação e Conformidade de Requisitos}
 
-Ao longo e após o desenvolvimento da solução, foi também realizada a validação para garantir que todos os requisitos definidos na Secção~\ref{sec:requirements} foram cumpridos \ref{fr:1}
+Ao longo e após o desenvolvimento da solução, foi também realizada a validação para garantir que todos os requisitos definidos na Secção~\ref{sec:requirements} foram cumpridos. Esta análise estruturou-se em 3 eixos distintos:
+\begin{itemize}
+    \item \textbf{Conformidade funcional:} verificação da presença e operabilidade correta das funcionalidades descritas nos requisitos funcionais.
+    \item \textbf{Qualidade por \textit{design} (herdada):} requisitos não funcionais assegurado pela escolha (e configuração) das tecnologias na fase de \textit{design} ou pela própria arquitetura em si.
+    \item \textbf{Qualidade experimental:} requisitos que não são totalmente assegurados pelas próprias ferramentas e que necessitam de verificação empírica.
+\end{itemize}
+
+\subsection{Conformidade funcional}
+
+A matriz apresentada na Tabela~\ref{tab:validacao_fr} estabelece a correspondência direta entre cada requisito funcional e o componente ou mecanismo implementado na solução final
+
+\begin{table}
+    \centering
+    \caption{Matriz de conformidade entre requisitos e implementação.}
+    \label{tab:validacao_fr}
+    \begin{tabularx}{\textwidth}{l|p{5cm}|X}
+        \toprule
+        \textbf{Requisito} & \textbf{Resumo do requisito} & \textbf{Implementação} \\
+        \midrule
+        \protect\ref{fr:1} e \protect\ref{fr:2} & Cada utilizador pode ter vários sensores associados e a funcionar simultaneamente. & Utilização de Kafka para processamento assíncrono em \textit{streaming}. \\ \addlinespace
+        \protect\ref{fr:3}, \protect\ref{fr:5} e \protect\ref{fr:6} & Visualização de dados (janela de 1 min). Identificar que sistemas estão em falha e qual o momento da falha. & Painel de visualização na app \textit{desktop} (Figura~\protect\ref{fig:hrv}). \\ \addlinespace
+        \protect\ref{fr:4} & Controlo centralizado de todos os sensores. Permitir ao utilizador & Painel de controlo na aplicação para \textit{desktop}. \\ \addlinespace
+        \protect\ref{fr:7} & Estimativa em tempo real (como prova de conceito) do nível de atenção & Visualização que estima (mesmo que de forma imprecisa) o nível de atenção com base nos 3 sensores. \\ \addlinespace
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Qualidade por design}
+
+
+
+\subsection{Qualidade experimental}
