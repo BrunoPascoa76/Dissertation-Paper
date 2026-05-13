@@ -116,7 +116,7 @@ Ao longo e após o desenvolvimento da solução, foi também realizada a valida�
 
 \subsection{Conformidade funcional}
 
-A matriz apresentada na Tabela~\ref{tab:validacao_fr} estabelece a correspondência direta entre cada requisito funcional e o componente ou mecanismo implementado na solução final
+A matriz apresentada na Tabela~\ref{tab:validacao_fr} estabelece a correspondência direta entre cada requisito funcional e o componente ou mecanismo implementado na solução final. Para a validação desta matrix, os vários componentes da solução foram submetidos a testes de aceitação manuais de modo a simular o uso do sistema pelo utilizador final e para garantir o correto fluxo de dados ao longo da \textit{pipeline}.
 
 \begin{table}
     \centering
@@ -134,8 +134,17 @@ A matriz apresentada na Tabela~\ref{tab:validacao_fr} estabelece a correspondên
     \end{tabularx}
 \end{table}
 
-\subsection{Qualidade por design}
+\subsection{Qualidade por \textit{design}}
 
-
+Esta categoria engloba requisitos cuja conformidade é garantida pela própria arquitetura ou pelas ferramentas usadas. Nestes casos, a validação necessária foca-se apenas em garantir a correta configuração e orquestração de cada componente.
+\begin{itemize}
+    \item \textbf{Modularidade e independência (\ref{nfr:1},~\ref{nfr:5}):} A arquitetura da solução foi desenhada para garantir o isolamento entre componentes, apresentando-se agnóstica à natureza dos sensores utilizados em duas frentes:
+    \begin{enumerate}
+        \item \textbf{Servidor agnóstico:} O \textit{pipeline} de ingestão processa dados de qualquer sensor de forma genérica, desde que a mensagem \ac{MQTT} esteja num tópico com o prefixo \texttt{plugins/} e possua os campos \texttt{uuid} e texttt{timestamp} (sendo os restantes considerados como valores). Isto permite a introdução de novos sensores sem alterar o servidor.
+        \item \textbf{Arquitetura de plugins do cliente:} A aplicação para \textit{desktop} carrega os módulos de recolha e de visualização de dados dinamicamente a partir a partir de um ficheiro de configuração (\texttt{pyproject.toml}). Esta abordagem permite adicionar ou remover funcionalidades sem necessidade de alterar o código central da aplicação, garantindo que cada plugin opere de forma autónoma.
+    \end{enumerate}
+    \item \textbf{Escalabilidade e extensibilidade (\ref{nfr:2},~\ref{nfr:4}):} O uso de Docker e a natureza agnóstica do servidor facilitam a escalabilidade (\ref{nfr:2}). A adição de novos sensores (\ref{nfr:4}) não requer modificações no código \textit{core} do servidor ou da aplicação \textit{desktop}, bastando apenas a criação de um novo \textit{plugin} e a sua declaração no ficheiro de configuração.
+    \item \textbf{Média ponderada e independência da previsão (\ref{nfr:6}):} De modo a permitir gerar uma previsão apenas com parte dos sensores, foram atribuidos pesos a cada sensor e subsequentemente utilizado uma média ponderada (divisão da pontuação total pela soma dos pesos) de modo a garantir uma previsão contínua, mesmo que algum sensor esteja em falta.
+\end{itemize}
 
 \subsection{Qualidade experimental}
