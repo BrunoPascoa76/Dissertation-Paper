@@ -148,3 +148,18 @@ Esta categoria engloba requisitos cuja conformidade é garantida pela própria a
 \end{itemize}
 
 \subsection{Qualidade experimental}
+
+Finalmente o~\ref{nfr:3}, por se tratar de um requisito de qualidade não garantido pela configuração, foi criado um teste para garantir que, de facto, o sistema consegue aguentar, pelo menos, 10 mensagens por segundo sem erros.
+
+Para tal, criou-se um script de teste que corre num \textit{container} Docker em separado, realizando duas tarefas em simultâneo durante 10s
+\begin{itemize}
+    \item A cada 100 milisegundos (ou seja, 10 vezes por segundo) é publicado uma mensagem para um tópico \ac{MQTT} de teste (\texttt{sensors/test}).
+    \item A cada segundo, é realizado uma \textit{query} à base de dados que retorna o número total de mensagens na tabela (que depois é subtraído ao valor anterior para obter o número de mensagens recebidas nesse segundo) (ver Figura~\ref{fig:throughput_results})
+\end{itemize}
+
+\begin{figure}
+         \centering
+         \includegraphics[width=\linewidth]{figs/tests/throughput.png}
+         \caption{Resultados do teste do NFR3}
+         \label{fig:throughput_results}
+\end{figure}
