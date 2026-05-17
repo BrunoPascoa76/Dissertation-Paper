@@ -2,18 +2,19 @@
 \label{chap:conclusions}
 
 \begin{introduction}
-Este capítulo foi criado por um modelo de Inteligência Artificial para demonstrar as várias funcionalidades disponíveis neste template de \LaTeX{}.
+Este capítulo descreve as conclusões gerais retiradas ao longo do trabalho, bem como sugestões de trabalho futuro.
 \end{introduction}
 
 
 \section{Conclusões}
-Este trabalho apresentou um estudo detalhado sobre [tema do trabalho], abordando os principais desafios e propondo soluções inovadoras. Através de uma análise rigorosa e da implementação de [métodos/tecnologias], conseguimos alcançar resultados significativos que contribuem para o avanço do conhecimento na área de [área de estudo].
+Este trabalho apresentou o desenvolvimento de uma \textit{pipeline} de processamento em \textit{streaming} de dados de sensores, abordando os desafios de resiliência e integridade, bem como o equilíbrio entre robustez e modularidade. Através da implementação de uma arquitetura baseada em Kafka e InfluxDB, foi possível garantir um fluxo contínuo de dados enviados em tempo real de forma agnóstica ao conteúdo desses mesmos dados, cumprindo com os requisitos propostos.
 
 \section{Trabalho Futuro}
-Apesar dos avanços alcançados, existem várias áreas que merecem investigação adicional. Futuras linhas de trabalho incluem:
+Apesar dos avanços alcançados, existem ainda funcionalidades e aspetos do trabalho que merecem investigação adicional. Estas incluem: 
 \begin{itemize}
-    \item Explorar a aplicação de [nova tecnologia/método] para melhorar [aspecto específico].
-    \item Realizar estudos de caso mais abrangentes para validar os resultados em diferentes contextos.
-    \item Investigar a integração de [outra área de estudo] para enriquecer as soluções propostas.
+    \item Explorar alternativas para InfluxDB com \textit{schemas} menos rígidos.
+    \item Adicionar a possibilidade de criar e preencher questionários.
+    \item Criar uma ferramenta para exploração, monitorização e exportação de dados para investigadores.
+    \item Criar uma plataforma que disponibilize este serviço sem a necessidade de \textit{self-hosting}.
 \end{itemize}   
 
