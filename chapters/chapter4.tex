@@ -1,13 +1,12 @@
-\chapter{Plano de Trabalho}
-\label{chap:planotrabalho}
+\chapter{Trabalho preliminar}
+\label{chap:preliminar}
 
 \begin{introduction}
-Este capítulo detalha o trabalho preliminar já realizado e apresenta o plano de trabalho futuro.
+Este capítulo detalha o trabalho preliminar realizado antes da implementação e como os resultados obtidos pelo protótipo alteraram a arquitetura final
 \end{introduction}
 
-\section{Trabalho Preliminar}
 
-\subsection{Protótipo}
+\section{Protótipo}
 
 De modo a validar a comunicação e de modo a identificar antecipadamente possíveis entraves no desenvolvimento, eu desenvolvi um protótipo da \textit{pipeline} inicial, que entretanto foi expandida com a adição de um \textit{broker} \ac{MQTT} e o componente Kafka Connect.
 As comunicações implementadas e testadas estão resumidas na Tabela~\ref{tab:comunicacoes-prototipo}, mostrando a origem, destino, tecnologias utilizadas e o aspecto da arquitetura explorado em cada etapa.
@@ -31,7 +30,7 @@ As comunicações implementadas e testadas estão resumidas na Tabela~\ref{tab:c
 
 Para além dos problemas identificados em baixo, cheguei também à conclusão que o envio de dados diretamente para o Kafka poderia levar à perda de dados caso o Kafka esteja indisponível ou exista algum problema de conexão. Por esta razão, decidi expandir a arquitetura de modo a utilizar o \textit{broker} \ac{MQTT} como \textit{buffer} local, sendo que a conexão entre este e o Kafka é assegurado de forma assíncrona pelo Kafka Connect.
 
-\subsection{Resultados Preliminares}
+\section{Resultados Preliminares}
 
 Através do desenvolvimento destes protótipos, consegui identificar 2 problemas referentes à comunicação envolvendo o smartwatch: um no uso de \ac{BLE} para a troca de informações com o computador do utilizador e outro no envio dos dados para o Kafka (Tabela~\ref{tab:prob_identificados}). Estes problemas levaram ao reestruturação da arquitetura de forma a utilizar métodos de comunicação alternativos.
 
@@ -49,23 +48,3 @@ Através do desenvolvimento destes protótipos, consegui identificar 2 problemas
         \hline
     \end{tabularx}
 \end{table}
-
-
-\section{Plano de Trabalho}
-
-De modo a alcançar os objetivos propostos na Secção~\ref{sec:objectives}, o trabalho foi organizado nas seguintes etapas:
-
-\begin{itemize}
-    \item \textbf{Recolha de dados de sensores:} Implementar a recolha contínua de dados provenientes dos três sensores.
-    \item \textbf{Transmissão e ingestão de dados:} Assegurar a transmissão, processamento e armazenamento dos dados.
-    \item \textbf{Previsão e visualização dos dados:} Implementar mecanismos de visualização dos dados e utilizar esses dados para a previsão do estado psicológico do utilizador.
-    \item \textbf{Avaliação de desempenho e resiliência:} Avaliar o desempenho do sistema face a diversas cargas, bem como a sua capacidade para lidar com componentes em falha, verificando o cumprimento dos requisitos não funcionais pré-estabelecidos. 
-    \item \textbf{Análise e apresentação dos resultados:} Analisar os resultados obtidos e apresentar as conclusões finais do trabalho.
-\end{itemize}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\linewidth]{figs/timeline.png}
-    \caption{Cronograma proposto para a realização da dissertação}
-    \label{fig:timeline}
-\end{figure}
