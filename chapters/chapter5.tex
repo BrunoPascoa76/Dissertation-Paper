@@ -43,7 +43,7 @@ De modo a facilitar a extensão, a app utiliza um sistema de \textit{plugins} co
          \caption{Painel de controlo dos sensores}
          \label{fig:painel_controlo}
      \end{subfigure}
-     \hfill % Cria um espaço elástico entre as duas imagens
+     \hfill
      \begin{subfigure}[b]{0.48\textwidth}
          \centering
          \includegraphics[width=\linewidth]{figs/desktop/desktop_grafico_hrv.png}
@@ -121,3 +121,58 @@ De modo a ilustrar como estes componentes comunicam entre si, a Figura~\ref{fig:
     \caption{Fluxo de dados \textit{end-to-end}}
     \label{fig:end2end}
 \end{figure}
+
+\section{Validação Analítica de Desempenho}
+
+Para além de garantir que a arquitetura do sistema cumpre com os objetivos propostos, é necessário também garantir que as ferramentas utilizadas (principalmente do servidor) são capazes de lidar com o número esperado de mensagens e clientes.
+
+\subsection{Tamanho das Mensagens}
+
+A estrutura da mensagem, serializada em formato JSON (como visto na Listagem~\ref{code:example_message}), foi desenhada para ser concisa, apresentando um payload médio de 165 bytes (sem contar com \textit{overhead} TCP/IP). Esta dimensão é composta pela soma dos campos identificadores (45 bytes para o \ac{UUID}, 31 bytes para o nome do sensor e 30 bytes para o timestamp), pelo valor da medição (30 bytes) e pela sintaxe estrutural inerente ao formato JSON (29 bytes).
+
+Considerando este volume de dados inexpressivo, o fator determinante para a escalabilidade da infraestrutura é exclusivamente o número de mensagens simultâneas que o broker consegue processar por segundo, e não o tamanho individual de cada pacote. Uma vez que a estrutura é simples e não exige processamento complexo ao nível da camada de transporte, o sistema é capaz de suportar um débito elevado de eventos, sendo a capacidade de ingestão limitada primariamente pela cadência de publicação (\textit{throughput}) e não pela ocupação da largura de banda.
+
+\begin{figure}[h!]
+\centering
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[language=json, caption={Exemplo da estrutura de uma mensagem JSON}, label={code:example_message}]
+{
+  "uuid": "550e8400-e29b-41d4-a716-446655440000",
+  "sensor": "heart_rate_sensor",
+  "timestamp": 1747926855.123,
+  "value": 72.5
+}
+\end{lstlisting}
+\end{minipage}
+\end{figure}
+
+\subsection{Volume de Mensagens Esperado}
+
+O volume de mensagens pode variar com base no número e tipo de sensores, contudo, com base no exemplo atual com 3 sensores, temos o seguinte volume de mensagens:
+    
+\begin{table}[h]
+\centering
+\begin{threeparttable}
+\caption{Estimativa da frequência de ingestão por dispositivo.}
+\label{tab:sensor_throughput}
+\begin{tabular}{llc}
+\toprule
+\textbf{Sensor} & \textbf{Descrição} & \textbf{Frequência (msg/s)} \\ 
+\midrule
+Teclado & Eventos de digitação & $5$\tnote{1} \\
+WearOS (\ac{HRV}, estimado a partir de BPM) & Monitorização cardíaca & $1$\tnote{2} \\
+Webcam & Processamento de vídeo/metadados & $10$\tnote{3} \\ 
+\midrule
+\textbf{Total} & & \textbf{$16$ msg/s} \\ 
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+    \small
+    \item[1] Baseado numa taxa de digitação de 60 palavras por minuto (aproximadamente 5 caracteres por segundo).
+    \item[2] Frequência nominal de atualização. O sistema opera de forma reativa, pelo que a taxa real de mensagens é dinâmica e proporcional à variação dos valores de \ac{BPM} reportados pelo sensor, não excedendo o limite de $1$ Hz.
+    \item[3] A taxa de 10 mensagens por segundo não constitui um limite de hardware, sendo uma configuração definida para satisfazer os requisitos de amostragem necessários para a presente análise.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+Ou seja, podemos estimar que cada cliente envia cerca de 16 (cerca de 2640) mensagens por segundo para estes sensores (sendo que, mesmo se cada )
