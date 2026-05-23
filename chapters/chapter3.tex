@@ -5,32 +5,11 @@
 Este capítulo detalha os objetivos pretendidos para este trabalho.
 \end{introduction}
 
-\section{Requisitos Funcionais e Não Funcionais}\label{sec:requirements}
+\section{Objetivos}
 
-De modo a guiar a criação deste trabalho, foi estabelecido um conjunto de requisitos funcionais e não funcionais que a solução deve respeitar.
+O objetivo principal deste trabalho é criar um sistema baseado em \textit{streaming} que permite a recolha de dados de sensores de forma remota e contínua. Este sistema, que poderá ser executado de forma \textit{self-hosted} ou na \textit{cloud}, deverá ser capaz de lidar com vários utilizadores em simultâneo (sendo que cada um deles poderá utilizar um ou mais sensores). O sistema deverá também ser focado na extensibilidade e modularidade, permitindo a troca de sensores conforme as necessidades e minimizando o esforço necessário para essa modificação.
 
-\subsection{Requisitos Funcionais}
-
-\begin{enumerate}[label=\textbf{FR.\arabic*},ref=FR.\arabic*]
-    \item~\label{fr:1} O sistema deve ser capaz de receber e agrupar dados de várias fontes associadas ao mesmo utilizador.
-    \item~\label{fr:2} O sistema deve ser capaz de receber e processar dados de diferentes sensores associados a um mesmo utilizador em simultâneo.
-    \item~\label{fr:3} O sistema deve permitir ao utilizador visualizar os dados recolhidos em tempo real e com uma janela temporal de pelo menos 1 minuto, de modo a permitir identicar falhas nos sensores.
-    \item~\label{fr:4} O sistema deve permitir o controlo de todos os sensores associados ao utilizador de forma centralizada.
-    \item~\label{fr:5} O sistema deve ser capaz de identificar os sensores disponíveis e monitorizar durante a sessão que sensores estão a enviar dados.
-    \item~\label{fr:6} O sistema deve ser capaz de detetar falhas na recolha ou no envio de dados e permitir ao utilizador detetar o momento da falha.
-    \item~\label{fr:7} O sistema deve ser capaz de gerar uma estimativa do nível de atenção do utilizador em tempo real utilizando os dados dos sensores disponíveis.
-\end{enumerate}
-
-\subsection{Requisitos Não Funcionais}
-
-\begin{enumerate}[label=\textbf{NFR.\arabic*},ref=NFR.\arabic*]
-    \item~\label{nfr:1} O sistema deve funcionar corretamente mesmo quando apenas um subconjunto dos sensores é utilizado.
-    \item~\label{nfr:2} O sistema deve permitir que os recursos sejam ajustados com base na dimensão do estudo e no número de utilizadores e sensores.
-    \item~\label{nfr:3} O sistema deve detetar falhas em sensores em até 1 segundo após a interrupção no envio de dados, de forma que o utilizador seja informado sobre a falha.
-    \item~\label{nfr:4} O sistema deve permitir a adição de mais sensores sem modificar a estrutura pré-existente.
-    \item~\label{nfr:5} Os plugins de cada sensor devem recolher e enviar dados de forma autónoma, sem depender do funcionamento de outros plugins.
-    \item~\label{nfr:6} O modelo preditivo deve gerar uma previsão (mesmo que menos precisa) mesmo que os dados de um ou mais sensores estejam em falta.
-\end{enumerate}
+Para além disso, de modo a demonstrar as capacidades do sistema, o sistema deverá também ser capaz de recolher dados do teclado, \textit{webcam} e \textit{smartwatch} e gerar alguma previsão (mesmo que imprecisa) com base na combinação dos dados destes sensores.
 
 \section{Arquitetura do Sistema}
 \label{sec:arquitecture}
