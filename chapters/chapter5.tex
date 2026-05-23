@@ -128,7 +128,7 @@ Para além de garantir que a arquitetura do sistema cumpre com os objetivos prop
 
 \subsection{Tamanho das Mensagens}
 
-A estrutura da mensagem, serializada em formato JSON (como visto na Listagem~\ref{code:example_message}), foi desenhada para ser concisa, apresentando um payload médio de 165 bytes (sem contar com \textit{overhead} TCP/IP). Esta dimensão é composta pela soma dos campos identificadores (45 bytes para o \ac{UUID}, 31 bytes para o nome do sensor e 30 bytes para o timestamp), pelo valor da medição (30 bytes) e pela sintaxe estrutural inerente ao formato JSON (29 bytes).
+A estrutura da mensagem, serializada em formato JSON (como visto na Listagem~\ref{code:example_message}), foi desenhada para ser concisa, apresentando um payload médio de 133B para o JSON em si (valor obtido através da serialização de uma das mensagens) e cerca de 173B se incluirmos os \textit{headers} de TCP/IP.
 
 Considerando este volume de dados inexpressivo, o fator determinante para a escalabilidade da infraestrutura é exclusivamente o número de mensagens simultâneas que o broker consegue processar por segundo, e não o tamanho individual de cada pacote. Uma vez que a estrutura é simples e não exige processamento complexo ao nível da camada de transporte, o sistema é capaz de suportar um débito elevado de eventos, sendo a capacidade de ingestão limitada primariamente pela cadência de publicação (\textit{throughput}) e não pela ocupação da largura de banda.
 
@@ -175,4 +175,6 @@ Webcam & Processamento de vídeo/metadados & $10$\tnote{3} \\
 \end{threeparttable}
 \end{table}
 
-Ou seja, podemos estimar que cada cliente envia cerca de 16 (cerca de 2640) mensagens por segundo para estes sensores (sendo que, mesmo se cada )
+Devido à reduzida carga operacional, o sistema apresenta baixos requisitos computacionais, sendo capaz de operar estavelmente em praticamente qualquer servidor moderno ou computador pessoal, sem necessidade de hardware especializado.
+Em termos de número de utilizadores simultâneos, apesar de alguns estudos involverem centenas de voluntários, a necessidade de monitorizar os voluntários tende a limitar este número para um máximo de cerca de 50 utilizadores em simultâneo. Com base neste valor, podemos estimar que a carga máxima esperada para o servidor não irá superar as 800 mensagens por segundo (o que equivale a cerca de 138.4KB/s). 
+
