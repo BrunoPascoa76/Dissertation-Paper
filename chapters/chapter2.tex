@@ -12,11 +12,28 @@ Estes estudos utilizam várias abordagens para estabelecer estas correlações, 
 
 Diversos estudos conseguiram estabelecer uma correlação entre o uso do teclado e o nível de atenção e frustração do utilizador. Em particular, apesar de ambos terem considerado útil a frequência do uso de \textit{backspace}, Maalej e Kallel~\cite{keyboard_speed_study} focaram-se mais na duração de cada tecla e intervalos entre teclas, enquanto que Epp et al.~\cite{keyboard_correction_study} focaram-se mais no tipo de caracteres (incluindo o número de caracteres especiais).
 
-Para além do teclado, existem também estudos que exploram dados de \ac{HRV} (obtido via \textit{smartwatch}) e dados faciais para estimar o estado emocional do utilizador. Em particular, um estudo realizado por Quiroz et al.~\cite{facial_hrv_study} integra dados de \textit{landmarks} faciais obtidos por \textit{webcam} com valores de HRV obtidos via \textit{smartwatch} enquanto os utilizadores assistiam a filmes ou ouviam música (com o objetivo de despoletar certas emoções). Os resultados obtidos demonstram a eficácia de combinar dados de vários sensores para prever o estado emocional do utilizador de forma mais precisa.
+Para além do teclado, existem também estudos que exploram dados de \ac{BPM} (obtido via \textit{smartwatch}) e dados faciais para estimar o estado emocional do utilizador. Em particular, um estudo realizado por Quiroz et al.~\cite{facial_hrv_study} integra dados de \textit{landmarks} faciais obtidos por \textit{webcam} com valores de \ac{BPM} obtidos via \textit{smartwatch} enquanto os utilizadores assistiam a filmes ou ouviam música (com o objetivo de despoletar certas emoções). Os resultados obtidos demonstram a eficácia de combinar dados de vários sensores para prever o estado emocional do utilizador de forma mais precisa.
+
+\begin{table}[h]
+    \centering
+    \caption{Métricas e correlações na literatura para monitorização via teclado e biometria.}
+    \label{tab:sensores_psico_fisiologico}
+    \begin{tabular}{l|l|l}
+        \toprule
+        \textbf{Sensor} & \textbf{Métricas / Informação Extraída} & \textbf{Estado Monitorizado} \\ 
+        \midrule
+        \textbf{\textit{Smartwatch} e \textit{Webcam}} & \ac{BPM} (Frequência Cardíaca), \textit{Landmarks} faciais  & Resposta emocional~\cite{facial_hrv_study} \\
+        \addlinespace
+        \textbf{Teclado} & Duração e intervalos entre teclas & Atenção e frustração~\cite{keyboard_speed_study} \\
+        \addlinespace
+        \textbf{Teclado} & Frequência de \textit{backspace} e tipos de caractere & Atenção e carga cognitiva~\cite{keyboard_correction_study} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \section{Principal Lacuna Identificada nos Estudos}
 
-Apesar de, como exemplificado acima, existirem diversos estudos que relacionam dados de sensores (ou até uma combinação de sensores) ao estado emocional do utilizador, uma lacuna presente em todos os estudos é a falta de estudos de longo prazo, focando-se principalmente na recolha de dados numa sessão em particular.
+Apesar de, como exemplificado acima, existirem diversos estudos que relacionam dados de sensores (ou até uma combinação de sensores) ao estado emocional do utilizador, uma lacuna presente em todos estes estudos é a falta de estudos de longo prazo, focando-se principalmente na recolha de dados numa sessão em particular. Para validar esta observação, realizou-se uma pesquisa exploratória na base de dados IEEE Xplore, utilizando a string de pesquisa: \textit{'emotion recognition' AND ('long-term' OR 'longitudinal' OR 'continuous monitoring') AND ('sensors' OR 'wearable')}. Nesta exploração confirmei a escassez de estudos que recorriam a recolha remota de dados ou a recolha de dados a longo prazo (sendo que a maioria recorre a recolha de dados a curto prazo e de forma local).
 
 Esta lacuna aparenta surgir devido à falta de soluções que permitam a recolha de dados de sensores de vários utilizadores de forma remota e a longo prazo, contudo o meu objetivo com este trabalho não é criar uma arquitetura que me permita realizar um estudo a longo prazo, mas sim criar uma base tecnológica que facilite a execução destes estudos por outros investigadores.
 
@@ -35,4 +52,4 @@ De forma similar à RADAR-base, a AWARE Framework é uma plataforma de recolha d
 
 \section{Principais Lacunas Identifcadas nas Plataformas}
 
-Apesar destas plataformas oferecerem soluções robustas, fáceis de utilizar e com funcionalidades complementares valiosas (como os questionários), estas soluções não são livremente extensíveis, não sendo possível o uso de sensores para além dos oficialmente suportados, sendo essa lacuna ainda mais evidente por nenhum destes proporcionar suporte parta o computador e respetivos dispositivos de \textit{input}. 
+Apesar destas plataformas oferecerem soluções robustas, fáceis de utilizar e com funcionalidades complementares valiosas (como os questionários) para recolha de dados de sensores para estudos científicos, estas soluções não são livremente extensíveis, não sendo possível o uso de sensores para além dos oficialmente suportados, sendo essa lacuna ainda mais evidente por nenhum destes proporcionar suporte parta o computador e respetivos dispositivos de \textit{input}. 
