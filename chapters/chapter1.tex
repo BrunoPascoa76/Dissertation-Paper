@@ -8,22 +8,30 @@
     \section{Contexto e Motivação}
 
     Atualmente, a crescente predominância de sensores em dispositivos pessoais como telemóveis, computadores ou \textit{smartwatches}, tem permitido observar e monitorizar o estado do utilizador durante o seu uso~\cite{facial_hrv_study,keyboard_speed_study,keyboard_correction_study}.
-    Estes sensores podem recolher não só dados biométricos, como a frequência cardíaca e o \ac{HRV} ou expressões faciais~\cite{facial_hrv_study}, mas também dados sobre como o utilizador interage com estes dispositivos, como padrões  de digitação no teclado~\cite{keyboard_speed_study,keyboard_correction_study}.
+    Estes sensores podem recolher não só dados biométricos, como a frequência cardíaca ou expressões faciais~\cite{facial_hrv_study}, mas também dados sobre como o utilizador interage com estes dispositivos, como padrões  de digitação no teclado~\cite{keyboard_speed_study,keyboard_correction_study}.
 
-    No entanto, no caso de estudos a longo prazo ou envolvando vários participantes, a quantidade de dados a armazenar, bem como a necessidade de os recolher de forma contínua, apresenta naturalmente um problema do ponto de vista tecnológico, visto que a maioria das soluções apresentadas acima não estão equipadas para a recolha contínua de grandes volumes de dados de sensores.
-
-    Este trabalho visa mitigar este problema através de uma base extensível e reutilizável, adaptável às necessidades de cada investigador e de cada estudo.
+    Contudo, em estudos que envolvem a recolha longitudinal de dados de sensores, uma estratégia central é o \ac{EMA}, que se baseia na recolha de dados (passiva e ativa) no ambiente natural do utilizador~\cite{Shiffman2008}. Dado que esta abordagem depende da identificação de momentos relevantes para o disparo de inquéritos (entre outros), a latência introduzida pelos modelos de recolha em lote (\textit{batching}) torna-se um impedimento crítico. Por isso, é necessário implementar uma arquitetura em \textit{streaming} que permite a monitorização contínua e a resposta imediata a eventos, de uma forma modular e escalável.
+    Este trabalho propõe, por isso, uma solução em \textit{streaming} que permite a monitorização contínua dos dados enviados de uma forma modular e escalável.
 
     \section{Objetivos}\label{sec:objectives}
 
-    Os principais objetivos deste trabalho consistem em desenvolver um sistema modular capaz de recolher dados de vários sensores e de vários utilizadores em simultâneos, processá-los em \textit{streaming} de forma contínua e disponibilizar essa informação para visualização ou para estimar automaticamente o nível de atenção do utilizador, mantendo o sistema extensível o suficiente para permitir a adição de outros sensores ou para estimar outros indicadores de interesse para futuros estudos.
-
+    O objetivo principal deste trabalho é o desenvolvimento de um sistema modular e extensível, concebida para servir como infraestrutura de suporte a estudos longitudinais envolvendo a interação de um utilizador com o computador. O sistema foca-se na recolha contínua e processamento em streaming de dados provenientes de sensores \textit{off-the-shelf} (como \textit{smartwatches}), bem como sensores presentes no próprio computador (como teclado ou câmara). A solução visa proporcionar a investigadores uma arquitetura agnóstica ao sensor, que viabiliza tanto a monitorização em tempo real como a inferência automatizada de indicadores comportamentais — como o nível de atenção do utilizador.
+    
     \section{Metodologia}
 
-    A arquitetura desenvolvida permite a monitorização multimodal da atividade do utilizador, com especial foco no nível de atenção durante o uso do computador. Para tal, o sistema integra a recolha de dados biométricos, como a frequência cardíaca e a variabilidade de batimentos (\ac{HRV}) através de um \textit{smartwatch}, bem como dados de interação com o computador, incluindo padrões de digitação no teclado e expressões faciais capturadas pela câmara.
+    A presente dissertação foca-se no desenvolvimento de uma infraestrutura de \textit{data streaming} orientada a eventos, desenhada para a recolha contínua, remota e assíncrona de dados multimodais em estudos longitudinais. O objetivo central é validar a robustez, modularidade e escalabilidade de uma arquitetura que desacopla a ingestão de dados (sensores e periféricos) da sua persistência e análise.
 
-    O objetivo da recolha destes dados não é produzir resultados sobre o estado psicológico do utilizador em si, mas sim validar a viabilidade e consistência da recolha e processamento de diferentes tipos de sensores, servindo como base para uma framework modular que possa ser adaptada e reutilizada em estudos futuros.
+    Para demonstrar a viabilidade desta arquitetura, foi implementado um caso de estudo baseado na monitorização multimodal de um utilizador durante o uso do computador. O sistema integra os seguintes fluxos de dados:
 
+    \begin{itemize}
+        \item \textbf{Biometria:} Recolha de frequência cardíaca (\textit{heart rate}) via \textit{smartwatch};
+        \item \textbf{Interação:} Captura de padrões de digitação e dinâmicas de teclado;
+        \item \textbf{Visão Computacional:} Ingestão de fluxos de vídeo para análise de expressões faciais.
+    \end{itemize}
+
+    A validação do sistema não reside na interpretação clínica do estado psicológico do utilizador.
+
+    
     \section{Estrutura do Documento}
     Este documento está organizado em seis capítulos. O Capítulo~\ref{chap:introduction} apresenta uma introdução, contextualizando a sua motivação, descrevendo os objetivos pretendidos e a metodologia adotada para os atingir.
     O Capítulo~\ref{chap:estadodaarte} apresenta o estado da arte atual, bem como trabalhos relacionados a esta dissertação.
