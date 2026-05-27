@@ -22,7 +22,7 @@ O sistema presente na Figura~\ref{fig:sys_arq} possui uma arquitetura descentral
         \item \textbf{App para \textit{Desktop}:} Esta app feita em Python será o principal ponto de acesso por parte do utilizador e permitirá ao utilizador não só controlar todos os sensores de forma centralizada (iniciar ou parar uma sessão e definir que sensores serão utilizados em cada sessão), mas também ver os valores medidos pelos sensores e a evolução do seu nível de atenção ao longo de cada sessão.
         \item \textbf{\textit{Plugins} para sensores locais:} Cada sensor presente no computador do utilizador (teclado e câmara) terá o seu próprio \textit{plugin} responsável por recolher os dados do respetivo sensor, remover informação irrelevante e enviar as medições para o Kafka. Estes \textit{plugins} serão controlados diretamente pelo utilizador através da app.
         \item \textbf{\textit{Broker} MQTT local:} Este broker irá correr localmente no computador do próprio utilizador e servirá não só como meio de comunicação entre os sensores e o programa principal, mas também servirá como \textit{buffer} dos dados, permitindo o envio eventual dos dados, mesmo que o \ac{MQTT} remoto esteja em baixo.
-        \item \textbf{App para \textit{WearOS}:} Esta app em Kotlin permitirá a medição de \ac{HRV} (extrapolado através dos batimentos por minuto) e o envio destes para o \textit{broker} \ac{MQTT} local.
+        \item \textbf{App para \textit{WearOS}:} Esta app em Kotlin permitirá a medição de \ac{BPM} e o envio destes para o \textit{broker} \ac{MQTT} local.
     \end{itemize}
     \item \textbf{Componentes externos:}
     \begin{itemize}

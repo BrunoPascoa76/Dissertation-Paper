@@ -31,8 +31,8 @@ A aplicação para \textit{desktop} foi criada para ser simultaneamente uma demo
 
 De modo a facilitar a extensão, a app utiliza um sistema de \textit{plugins} com uma interface pré-estabelicida, divididos em dois tipos principais: \textit{plugins} de sensores e \textit{plugins} de visualização.
 \begin{itemize}
-    \item \textbf{\textit{Plugins} de sensores:} são responsáveis pela interação direta (ou indireta no caso de sensores externos) com os sensores, recolhendo informações. Os sensores podem ser controlados de forma unificada (selecionar os sensores pretendidos e começar/parar a recolha de dados) a partir de um painel de controlo (ver Figura~\ref{fig:painel_controlo}). Para demonstrar a recolha de dados, foram criados 3 \textit{plugins} para sensores distintos (2 internos e 1 externo): um para controlo da app para WearOS (\ac{HRV}), um para obter direção do olhar e grau de abertura dos olhos via \textit{webcam} e outro para registar a cadência e o tipo de teclas premidas num teclado.
-    \item \textbf{\textit{Plugins} de visualização:} atuam na camada da interface, sendo responsáveis por consumir os dados obtidos via API REST de um ou mais sensores e transformá-los em representações gráficas (ver Figura~\ref{fig:hrv}). No caso de gráficos de linha, será necessário apenas implementar métodos para a recolha e tratamento dos dados, sendo que a visualização destes já está estabelecida na classe que herdam. Foram criados 3 \textit{plugins} de visualização: dois focados na visualização direta de dados de um sensor (\ac{HRV} e caracteres por minuto) e outro que utiliza os dados dos 3 sensores para estimar o nível de atenção.
+    \item \textbf{\textit{Plugins} de sensores:} são responsáveis pela interação direta (ou indireta no caso de sensores externos) com os sensores, recolhendo informações. Os sensores podem ser controlados de forma unificada (selecionar os sensores pretendidos e começar/parar a recolha de dados) a partir de um painel de controlo (ver Figura~\ref{fig:painel_controlo}). Para demonstrar a recolha de dados, foram criados 3 \textit{plugins} para sensores distintos (2 internos e 1 externo): um para controlo da app para WearOS, um para obter direção do olhar e grau de abertura dos olhos via \textit{webcam} e outro para registar a cadência e o tipo de teclas premidas num teclado.
+    \item \textbf{\textit{Plugins} de visualização:} atuam na camada da interface, sendo responsáveis por consumir os dados obtidos via API REST de um ou mais sensores e transformá-los em representações gráficas (ver Figura~\ref{fig:hrv}). No caso de gráficos de linha, será necessário apenas implementar métodos para a recolha e tratamento dos dados, sendo que a visualização destes já está estabelecida na classe que herdam. Foram criados 3 \textit{plugins} de visualização: dois focados na visualização direta de dados de um sensor (\ac{BPM} e caracteres por minuto) e outro que utiliza os dados dos 3 sensores para estimar o nível de atenção.
 \end{itemize}
 
 \begin{figure}[H]
@@ -47,7 +47,7 @@ De modo a facilitar a extensão, a app utiliza um sistema de \textit{plugins} co
      \begin{subfigure}[b]{0.48\textwidth}
          \centering
          \includegraphics[width=\linewidth]{figs/desktop/desktop_grafico_hrv.png}
-         \caption{Painel de visualização (hrv)}
+         \caption{Painel de visualização}
          \label{fig:hrv}
      \end{subfigure}
      \caption{Interface da aplicação para \textit{desktop}}
@@ -159,9 +159,9 @@ O volume de mensagens pode variar com base no número e tipo de sensores, contud
 \toprule
 \textbf{Sensor} & \textbf{Descrição} & \textbf{Frequência (msg/s)} \\ 
 \midrule
-Teclado & Eventos de digitação & $5$\tnote{1} \\
-WearOS (\ac{HRV}, estimado a partir de BPM) & Monitorização cardíaca & $1$\tnote{2} \\
-Webcam & Processamento de vídeo/metadados & $10$\tnote{3} \\ 
+Teclado\tnote{1} & Eventos de digitação & $5$ \\
+WearOS\tnote{2} (\ac{BPM}) & Monitorização cardíaca & $1$ \\
+Webcam\tnote{3} & Processamento de vídeo/metadados & $10$ \\ 
 \midrule
 \textbf{Total} & & \textbf{$16$ msg/s} \\ 
 \bottomrule
