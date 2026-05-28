@@ -15,15 +15,7 @@ O servidor consiste num ambiente de contentores (Docker Compose) que comunicam e
 
 O principal ponto de acesso para ingestão de dados é um \textit{broker} Mosquitto (sendo que cada tópico com o prefixo \texttt{sensors/} é considerado um tipo de sensor diferente) que permite a ingestão unificada de dados de vários utilizadores. Estes registos são depois transferidos para o Kafka (que possui melhor resiliência de dados) de forma automática e agnóstica via Kafka Connect antes de serem inseridos de forma assíncrona na base de dados (novamente usando Kafka Connect), onde cada tópico \ac{MQTT} é inserido numa tabela (\textit{measurement}) distinta no InfluxDB. Esta abordagem agnóstica e aberta permite não só acrescentar sensores sem ter de modificar o servidor, mas também a possibilidade de integrar com sistemas pré-existentes (necessitando apenas de usar o prefixo "sensors/" no tópico e incluir \texttt{uuid} e \texttt{timestamp} na mensagem).
 
-O acesso da base de dados por parte dos clientes é gerido por uma API REST simples (escrita em FastAPI). O endpoint principal desta API é \texttt{/data/{sensor}}, que constroi uma \textit{query} para um sensor específico a partir dos seguintes parâmetros:
-\begin{itemize}
-    \item \textbf{start e end}: janela temporal, em ms, para a qual queremos obter os dados.
-    \item \textbf{uuid}: o \ac{UUID} do utilizador a que pertecem os dados.
-    \item \textbf{agg}: o tipo de agregação (opcional) (MEAN, COUNT, SUM, MIN, MAX). Por defeito (ou se utilizar NONE), os valores não são agregados.
-    \item \textbf{field}: o campo (ou campos, separados por vírgula) a retornar. O valor por defeito é \texttt{value}.
-    \item \textbf{interval}: o intervalo de tempo (opcional) para agregação (deverá incluir o valor e a unidade de tempo, por exemplo \texttt{1s}). Se omitido os valores não são agregados por tempo.
-\end{itemize}
-O uso desta API e de parâmetros evita que agentes externos tenham acesso à base de dados, reduzindo por isso o risco de vulnerabilidades.
+Finalmente, ao contrário da ingestão, o acesso aos dados ingeridos é feito via uma API REST utilizando o endpoint \texttt{/data/{sensor}} (a definição da API pode ser encontrada na Subsecção~\ref{sec:rest_definition})
 
 \subsection{Cliente}
 
@@ -103,25 +95,6 @@ A aplicação para WearOS foi criada para exemplificar a recolha de dados usando
      \caption{Interface da aplicação para WearOS}
 \end{figure}
 
-\subsection{Fluxo de Dados}
-
-De modo a ilustrar como estes componentes comunicam entre si, a Figura~\ref{fig:end2end} mapeia o fluxo de dados \textit{end-to-end}, utilizando como exemplo os dados faciais obtidos via \textit{webcam}:
-
-\begin{enumerate}
-    \item \textbf{Captura e ingestão:} O \textit{plugin} da \textit{webcam} presente na aplicação \textit{desktop} captura uma \textit{frame} e extrai as \textit{features} faciais (utilizando a biblioteca MediaPipe). Essas \textit{features} são convertidas em métricas (de modo a reduzir o volume de dados a enviar) e enviadas para o \textit{broker} Mosquitto local.
-    \item \textbf{Redirecionamento:} Os dados presentes no broker local (em tópicos com o prefixo \texttt{sensors/}) são redirecionados para um \textit{broker} remoto automaticamente.
-    \item \textbf{Transporte:} Após a chegada de novos dados ao \textit{broker}, o conector \textit{source} do Kafka Connect recolhe estes dados e insere-os no Kafka (que possui melhor resiliência que o Mosquitto, permitindo ingestão assíncrona).
-    \item \textbf{Armazenamento:} Após a inserção no Kafka, um segundo conector \textit{sink} de Kafka Connect consome as mensagens e armazena-as na base de dados.
-    \item \textbf{Acesso e visualização:} Após o armazenamento dos dados, estes são acedidos via API REST pela app \textit{desktop} a cada segundo para gerar uma visualização dos dados.
-\end{enumerate}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{figs/end2end.png}
-    \caption{Fluxo de dados \textit{end-to-end}}
-    \label{fig:end2end}
-\end{figure}
-
 \section{Validação Analítica de Desempenho}
 
 Para além de garantir que a arquitetura do sistema cumpre com os objetivos propostos, é necessário também garantir que as ferramentas utilizadas (principalmente do servidor) são capazes de lidar com o número esperado de mensagens e clientes.
@@ -131,20 +104,6 @@ Para além de garantir que a arquitetura do sistema cumpre com os objetivos prop
 A estrutura da mensagem, serializada em formato JSON (como visto na Listagem~\ref{code:example_message}), foi desenhada para ser concisa, apresentando um payload médio de 133B para o JSON em si (valor obtido através da serialização de uma das mensagens) e cerca de 173B se incluirmos os \textit{headers} de TCP/IP.
 
 Considerando este volume de dados inexpressivo, o fator determinante para a escalabilidade da infraestrutura é exclusivamente o número de mensagens simultâneas que o broker consegue processar por segundo, e não o tamanho individual de cada pacote. Uma vez que a estrutura é simples e não exige processamento complexo ao nível da camada de transporte, o sistema é capaz de suportar um débito elevado de eventos, sendo a capacidade de ingestão limitada primariamente pela cadência de publicação (\textit{throughput}) e não pela ocupação da largura de banda.
-
-\begin{figure}[h!]
-\centering
-\begin{minipage}{\textwidth}
-\begin{lstlisting}[language=json, caption={Exemplo da estrutura de uma mensagem JSON}, label={code:example_message}]
-{
-  "uuid": "550e8400-e29b-41d4-a716-446655440000",
-  "sensor": "heart_rate_sensor",
-  "timestamp": 1747926855.123,
-  "value": 72.5
-}
-\end{lstlisting}
-\end{minipage}
-\end{figure}
 
 \subsection{Volume de Mensagens Esperado}
 
