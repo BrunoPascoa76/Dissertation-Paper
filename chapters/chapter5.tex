@@ -95,6 +95,15 @@ A aplicação para WearOS foi criada para exemplificar a recolha de dados usando
      \caption{Interface da aplicação para WearOS}
 \end{figure}
 
+\subsection{Aquisição de Dados dos Sensores}
+
+Como referido acima, foram utilizados os seguintes sensores para a aquisição de dados:
+\begin{itemize}
+    \item \textbf{Teclado:} de modo a registar o tipo de teclas premido pelo utilizador, foi utilizada a biblioteca PyInput\cite{pyinput_docs}. Esta biblioteca utiliza \textit{hooks} de baixo nível para intercetar (ou produzir) eventos de teclado ao nível do Sistema Operativo, permitindo monitorizar quais teclas são premidas de forma assíncrona. Contudo, como a interceção destes eventos não se limita apenas à janela do programa (e de modo a evitar o armazenamento acidental de palavras-passe) as teclas foram "anonimizadas" antes de serem enviadas, sendo que é apenas enviado o tipo de tecla premida em vez da tecla em si.
+    \item \textbf{Câmara:} a captura e extração de \textit{landmarks} é realizada através da biblioteca MediaPipe\cite{mediapipe_docs}. Esta biblioteca não só consegue capturar e processar \textit{frames} individuais da câmara em tempo real, mas também suporta o uso de modelos locais para a extração de \textit{landmarks} facias (suportando um total de 478 pontos). Após a obtenção destas \textit{landmarks} foi realizado também um pré-processamento para reduzir o volume de dados, utilizando pontos dos olhos e nariz para determinar a direção do olhar (\textit{pitch} e \textit{yaw}), bem como os pontos da pálpebra para determinar a taxa de abertura dos olhos.
+    \item \textbf{\ac{BPM:}} finalmente, de modo a obter os \ac{BPM} (e estimar o intervalo de RR), foram utilizados os sensores presentes no próprio \textit{smartwatch} através da API para WearOS do Kotlin.
+\end{itemize}
+
 \section{Validação Analítica de Desempenho}
 
 Para além de garantir que a arquitetura do sistema cumpre com os objetivos propostos, é necessário também garantir que as ferramentas utilizadas (principalmente do servidor) são capazes de lidar com o número esperado de mensagens e clientes.
