@@ -37,19 +37,52 @@ Apesar de, como exemplificado acima, existirem diversos estudos que relacionam d
 
 Esta lacuna aparenta surgir devido à falta de soluções que permitam a recolha de dados de sensores de vários utilizadores de forma remota e a longo prazo, contudo o meu objetivo com este trabalho não é criar uma arquitetura que me permita realizar um estudo a longo prazo, mas sim criar uma base tecnológica que facilite a execução destes estudos por outros investigadores.
 
-\section{Plataformas de Recolha de Dados de Sensores}
+\section{Plataformas de Recolha de Dados de Sensores para Estudos Científicos}
 
-Adicionalmente, para além de estudos científicos, existem também plataformas já estabelecidas que permitem a recolha e tratamento de dados de sensores, destacando-se em particular o RADAR-base~\cite{radarbase} e a AWARE~Framework~\cite{aware}.
+Adicionalmente, para além de estudos científicos, decidi também procurar sobre plataformas que permitam a recolha de dados de forma remota para estudos científicos ou clínicos, sendo que os resultados desta pesquisa encontram-se resumidos na Tabela~\ref{tab:other_platforms}
 
-\subsection{RADAR-base}
+\begin{table}[h]
+    \centering
+    \caption{Características das plataformas para recolha de dados de sensores para estudos científicos ou clínicos}
+    \label{tab:other_platforms}
+    \begin{tabular}{l|l|l|l|l|l}
+        \toprule
+        \textbf{Nome} & \textbf{\textit{Open-Source?}} & \textbf{Dispositivos/Sensores Suportados} & \textbf{\textit{Deployment}} & \textbf{Tipo de Recolha} \\ 
+        Radar-base~\cite{radarbase} 
+            & Sim 
+            & Android, iOS, \textit{wearable} e sensores \ac{IoT} 
+            & Local ou \textit{cloud} 
+            & \textit{Streaming} \\
 
-A RADAR-base~\cite{radarbase} é uma plataforma open source que permite a recolha de dados para estudos clínicos não só utilizando sensores do telemóvel a partir de uma app Android ou iOS, mas também sensores externos como \textit{wearables} ou sensores \ac{IoT}, possuindo suporte oficial para diversos modelos de sensores.
-Para além disso, esta plataforma oferece também a opção de acompanhar os dados com um questionário preenchido por cada utilizador.
+        AWARE Framework~\cite{aware} 
+            & Sim 
+            & Android 
+            & Local 
+            & Envio direto para base de dados (MySQL) \\
 
-\subsection{AWARE Framework}
+        Beiwe~\cite{beiwe,beiwe_docs}
+            & Sim
+            & Android, iOS
+            & \textit{Cloud} (AWS)
+            & \textit{Batch} (HTTP, configurável entre 5 min e 1 h) \\
 
-De forma similar à RADAR-base, a AWARE Framework é uma plataforma de recolha de dados para estudos científicos que permite recolher dados dos sensores internos de um telemóvel Android ou iOS, bem como a realização de questionários. Contudo, apesar de ambos utilizarem um sistema baseado em plugins, a AWARE Framework não possui (até à data) capacidade de recolha de sensores externos ao telemóvel e suportando oficialmente um número menor de sensores do próprio telemóvel.
+        iMotions~\cite{imotions_rdc}
+            & Não
+            & EEG, ECG, EMG, GSR/EDA, \textit{eye tracking}, webcam (PC)
+            & \textit{SaaS} (\textit{cloud} proprietário)
+            & Por sessão (\textit{browser}-based) \\
+        \midrule
+        \bottomrule
+    \end{tabular}
+\end{table}
 
-\section{Principais Lacunas Identifcadas nas Plataformas}
+\section{Principais Lacunas Identificadas nas Plataformas}
 
-Apesar destas plataformas oferecerem soluções robustas, fáceis de utilizar e com funcionalidades complementares valiosas (como os questionários) para recolha de dados de sensores para estudos científicos, estas soluções não são livremente extensíveis, não sendo possível o uso de sensores para além dos oficialmente suportados, sendo essa lacuna ainda mais evidente por nenhum destes proporcionar suporte parta o computador e respetivos dispositivos de \textit{input}. 
+Com base na tabela anterior, podemos identificar duas lacunas principais:
+\begin{itemize}
+    \item \textbf{Suporte para computador:} a única plataforma que suporta computador (iMotions) é proprietária e \textit{closed-source}, sendo as restantes \textit{open-source} focadas principalmente no uso do telemóvel.
+    \item \textbf{Extensibilidade limitada para novos sensores:} nenhuma das plataformas analisadas documenta a possibilidade de um investigador estender a arquitetura para adicionar suporte a sensores não presentes na lista oficialmente suportada. Adicionalmente, a ausência de suporte para sensores genéricos significa que qualquer investigador que pretenda utilizar estas plataformas se encontra limitado a um conjunto fixo e predefinido de fontes de dados.
+\end{itemize}
+
+Por isto, pretendo preencher as lacunas identificadas aqui não só ao focar-me num cenário centrado no computador, mas também ao garantir suporte para sensores genéricos, permitindo o uso de quase todos os sensores capazes de comunicar (diretamente ou indiretamente) via \ac{MQTT}
+
