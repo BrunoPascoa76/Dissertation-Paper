@@ -101,8 +101,20 @@ Como referido acima, foram utilizados os seguintes sensores para a aquisição d
 \begin{itemize}
     \item \textbf{Teclado:} de modo a registar o tipo de teclas premido pelo utilizador, foi utilizada a biblioteca PyInput\cite{pyinput_docs}. Esta biblioteca utiliza \textit{hooks} de baixo nível para intercetar (ou produzir) eventos de teclado ao nível do Sistema Operativo, permitindo monitorizar quais teclas são premidas de forma assíncrona. Contudo, como a interceção destes eventos não se limita apenas à janela do programa (e de modo a evitar o armazenamento acidental de palavras-passe) as teclas foram "anonimizadas" antes de serem enviadas, sendo que é apenas enviado o tipo de tecla premida em vez da tecla em si.
     \item \textbf{Câmara:} a captura e extração de \textit{landmarks} é realizada através da biblioteca MediaPipe\cite{mediapipe_docs}. Esta biblioteca não só consegue capturar e processar \textit{frames} individuais da câmara em tempo real, mas também suporta o uso de modelos locais para a extração de \textit{landmarks} facias (suportando um total de 478 pontos). Após a obtenção destas \textit{landmarks} foi realizado também um pré-processamento para reduzir o volume de dados, utilizando pontos dos olhos e nariz para determinar a direção do olhar (\textit{pitch} e \textit{yaw}), bem como os pontos da pálpebra para determinar a taxa de abertura dos olhos.
-    \item \textbf{\ac{BPM:}} finalmente, de modo a obter os \ac{BPM} (e estimar o intervalo de RR), foram utilizados os sensores presentes no próprio \textit{smartwatch} através da API para WearOS do Kotlin.
+    \item \textbf{\ac{BPM}:} finalmente, de modo a obter os \ac{BPM} (e estimar o intervalo de RR), foram utilizados os sensores presentes no próprio \textit{smartwatch} através da API para WearOS do Kotlin.
 \end{itemize}
+
+\subsection{Monitorização}
+
+De forma a permitir a monitorização dos dados do lado do servidor, foi também criado o \textit{dashboard} Grafana presente na Figura~\ref{fig:grafana}. Este \textit{dashboard} consome dados diretamente do InfluxDB e permite selecionar o \textit{UUID} do utilizador pretendido através de um \textit{dropdown}, apresentando para cada sensor o último valor registado, bem como a sua evolução temporal (sendo que a janela temporada é indicada através do próprio Grafana).
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figs/grafana}
+    \caption{\textit{Dashboard} do Grafana}
+    \label{fig:grafana}
+\end{figure}
+
 
 \section{Fluxo \textit{end-to-end}}
 
@@ -112,49 +124,43 @@ De modo a ilustrar o funcionamento do sistema de forma \textit{end-to-end}, apre
     \item O valor é processado localmente para extrair o \textit{pitch} e o \textit{yawn} e enviado para o \textit{broker} local para o tópico \texttt{/sensors/face} (Figura~\ref{fig:example_1}).
     \item O valor é redirecionado automaticamente do \textit{broker} local para o \textit{broker} remoto (Figura~\ref{fig:example_2}).
     \item O valor é inserido no Kafka via Kafka Connect (Figura~\ref{fig:example_3}).
-    \item O valor é lido pelo Kafka Connect e inserido na base de dados (Figuras~\ref{fig:example_4}~e~\ref{fig:example_45}).
+    \item O valor é lido pelo Kafka Connect e inserido na base de dados (Figura~\ref{fig:example_4}).
 \end{enumerate}
 
 \begin{figure}[H]
      \centering
-     \begin{subfigure}[t]{0.19\textwidth}
+     \begin{subfigure}[t]{0.49\textwidth}
          \centering
          \includegraphics[width=\linewidth]{figs/example/local_broker}
-         \caption{Receção da mensagem no \textit{broker} local}
+         \caption{Receção da mensagem no \textit{broker} local\footnotemark}
          \label{fig:example_1}
      \end{subfigure}
      \hfill
-     \begin{subfigure}[t]{0.19\textwidth}
+     \begin{subfigure}[t]{0.49\textwidth}
          \centering
          \includegraphics[width=\linewidth]{figs/example/remote_broker}
          \caption{Receção da mensagem no \textit{broker} remoto}
          \label{fig:example_2}
      \end{subfigure}
      \hfill
-     \begin{subfigure}[t]{0.19\textwidth}
+     \begin{subfigure}[t]{0.49\textwidth}
          \centering
          \includegraphics[width=\linewidth]{figs/example/kafka}
          \caption{Receção da mensagem no Kafka}
          \label{fig:example_3}
      \end{subfigure}
      \hfill
-     \begin{subfigure}[t]{0.19\textwidth}
+     \begin{subfigure}[t]{0.49\textwidth}
          \centering
          \includegraphics[width=\linewidth]{figs/example/influx_query}
          \caption{Valor registado no InfluxDB}
          \label{fig:example_4}
      \end{subfigure}
-     \hfill
-     \begin{subfigure}[t]{0.19\textwidth}
-         \centering
-         \includegraphics[width=\linewidth]{figs/example/grafana}
-         \caption{Dashboard do Grafana}
-         \label{fig:example_5}
-     \end{subfigure}     
+     \hfill   
      \caption{Ilustração do envio de dados relativos à orientação facial}
 \end{figure}
 
-
+\footnotetext{O MQTT5 Explorer apenas apresenta a última mensagem recebida por tópico, não o histórico completo de mensagens.}
 
 \section{Validação Analítica de Desempenho}
 
@@ -180,7 +186,7 @@ O volume de mensagens pode variar com base no número e tipo de sensores, contud
 \textbf{Sensor} & \textbf{Descrição} & \textbf{Frequência (msg/s)} \\ 
 \midrule
 Teclado\tnote{1} & Eventos de digitação & $5$ \\
-WearOS\tnote{2} (\ac{BPM}) & Monitorização cardíaca & $1$ \\
+WearOS (\ac{BPM})\tnote{2} & Monitorização cardíaca & $1$ \\
 Webcam\tnote{3} & Processamento de vídeo/metadados & $10$ \\ 
 \midrule
 \textbf{Total} & & \textbf{$16$ msg/s} \\ 
