@@ -104,6 +104,58 @@ Como referido acima, foram utilizados os seguintes sensores para a aquisição d
     \item \textbf{\ac{BPM:}} finalmente, de modo a obter os \ac{BPM} (e estimar o intervalo de RR), foram utilizados os sensores presentes no próprio \textit{smartwatch} através da API para WearOS do Kotlin.
 \end{itemize}
 
+\section{Fluxo \textit{end-to-end}}
+
+De modo a ilustrar o funcionamento do sistema de forma \textit{end-to-end}, apresenta-se de seguida o fluxo de uma mensagem desde a sua origem até ao armazenamento, utilizando como exemplo um valor de \ac{BPM} enviado pelo \textit{smartwatch}:
+\begin{enumerate}
+    \item O \textit{plugin} facial extrai uma \textit{frame} da câmara e utiliza um modelo local para identificar as \textit{landmarks} da cara.
+    \item O valor é processado localmente para extrair o \textit{pitch} e o \textit{yawn} e enviado para o \textit{broker} local para o tópico \texttt{/sensors/face} (Figura~\ref{fig:example_1}).
+    \item O valor é redirecionado automaticamente do \textit{broker} local para o \textit{broker} remoto (Figura~\ref{fig:example_2}).
+    \item O valor é inserido no Kafka via Kafka Connect (Figura~\ref{fig:example_3}).
+    \item O valor é lido pelo Kafka Connect e inserido na base de dados (Figuras~\ref{fig:example_4}~e~\ref{fig:example_45}).
+\end{enumerate}
+
+\begin{figure}[H]
+     \centering
+     \begin{subfigure}[t]{0.19\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/example/local_broker}
+         \caption{Receção da mensagem no \textit{broker} local}
+         \label{fig:example_1}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.19\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/example/remote_broker}
+         \caption{Receção da mensagem no \textit{broker} remoto}
+         \label{fig:example_2}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.19\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/example/kafka}
+         \caption{Receção da mensagem no Kafka}
+         \label{fig:example_3}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.19\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/example/influx_query}
+         \caption{Valor registado no InfluxDB}
+         \label{fig:example_4}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.19\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/example/grafana}
+         \caption{Dashboard do Grafana}
+         \label{fig:example_5}
+     \end{subfigure}     
+     \caption{Ilustração do envio de dados relativos à orientação facial}
+\end{figure}
+
+
+
 \section{Validação Analítica de Desempenho}
 
 Para além de garantir que a arquitetura do sistema cumpre com os objetivos propostos, é necessário também garantir que as ferramentas utilizadas (principalmente do servidor) são capazes de lidar com o número esperado de mensagens e clientes.
@@ -145,4 +197,3 @@ Webcam\tnote{3} & Processamento de vídeo/metadados & $10$ \\
 
 Devido à reduzida carga operacional, o sistema apresenta baixos requisitos computacionais, sendo capaz de operar estavelmente em praticamente qualquer servidor moderno ou computador pessoal, sem necessidade de hardware especializado.
 Em termos de número de utilizadores simultâneos, apesar de alguns estudos involverem centenas de voluntários, a necessidade de monitorizar os voluntários tende a limitar este número para um máximo de cerca de 50 utilizadores em simultâneo. Com base neste valor, podemos estimar que a carga máxima esperada para o servidor não irá superar as 800 mensagens por segundo (o que equivale a cerca de 138.4KB/s). 
-
