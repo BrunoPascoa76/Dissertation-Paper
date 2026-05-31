@@ -7,11 +7,10 @@
 
     \section{Contexto e Motivação}
 
-    Atualmente, a crescente predominância de sensores em dispositivos pessoais como telemóveis, computadores ou \textit{smartwatches}, tem permitido observar e monitorizar o estado do utilizador durante o seu uso~\cite{facial_hrv_study,keyboard_speed_study,keyboard_correction_study}.
-    Estes sensores podem recolher não só dados biométricos, como a frequência cardíaca ou expressões faciais~\cite{facial_hrv_study}, mas também dados sobre como o utilizador interage com estes dispositivos, como padrões  de digitação no teclado~\cite{keyboard_speed_study,keyboard_correction_study}.
+    O uso prolongado do computador em contextos de trabalho e estudo cria oportunidades únicas para a monitorização contínua do estado do utilizador através dos sensores integrados ou conectáveis a este dispositivo~\cite{keyboard_correction_study,keyboard_speed_study,facial_hrv_study}. Estes sensores permitem recolher não só dados biométricos, como a frequência cardíaca ou expressões faciais~\cite{facial_hrv_study}, mas também dados comportamentais, como padrões de digitação no teclado~\cite{keyboard_speed_study,keyboard_correction_study}.
 
-    Contudo, em estudos que envolvem a recolha longitudinal de dados de sensores, uma estratégia central é o \ac{EMA}, que se baseia na recolha de dados (passiva e ativa) no ambiente natural do utilizador~\cite{Shiffman2008}. Dado que esta abordagem depende da identificação de momentos relevantes para o disparo de inquéritos (entre outros), a latência introduzida pelos modelos de recolha em lote (\textit{batching}) torna-se um impedimento crítico. Por isso, é necessário implementar uma arquitetura em \textit{streaming} que permite a monitorização contínua e a resposta imediata a eventos, de uma forma modular e escalável.
-    Este trabalho propõe, por isso, uma solução em \textit{streaming} que permite a monitorização contínua dos dados enviados de uma forma modular e escalável.
+    Como se verá no Capítulo~\ref{chap:estadodaarte}, as plataformas \textit{open-source} existentes para recolha de dados de sensores (como o RADAR-base~\cite{radarbase} ou a AWARE Framework~\cite{aware}, por exemplo) focam-se maioritariamente em dispositivos móveis e não suportam sensores de computador, não existindo atualmente nenhuma solução adequada à recolha contínua e remota de dados em estudos longitudinais neste contexto. 
+    Este trabalho propõe, por isso, uma infraestrutura em \textit{streaming} que permite a monitorização contínua e assíncrona de dados de sensores de forma modular, extensível e agnóstica ao tipo de sensor.
 
     \section{Objetivos}\label{sec:objectives}
 
@@ -29,7 +28,7 @@
         \item \textbf{Visão Computacional:} Ingestão de fluxos de vídeo para análise de expressões faciais.
     \end{itemize}
 
-    A validação do sistema não reside na interpretação clínica do estado psicológico do utilizador.
+    A validação do sistema não reside na interpretação clínica do estado psicológico do utilizador mas sim na implementação correta da arquitetura de forma a cumprir com os objetivos estabelecidos.
 
     
     \section{Estrutura do Documento}
