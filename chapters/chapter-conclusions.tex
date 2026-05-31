@@ -7,7 +7,9 @@ Este capítulo descreve as conclusões gerais retiradas ao longo do trabalho, be
 
 
 \section{Conclusões}
-Este trabalho apresentou o desenvolvimento de uma \textit{pipeline} de processamento em \textit{streaming} de dados de sensores, abordando os desafios de resiliência e integridade, bem como o equilíbrio entre robustez e modularidade. Através da implementação de uma arquitetura baseada em Kafka e InfluxDB, foi possível garantir um fluxo contínuo de dados enviados em tempo real de forma agnóstica ao conteúdo desses mesmos dados, cumprindo com os requisitos propostos.
+Este trabalho apresentou o desenvolvimento de uma \textit{pipeline} de processamento em \textit{streaming} de dados de sensores, abordando os desafios de resiliência e integridade, bem como o equilíbrio entre robustez e modularidade.
+Em geral, considero que os objetivos propostos foram cumpridos na sua totalidade: desenvolvi um servidor baseado em \ac{MQTT} e Kafka capaz de receber dados de qualquer sensor que respeite o contrato mínimo definido, uma aplicação para \textit{desktop} com sistema de \textit{plugins} que facilita a integração de novos sensores, e uma aplicação para WearOS que demonstra o suporte a sensores externos. 
+Adicionalmente, o funcionamento da aplicação foi validado através de um \textit{dashboard} Grafana e, através de estimativas de carga esperada, consegui também garantir que o servidor é capaz de ser executado mesmo em \textit{hardware} mais modesto.
 
 \section{Trabalho Futuro}
 Apesar dos avanços alcançados, existem ainda funcionalidades e aspetos do trabalho que merecem investigação adicional. Estas incluem: 
