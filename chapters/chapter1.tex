@@ -14,22 +14,33 @@
 
     \section{Objetivos}\label{sec:objectives}
 
-    O objetivo principal deste trabalho é o desenvolvimento de um sistema modular e extensível, concebida para servir como infraestrutura de suporte a estudos longitudinais envolvendo a interação de um utilizador com o computador. O sistema foca-se na recolha contínua e processamento em streaming de dados provenientes de sensores \textit{off-the-shelf} (como \textit{smartwatches}), bem como sensores presentes no próprio computador (como teclado ou câmara). A solução visa proporcionar a investigadores uma arquitetura agnóstica ao sensor, que viabiliza tanto a monitorização em tempo real como a inferência automatizada de indicadores comportamentais — como o nível de atenção do utilizador.
+    Os objetivos concretos do trabalho são:
+    \begin{itemize}
+        \item Desenvolver um servidor de ingestão de dados baseado em \ac{MQTT} e Kafka, capaz de receber dados de múltiplos sensores e de múltiplos utilizadores em simultâneo.
+        \item Definir um protocolo de ingestão agnóstico baseado num contrato mínimo (\ac{UUID}, \textit{timestamp}, nome do sensor e valores) que permita a adição de novos tipos de sensores sem alterar o servidor.
+        \item Desenvolver uma aplicação de \textit{desktop} baseada num sistema de \textit{plugins} que facilite a integração de novos sensores.
+        \item Desenvolver umna aplicação para WearOS que permita a recolha de \ac{BPM} de um \textit{smartwatch}.
+        \item Validar o sistema através de um fluxo \textit{end-to-end} com dados reais e de uma análise analítica de escalabilidade.
+        \item Validar o sistema através de um fluxo \textit{end-to-end} com dados reais, de uma análise analítica de escalabilidade e de um \textit{dashboard} Grafana para monitorização
+    \end{itemize}
+
     
     \section{Metodologia}
 
-    A presente dissertação foca-se no desenvolvimento de uma infraestrutura de \textit{data streaming} orientada a eventos, desenhada para a recolha contínua, remota e assíncrona de dados multimodais em estudos longitudinais. O objetivo central é validar a robustez, modularidade e escalabilidade de uma arquitetura que desacopla a ingestão de dados (sensores e periféricos) da sua persistência e análise.
+    O desenvolvimento da arquitetura seguiu uma abordagem incremental por componente, na qual cada elemento da arquitetura foi desenvolvido e validado de forma independente antes de ser integrado, sendo depois novamente testado para garantir a sua correta integração no sistema.
 
-    Para demonstrar a viabilidade desta arquitetura, foi implementado um caso de estudo baseado na monitorização multimodal de um utilizador durante o uso do computador. O sistema integra os seguintes fluxos de dados:
+    De modo a guiar o desenvolvimento, foi também estabelecida a seguinte ordem de implementação:
+    \begin{enumerate}
+        \item servidor (excluindo API REST)
+        \item estrutura central da app \textit{desktop} (\textit{broker} local e sistema de \textit{plugins})
+        \item \textit{plugins} de câmara e teclado
+        \item app para WearOS (e \textit{plugin} de \ac{BPM})
+        \item API REST
+        \item Finalização da app \textit{desktop} (paineis de controlo e de visualização)
+        \item \textit{Dashboard} Grafana
+    \end{enumerate}
 
-    \begin{itemize}
-        \item \textbf{Biometria:} Recolha de frequência cardíaca (\textit{heart rate}) via \textit{smartwatch};
-        \item \textbf{Interação com o teclado:} Captura de padrões de digitação e dinâmicas de teclado;
-        \item \textbf{Visão Computacional:} Ingestão de fluxos de vídeo para análise de expressões faciais.
-    \end{itemize}
-
-    A validação do sistema não reside na interpretação clínica do estado psicológico do utilizador mas sim na implementação correta da arquitetura de forma a cumprir com os objetivos estabelecidos.
-
+    Finalmente, foi realizada uma validação em tempo real utilizando o \textit{dashboard} de Grafana de modo a garantir o correto funcionamento do sistema, bem como uma validação analítica do tamanho e frequência das mensagens, de modo a garantir que o sistema é capaz de escalar de forma eficiente.
     
     \section{Estrutura do Documento}
     Este documento está organizado em seis capítulos. O Capítulo~\ref{chap:introduction} apresenta uma introdução, contextualizando a sua motivação, descrevendo os objetivos pretendidos e a metodologia adotada para os atingir.
