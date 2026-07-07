@@ -7,9 +7,10 @@ Este capítulo detalha os objetivos pretendidos para este trabalho, bem como a a
 
 \section{Objetivos}
 
-O objetivo principal deste trabalho é criar um sistema baseado em \textit{streaming} que permite a recolha de dados de sensores de forma remota e contínua de vários utilizadores enquanto estes utilizam o computador, utilizando sensores do próprio computador (teclado e câmara) e sensores \textit{off-the-shelf} como \textit{smartwatches}. Este sistema, que poderá ser executado de forma \textit{self-hosted} ou na \textit{cloud}, deverá ser capaz de lidar com vários utilizadores em simultâneo (sendo que cada um deles poderá utilizar um ou mais sensores). O sistema deverá também ser focado na extensibilidade e modularidade, permitindo a troca de sensores conforme as necessidades e minimizando o esforço necessário para essa modificação.
+Os objetivos estabelecidos na secção~\ref{sec:objectives} estabelecem um conjunto de requisitos sobre a arquitetura do sistema:
+\begin{itemize}
+\end{itemize}
 
-Para além disso, de modo a demonstrar as capacidades do sistema, o sistema deverá também ser capaz de recolher dados do teclado, \textit{webcam} e \textit{smartwatch} e gerar alguma previsão (mesmo que imprecisa) com base na combinação dos dados destes sensores.
 
 \section{Arquitetura do Sistema}
 \label{sec:arquitecture}
@@ -36,7 +37,7 @@ O sistema presente na Figura~\ref{fig:sys_arq} possui uma arquitetura descentral
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{figs/Dissertation_arquitecture.png}
+    \includegraphics[width=\linewidth]{figs/dissertation_deployment_arquitecture.png}
     \caption{Diagrama de \textit{deployment} do sistema}
     \label{fig:sys_arq}
 \end{figure}

@@ -16,31 +16,26 @@
 
     Os objetivos concretos do trabalho são:
     \begin{itemize}
-        \item Desenvolver um servidor de ingestão de dados baseado em \ac{MQTT} e Kafka, capaz de receber dados de múltiplos sensores e de múltiplos utilizadores em simultâneo.
-        \item Definir um protocolo de ingestão agnóstico baseado num contrato mínimo (\ac{UUID}, \textit{timestamp}, nome do sensor e valores) que permita a adição de novos tipos de sensores sem alterar o servidor.
-        \item Desenvolver uma aplicação de \textit{desktop} baseada num sistema de \textit{plugins} que facilite a integração de novos sensores.
-        \item Desenvolver umna aplicação para WearOS que permita a recolha de \ac{BPM} de um \textit{smartwatch}.
-        \item Validar o sistema através de um fluxo \textit{end-to-end} com dados reais e de uma análise analítica de escalabilidade.
-        \item Validar o sistema através de um fluxo \textit{end-to-end} com dados reais, de uma análise analítica de escalabilidade e de um \textit{dashboard} Grafana para monitorização
+        \item Desenvolver um servidor de ingestão de dados baseado em \textit{streaming}, capaz de receber dados de múltiplos sensores e de múltiplos utilizadores em simultâneo.
+        \item Definir um protocolo de ingestão agnóstico baseado num contrato mínimo que permita a adição de novos tipos de sensores sem alterar o servidor.
+        \item Desenvolver uma aplicação de \textit{desktop} para demonstração das capacidades do sistema. Esta aplicação deverá ter uma estrutura modular que facilite a integração de novos sensores.
+        \item Integrar um sensor externo \textit{off-the-shelf} através de um dispositivo \textit{wearable}.
+        \item Validar o sistema através de um fluxo \textit{end-to-end} com dados reais e realizar uma análise analítica de escalabilidade.
     \end{itemize}
-
     
     \section{Metodologia}
 
-    O desenvolvimento da arquitetura seguiu uma abordagem incremental por componente, na qual cada elemento da arquitetura foi desenvolvido e validado de forma independente antes de ser integrado, sendo depois novamente testado para garantir a sua correta integração no sistema.
-
-    De modo a guiar o desenvolvimento, foi também estabelecida a seguinte ordem de implementação:
+    De modo a guiar a concretização dos objetivos acima descritos, decidi adotar uma abordagem estruturada baseada nas seguintes fases:
     \begin{enumerate}
-        \item servidor (excluindo API REST)
-        \item estrutura central da app \textit{desktop} (\textit{broker} local e sistema de \textit{plugins})
-        \item \textit{plugins} de câmara e teclado
-        \item app para WearOS (e \textit{plugin} de \ac{BPM})
-        \item API REST
-        \item Finalização da app \textit{desktop} (paineis de controlo e de visualização)
-        \item \textit{Dashboard} Grafana
+        \item Análise do estado da arte para identificar sensores relevantes para identificação de lacunas e alternativas existentes, bem como sensores relevantes para a validação do sistema.
+        \item Criação de uma arquitetura conceptual baseada em componentes lógicos.
+        \item Identificação de limitações técnicas na comunicação entre componentes.
+        \item Seleção das tecnologias mais apropriadas para a implementação de cada componente lógico.
+        \item Implementação e validação incremental de cada componente lógico.
+        \item Validação do fluxo \textit{end-to-end} utilizando dados reais.
+        \item Análise analítica da escalabilidade do sistema.
     \end{enumerate}
 
-    Finalmente, foi realizada uma validação em tempo real utilizando o \textit{dashboard} de Grafana de modo a garantir o correto funcionamento do sistema, bem como uma validação analítica do tamanho e frequência das mensagens, de modo a garantir que o sistema é capaz de escalar de forma eficiente.
     
     \section{Estrutura do Documento}
     Este documento está organizado em cinco capítulos. O Capítulo~\ref{chap:introduction} apresenta uma introdução, contextualizando a sua motivação, descrevendo os objetivos pretendidos e a metodologia adotada para os atingir.
