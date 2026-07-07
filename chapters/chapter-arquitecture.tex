@@ -5,7 +5,7 @@
 Este capítulo detalha de que forma os objetivos influenciaram a arquitetura, apresenta a arquitetura conceptual e descreve as tecnologias escolhidas para a concretizar.
 \end{introduction}
 
-\section{Impacto dos objetivos na arquitetura}
+\section{Impacto dos Objetivos na Arquitetura}
 
 Os objetivos definidos na secção~\ref{sec:objectives} estabelecem um conjunto de requisitos sobre a arquitetura do sistema:
 \begin{itemize}
@@ -14,7 +14,25 @@ Os objetivos definidos na secção~\ref{sec:objectives} estabelecem um conjunto 
     \item O incentivo a facilitar a modificação do cliente para adicionar mais sensores favorece a adoção de uma estrutura modular com baixo acoplamento com os sensores (como um sistema de \textit{plugins}).
 \end{itemize}
 
-O sistema presente na Figura~\ref{fig:sys_arq} possui uma arquitetura descentralizada à base de eventos, que pode ser divido em 2 secções: \textbf{componentes locais} (que são executados no computador ou wearable do próprio utilizador) e \textbf{componentes externos} que serão executados de forma remota num servidor ou na cloud.
+\section{Arquitetura Conceptual}
+
+O diagrama de componentes presente na Figura~\ref{fig:sys_arq_concept} apresenta a estrutura a alto nível do sistema, podendo ser dividido em dois subsistemas:
+\begin{itemize}
+    \item \textbf{Subsistema Local (Cliente):} Este subsistema é executado no computador do utilizador e tem como objetivo recolher e agregar dados de sensores. Para além dos sensores (que podem ser parte do próprio computador ou serem externos a este), este subsistema é composto por uma \textbf{Aplicação} responsável pelo controlo dos sensores e por um \textbf{\textit{Broker} Local}, que serve como intermediário para a comunicação com sensores externos e como \textit{buffer} no envio de dados para o servidor.
+    \item \textbf{Subsistema Remoto (Servidor):} Este subsistema é executado num servidor remoto e tem como objetivo a recolha, armazenamento e disponibilização dos dados de forma contínua. Este subsistema é composto por uma \textbf{\textit{Pipeline} para recolha de dados} capaz de os processar em \textit{streaming} contínuo, uma \textbf{Base de dados} para os armazenar e finalmente uma \textbf{API} para gerir a consulta de dados.
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figs/conceptual_arquitecture.png}
+    \caption{Diagrama de componentes do sistema}
+    \label{fig:sys_arq_concept}
+\end{figure}
+
+%TODO: explicar a concretização da tecnologia
+%TODO: mover isto para o outro capítulo
+
+O sistema presente na Figura~\ref{fig:sys_arq_deployment} possui uma arquitetura descentralizada à base de eventos, que pode ser divido em 2 secções: \textbf{componentes locais} (que são executados no computador ou wearable do próprio utilizador) e \textbf{componentes externos} que serão executados de forma remota num servidor ou na cloud.
 
 \begin{itemize}
     \item \textbf{Componentes locais:}
@@ -36,10 +54,12 @@ O sistema presente na Figura~\ref{fig:sys_arq} possui uma arquitetura descentral
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{figs/dissertation_deployment_arquitecture.png}
+    \includegraphics[width=\linewidth]{figs/deployment_arquitecture.png}
     \caption{Diagrama de \textit{deployment} do sistema}
-    \label{fig:sys_arq}
+    \label{fig:sys_arq_deployment}
 \end{figure}
+
+%TODO: mudar introdução disto
 
 \section{Fluxo de Dados}
 
@@ -60,12 +80,14 @@ De modo a ilustrar como estes componentes comunicam entre si, a Figura~\ref{fig:
     \label{fig:end2end}
 \end{figure}
 
+%TODO: mover isto para o outro capítulo
+
 \section{Especificação do Protocolo de Ingestão}
 
 O ponte de entrada principal para a ingestão de mensagens é o \textit{broker} \ac{MQTT} remoto (ou o local no caso da app para \textit{Desktop}). De modo a permitir que a mensagem seja corretamente ingerida, a mensagem deverá ser publicada para um tópico com o prefixo \texttt{/sensors/} (por exemplo, \texttt{/sensors/face}), e o corpo da mensagem deverá utilizar o formato /ac{JSON} e seguir a seguinte estrutura:
 \begin{itemize}
     \item \textbf{\ac{UUID}:} cada mensagem tem de conter o \ac{UUID} correspondente ao utilizador ao qual os dados correspondem.
-    \item \textbf{\textit{timestamp}:} este campo corresponde ao tempo (em milisegundos) em que o valor foi registado. 
+    \item \textbf{\textit{timestamp}:} este campo corresponde ao tempo (em milissegundos) em que o valor foi registado. 
     \item \textbf{\textit{sensor}:} o nome do sensor que gerou os dados
     \item \textbf{\textit{message\_id}:} campo opcional que permite fazer o \textit{tracing} de uma mensagem
     \item \textbf{valores:} todos os campos com exceção aos de cima são considerados como valores. Estes valores não poderão ser coleções e o tipo de dados de cada campo deve ser consistente dentro do mesmo tipo de sensor.,
@@ -93,7 +115,7 @@ A Listagem~\ref{code:example_message} apresenta um exemplo de uma mensagem receb
 O acesso da base de dados por parte dos clientes é gerido por uma API REST simples (escrita em FastAPI). O endpoint principal desta API é \texttt{/data/{sensor}}, que constroi uma \textit{query} para um sensor específico a partir dos seguintes parâmetros:
 \begin{itemize}
     \item \textbf{start e end}: janela temporal, em ms, para a qual queremos obter os dados.
-    \item \textbf{uuid}: o \ac{UUID} do utilizador a que pertecem os dados.
+    \item \textbf{uuid}: o \ac{UUID} do utilizador a que pertencem os dados.
     \item \textbf{agg}: o tipo de agregação (opcional) (MEAN, COUNT, SUM, MIN, MAX). Por defeito (ou se utilizar NONE), os valores não são agregados.
     \item \textbf{field}: o campo (ou campos, separados por vírgula) a retornar. O valor por defeito é \texttt{value}.
     \item \textbf{interval}: o intervalo de tempo (opcional) para agregação (deverá incluir o valor e a unidade de tempo, por exemplo \texttt{1s}). Se omitido os valores não são agregados por tempo.
