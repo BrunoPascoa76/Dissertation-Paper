@@ -17,7 +17,7 @@
     Os objetivos concretos do trabalho são:
     \begin{itemize}
         \item Desenvolver um servidor de ingestão de dados baseado em \textit{streaming}, capaz de receber dados de múltiplos sensores e de múltiplos utilizadores em simultâneo.
-        \item Definir um protocolo de ingestão agnóstico baseado num contrato mínimo que permita a adição de novos tipos de sensores sem alterar o servidor.
+        \item Suportar a adição de novos tipos de sensores com um esforço de integração reduzido e localizado, minimizando os componentes que precisam de ser adaptados.
         \item Desenvolver uma aplicação de \textit{desktop} para demonstração das capacidades do sistema. Esta aplicação deverá ter uma estrutura modular que facilite a integração de novos sensores.
         \item Integrar um sensor externo \textit{off-the-shelf} através de um dispositivo \textit{wearable}.
         \item Validar o sistema através de um fluxo \textit{end-to-end} com dados reais e realizar uma análise analítica de escalabilidade.
@@ -40,7 +40,7 @@
     \section{Estrutura do Documento}
     Este documento está organizado em cinco capítulos. O Capítulo~\ref{chap:introduction} apresenta uma introdução, contextualizando a sua motivação, descrevendo os objetivos pretendidos e a metodologia adotada para os atingir.
     O Capítulo~\ref{chap:estadodaarte} apresenta o estado da arte atual, bem como trabalhos relacionados a esta dissertação.
-    O Capítulo~\ref{chap:objetivos_arquitetura} descreve os objetivos estabelecidos, bem como a arquitetura criada com base nesses requisitos.
+    O Capítulo~\ref{chap:arquitetura} descreve os objetivos estabelecidos, bem como a arquitetura criada com base nesses requisitos.
     O Capítulo~\ref{chap:resultados} descreve os resultados obtidos, bem como o processo de validação da solução final e ilustra um fluxo \textit{end-to-end}.
     Finalmente, o Capítulo~\ref{chap:conclusions} sumariza as contribuições e sugere direções para trabalhos futuros.
 
