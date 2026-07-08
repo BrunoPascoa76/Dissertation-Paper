@@ -29,8 +29,26 @@ O diagrama de componentes presente na Figura~\ref{fig:sys_arq_concept} apresenta
     \label{fig:sys_arq_concept}
 \end{figure}
 
-%TODO: explicar a concretização da tecnologia
-%TODO: mover isto para o outro capítulo
+\section{Tecnologias Escolhidas}
+
+Após o estabelecimento dos blocos lógicos e da escolha dos sensores a utilizar para demonstrar as capacidades do sistema (câmara, teclado e \ac{BPM} via \textit{smartwatch WearOS}), prossegui à escolha das ferramentas e tecnologias para implementar cada um dos blocos lógicos.
+
+Para a aplicação, decidi fazer uma interface gráfica em \textbf{Python}, utilizando uma estrutura baseada num registo de \textit{plugins}, não só pela versatilidade da linguagem, mas também por considerar ser uma das linguagens de programação mais fáceis de aprender, diminuindo assim a barreira de acesso para investigadores com pouco conhecimento em programação.
+
+Para o \textit{broker} local, decidi utilizar o \textbf{Mosquitto}, que desempenha duas funções: atua como \textit{buffer} local em caso de falha de rede e serve como intermediário para comunicar com o \textit{smartwatch}, pois apesar de ter sido preferível o uso do protocolo \ac{BLE}, alguns dispositivos (como o Xiaomi Watch 2 que utilizei neste trabalho), optam por utilizar uma interface proprietária~\cite{blexiaomi}, dificultando assim a comunicação direta entre aplicações.
+
+Para a \textit{pipeline} de ingestão de dados, decidi utilizar as três seguintes tecnologias:
+\begin{itemize}
+    \item \textbf{Kafka:} escolhi o Kafka como base da \textit{pipeline} por oferecer um modelo de \textit{streaming} robusto e com melhor resiliência a falhas do que o \ac{MQTT}.
+    \item \textbf{Kafka Connect:} para a ingestão dos dados no Kafka e a sua inserção na base de dados, decidi utilizar o Kafka Connect em vez de uma implementação própria, por já possuir mecanismos para lidar com falhas transitórias e por possuir uma grande variedade de conectores prontos a utilizar (reduzindo assim o esforço para troca de componentes ou integração com bases de dados pré-existentes).
+    \item \textbf{Mosquitto:} finalmente, como o estabelecimento de um conector para cada cliente apresenta problemas de escalabilidade e possivelmente de segurança (visto que algumas \textit{firewalls} bloqueiam conexões \textit{inbound}), decidi também utilizar um segundo \textit{broker \ac{MQTT}} como ponto principal de acesso para ingestão (sendo que a movimentação de dados entre o \textit{broker} local e o \textit{broker} remoto é realizado de forma automática pelo próprio Mosquitto).
+\end{itemize}
+
+Para a base de dados, visto que os dados a armazenar são medições de sensores (que são dados naturalmente indexados por tempo), optei por uma base de dados \textit{Time Series}. Em particular, escolhi o InfluxDB pela sua popularidade e boa documentação (características particularmente úteis para um projeto individual com prazo limitado).
+
+Finalmente, por questões de segurança, decidi utilizar uma API \ac{REST} escrita em Python (por permitir criar um servidor simples com um mínimo de código \textit{boilerplate}) para servir como intermediário no acesso aos dados por parte do cliente, reduzindo assim o risco de injeção de \textit{queries}.
+
+
 
 O sistema presente na Figura~\ref{fig:sys_arq_deployment} possui uma arquitetura descentralizada à base de eventos, que pode ser divido em 2 secções: \textbf{componentes locais} (que são executados no computador ou wearable do próprio utilizador) e \textbf{componentes externos} que serão executados de forma remota num servidor ou na cloud.
 
