@@ -32,6 +32,46 @@ O sistema presente na Figura~\ref{fig:sys_arq_deployment} possui uma arquitetura
     \label{fig:sys_arq_deployment}
 \end{figure}
 
+\section{Especificação do Protocolo de Ingestão}
+
+O ponte de entrada principal para a ingestão de mensagens é o \textit{broker} \ac{MQTT} remoto (ou o local no caso da app para \textit{Desktop}). De modo a permitir que a mensagem seja corretamente ingerida, a mensagem deverá ser publicada para um tópico com o prefixo \texttt{/sensors/} (por exemplo, \texttt{/sensors/face}), e o corpo da mensagem deverá utilizar o formato /ac{JSON} e seguir a seguinte estrutura:
+\begin{itemize}
+    \item \textbf{\ac{UUID}:} cada mensagem tem de conter o \ac{UUID} correspondente ao utilizador ao qual os dados correspondem.
+    \item \textbf{\textit{timestamp}:} este campo corresponde ao tempo (em milissegundos) em que o valor foi registado. 
+    \item \textbf{\textit{sensor}:} o nome do sensor que gerou os dados
+    \item \textbf{\textit{message\_id}:} campo opcional que permite fazer o \textit{tracing} de uma mensagem
+    \item \textbf{valores:} todos os campos com exceção aos de cima são considerados como valores. Estes valores não poderão ser coleções e o tipo de dados de cada campo deve ser consistente dentro do mesmo tipo de sensor.,
+\end{itemize}
+
+A Listagem~\ref{code:example_message} apresenta um exemplo de uma mensagem recebida pelo \textit{broker}
+\begin{figure}[h!]
+\centering
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[language=json, caption={Exemplo da estrutura de uma mensagem ingerida}, label={code:example_message}]
+{
+  "uuid": "550e8400-e29b-41d4-a716-446655440000",
+  "message_id": 12345,
+  "sensor": "heart_rate_sensor",
+  "timestamp": 1747926855.123,
+  "value": 72.5
+}
+\end{lstlisting}
+\end{minipage}
+\end{figure}
+
+\section{Acesso aos Dados}
+\label{sec:rest_definition}
+
+O acesso da base de dados por parte dos clientes é gerido por uma API REST simples (escrita em FastAPI). O endpoint principal desta API é \texttt{/data/{sensor}}, que constroi uma \textit{query} para um sensor específico a partir dos seguintes parâmetros:
+\begin{itemize}
+    \item \textbf{start e end}: janela temporal, em ms, para a qual queremos obter os dados.
+    \item \textbf{uuid}: o \ac{UUID} do utilizador a que pertencem os dados.
+    \item \textbf{agg}: o tipo de agregação (opcional) (MEAN, COUNT, SUM, MIN, MAX). Por defeito (ou se utilizar NONE), os valores não são agregados.
+    \item \textbf{field}: o campo (ou campos, separados por vírgula) a retornar. O valor por defeito é \texttt{value}.
+    \item \textbf{interval}: o intervalo de tempo (opcional) para agregação (deverá incluir o valor e a unidade de tempo, por exemplo \texttt{1s}). Se omitido os valores não são agregados por tempo.
+\end{itemize}
+O uso desta API e de parâmetros evita que agentes externos tenham acesso à base de dados, reduzindo por isso o risco de vulnerabilidades.
+
 \section{Estado Final da Solução}
 
 Após um período de desenvolvimento de vários meses, considero ter desenvolvido uma solução que cumpre com todos os objetivos e requisitos que defini no início deste projeto.
