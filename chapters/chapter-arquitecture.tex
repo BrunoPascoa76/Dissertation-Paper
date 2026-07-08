@@ -48,37 +48,6 @@ Para a base de dados, visto que os dados a armazenar são medições de sensores
 
 Finalmente, por questões de segurança, decidi utilizar uma API \ac{REST} escrita em Python (por permitir criar um servidor simples com um mínimo de código \textit{boilerplate}) para servir como intermediário no acesso aos dados por parte do cliente, reduzindo assim o risco de injeção de \textit{queries}.
 
-
-
-O sistema presente na Figura~\ref{fig:sys_arq_deployment} possui uma arquitetura descentralizada à base de eventos, que pode ser divido em 2 secções: \textbf{componentes locais} (que são executados no computador ou wearable do próprio utilizador) e \textbf{componentes externos} que serão executados de forma remota num servidor ou na cloud.
-
-\begin{itemize}
-    \item \textbf{Componentes locais:}
-    \begin{itemize}
-        \item \textbf{App para \textit{Desktop}:} Esta app feita em Python será o principal ponto de acesso por parte do utilizador e permitirá ao utilizador não só controlar todos os sensores de forma centralizada (iniciar ou parar uma sessão e definir que sensores serão utilizados em cada sessão), mas também ver os valores medidos pelos sensores e a evolução do seu nível de atenção ao longo de cada sessão.
-        \item \textbf{\textit{Plugins} para sensores locais:} Cada sensor presente no computador do utilizador (teclado e câmara) terá o seu próprio \textit{plugin} responsável por recolher os dados do respetivo sensor, remover informação irrelevante e enviar as medições para o Kafka. Estes \textit{plugins} serão controlados diretamente pelo utilizador através da app.
-        \item \textbf{\textit{Broker} MQTT local:} Este broker irá correr localmente no computador do próprio utilizador e servirá não só como meio de comunicação entre os sensores e o programa principal, mas também servirá como \textit{buffer} dos dados, permitindo o envio eventual dos dados, mesmo que o \ac{MQTT} remoto esteja em baixo.
-        \item \textbf{App para \textit{WearOS}:} Esta app em Kotlin permitirá a medição de \ac{BPM} e o envio destes para o \textit{broker} \ac{MQTT} local.
-    \end{itemize}
-    \item \textbf{Componentes externos:}
-    \begin{itemize}
-        \item \textbf{\textit{Broker} MQTT remoto:} Serve como intermediário entre o cliente e o Kafka. A adição deste componente melhora a escalabilidade e a segurança do sistema ao evitar que cada cliente necessite de estabelecer conectores entre o broker local e o Kafka.
-        \item \textbf{Kafka Connect:} O Kafka Connect estabelece conectores entre o broker \ac{MQTT} remoto e o Kafka, bem como a exportação destes dados para  a base de dados, permitindo uma ingestão automática e agnóstica ao tipo de sensor.
-        \item \textbf{Kafka:} O Kafka permite gerir o fluxo de dados entre os plugins e os respetivos consumidores, garantindo a entrega de mensagens de forma escalável e com uma persistência de dados melhor que o padrão \ac{MQTT}, levando a uma melhor tolerância a falhas ou atrasos.
-        \item \textbf{InfluxDB:} Base de dados \textit{Time Series} onde os dados são armazenados após serem processados e alimenta a app para \textit{desktop}. InfluxDB em particular foi escolhido visto ser a base de dados Time Series com a melhor documentação e suporte que encontrei até agora.
-        \item \textbf{API REST:} API FastAPI que regula o acesso à base de dados e evita injeção de \textit{queries}. Utiliza parâmetros para a construção da \textit{query}, permitindo versatilidade sem por em risco a segurança do sistema.
-    \end{itemize}
-\end{itemize}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{figs/deployment_arquitecture.png}
-    \caption{Diagrama de \textit{deployment} do sistema}
-    \label{fig:sys_arq_deployment}
-\end{figure}
-
-%TODO: mudar introdução disto
-
 \section{Fluxo de Dados}
 
 De modo a ilustrar como estes componentes comunicam entre si, a Figura~\ref{fig:end2end} mapeia o fluxo de dados \textit{end-to-end}, utilizando como exemplo os dados faciais obtidos via \textit{webcam}:
