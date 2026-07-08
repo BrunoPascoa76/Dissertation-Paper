@@ -37,6 +37,8 @@ Para a aplicação, decidi fazer uma interface gráfica em \textbf{Python}, util
 
 Para o \textit{broker} local, decidi utilizar o \textbf{Mosquitto}, que desempenha duas funções: atua como \textit{buffer} local em caso de falha de rede e serve como intermediário para comunicar com o \textit{smartwatch}, pois apesar de ter sido preferível o uso do protocolo \ac{BLE}, alguns dispositivos (como o Xiaomi Watch 2 que utilizei neste trabalho), optam por utilizar uma interface proprietária~\cite{blexiaomi}, dificultando assim a comunicação direta entre aplicações.
 
+Para o \textit{smartwatch}, optei por desenvolver uma aplicação em Kotlin para \textit{WearOS} para facilitar a comunicação com o computador (sendo que escolhi Kotlin em particular por ser a linguagem oficial para desenvolvimento em \textit{WearOS}).
+
 Para a \textit{pipeline} de ingestão de dados, decidi utilizar as três seguintes tecnologias:
 \begin{itemize}
     \item \textbf{Kafka:} escolhi o Kafka como base da \textit{pipeline} por oferecer um modelo de \textit{streaming} robusto e com melhor resiliência a falhas do que o \ac{MQTT}.
@@ -47,6 +49,15 @@ Para a \textit{pipeline} de ingestão de dados, decidi utilizar as três seguint
 Para a base de dados, visto que os dados a armazenar são medições de sensores (que são dados naturalmente indexados por tempo), optei por uma base de dados \textit{Time Series}. Em particular, escolhi o InfluxDB pela sua popularidade e boa documentação (características particularmente úteis para um projeto individual com prazo limitado).
 
 Finalmente, por questões de segurança, decidi utilizar uma API \ac{REST} escrita em Python (por permitir criar um servidor simples com um mínimo de código \textit{boilerplate}) para servir como intermediário no acesso aos dados por parte do cliente, reduzindo assim o risco de injeção de \textit{queries}.
+
+De modo a ilustrar melhor a estrutura do sistema após a escolha das tecnologias, eu desenhei o diagrama de \textit{deployment} presente na Figura~\ref{fig:sys_arq_deployment}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figs/deployment_arquitecture.png}
+    \caption{Diagrama de \textit{deployment} do sistema}
+    \label{fig:sys_arq_deployment}
+\end{figure}
 
 \section{Fluxo de Dados}
 

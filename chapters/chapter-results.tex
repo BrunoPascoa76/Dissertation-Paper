@@ -5,45 +5,18 @@
 Este capítulo apresenta os resultados obtidos, bem como a validação do sistema final de modo a garantir que cumpre com os requisitos pré-estabelecidos.
 \end{introduction}
 
-O sistema presente na Figura~\ref{fig:sys_arq_deployment} possui uma arquitetura descentralizada à base de eventos, que pode ser divido em 2 secções: \textbf{componentes locais} (que são executados no computador ou wearable do próprio utilizador) e \textbf{componentes externos} que serão executados de forma remota num servidor ou na cloud.
+\section{Estado Final da Solução}
 
-\begin{itemize}
-    \item \textbf{Componentes locais:}
-    \begin{itemize}
-        \item \textbf{App para \textit{Desktop}:} Esta app feita em Python será o principal ponto de acesso por parte do utilizador e permitirá ao utilizador não só controlar todos os sensores de forma centralizada (iniciar ou parar uma sessão e definir que sensores serão utilizados em cada sessão), mas também ver os valores medidos pelos sensores e a evolução do seu nível de atenção ao longo de cada sessão.
-        \item \textbf{\textit{Plugins} para sensores locais:} Cada sensor presente no computador do utilizador (teclado e câmara) terá o seu próprio \textit{plugin} responsável por recolher os dados do respetivo sensor, remover informação irrelevante e enviar as medições para o Kafka. Estes \textit{plugins} serão controlados diretamente pelo utilizador através da app.
-        \item \textbf{\textit{Broker} MQTT local:} Este broker irá correr localmente no computador do próprio utilizador e servirá não só como meio de comunicação entre os sensores e o programa principal, mas também servirá como \textit{buffer} dos dados, permitindo o envio eventual dos dados, mesmo que o \ac{MQTT} remoto esteja em baixo.
-        \item \textbf{App para \textit{WearOS}:} Esta app em Kotlin permitirá a medição de \ac{BPM} e o envio destes para o \textit{broker} \ac{MQTT} local.
-    \end{itemize}
-    \item \textbf{Componentes externos:}
-    \begin{itemize}
-        \item \textbf{\textit{Broker} MQTT remoto:} Serve como intermediário entre o cliente e o Kafka. A adição deste componente melhora a escalabilidade e a segurança do sistema ao evitar que cada cliente necessite de estabelecer conectores entre o broker local e o Kafka.
-        \item \textbf{Kafka Connect:} O Kafka Connect estabelece conectores entre o broker \ac{MQTT} remoto e o Kafka, bem como a exportação destes dados para  a base de dados, permitindo uma ingestão automática e agnóstica ao tipo de sensor.
-        \item \textbf{Kafka:} O Kafka permite gerir o fluxo de dados entre os plugins e os respetivos consumidores, garantindo a entrega de mensagens de forma escalável e com uma persistência de dados melhor que o padrão \ac{MQTT}, levando a uma melhor tolerância a falhas ou atrasos.
-        \item \textbf{InfluxDB:} Base de dados \textit{Time Series} onde os dados são armazenados após serem processados e alimenta a app para \textit{desktop}. InfluxDB em particular foi escolhido visto ser a base de dados Time Series com a melhor documentação e suporte que encontrei até agora.
-        \item \textbf{API REST:} API FastAPI que regula o acesso à base de dados e evita injeção de \textit{queries}. Utiliza parâmetros para a construção da \textit{query}, permitindo versatilidade sem por em risco a segurança do sistema.
-    \end{itemize}
-\end{itemize}
+Após um período de desenvolvimento de vários meses, considero ter desenvolvido uma solução que cumpre com todos os objetivos e requisitos que defini no início deste projeto.
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{figs/deployment_arquitecture.png}
-    \caption{Diagrama de \textit{deployment} do sistema}
-    \label{fig:sys_arq_deployment}
-\end{figure}
+\subsection{Servidor}
 
-\section{Especificação do Protocolo de Ingestão}
+O servidor consiste num ambiente de contentores (Docker Compose) que comunicam entre si, mantendo o isolamento necessário para que este sistema possa ser executado em cloud (caso desejado), ao mesmo tempo que permite a execução mais unificada do servidor em ambientes mais locais.
 
-O ponte de entrada principal para a ingestão de mensagens é o \textit{broker} \ac{MQTT} remoto (ou o local no caso da app para \textit{Desktop}). De modo a permitir que a mensagem seja corretamente ingerida, a mensagem deverá ser publicada para um tópico com o prefixo \texttt{/sensors/} (por exemplo, \texttt{/sensors/face}), e o corpo da mensagem deverá utilizar o formato /ac{JSON} e seguir a seguinte estrutura:
-\begin{itemize}
-    \item \textbf{\ac{UUID}:} cada mensagem tem de conter o \ac{UUID} correspondente ao utilizador ao qual os dados correspondem.
-    \item \textbf{\textit{timestamp}:} este campo corresponde ao tempo (em milissegundos) em que o valor foi registado. 
-    \item \textbf{\textit{sensor}:} o nome do sensor que gerou os dados
-    \item \textbf{\textit{message\_id}:} campo opcional que permite fazer o \textit{tracing} de uma mensagem
-    \item \textbf{valores:} todos os campos com exceção aos de cima são considerados como valores. Estes valores não poderão ser coleções e o tipo de dados de cada campo deve ser consistente dentro do mesmo tipo de sensor.,
-\end{itemize}
+O principal ponto de acesso para ingestão de dados é um \textit{broker} Mosquitto (sendo que cada tópico com o prefixo \texttt{sensors/} é considerado um tipo de sensor diferente) que permite a ingestão unificada de dados de vários utilizadores. Estes registos são depois transferidos para o Kafka (que possui melhor resiliência de dados) de forma automática e agnóstica via Kafka Connect antes de serem inseridos de forma assíncrona na base de dados (novamente usando Kafka Connect), onde cada tópico \ac{MQTT} é inserido numa tabela (\textit{measurement}) distinta no InfluxDB. Esta abordagem agnóstica e aberta permite não só acrescentar sensores sem ter de modificar o servidor, mas também a possibilidade de integrar com sistemas pré-existentes (necessitando apenas de usar o prefixo "sensors/" no tópico e incluir \texttt{uuid}, \texttt{timestamp} e o nome do sensor na mensagem).
 
-A Listagem~\ref{code:example_message} apresenta um exemplo de uma mensagem recebida pelo \textit{broker}
+Finalmente, ao contrário da ingestão, o acesso aos dados ingeridos é feito via uma API REST utilizando o \textit{endpoint} \texttt{/data/{sensor}}, que permite a construção de \textit{queries} diferentes conforme o tipo de visualização necessária (estando limitado, contudo, a parâmetros pré-estabelecidos e sanitizados de modo a prevenir injeção de \textit{queries}).
+
 \begin{figure}[h!]
 \centering
 \begin{minipage}{\textwidth}
@@ -59,38 +32,13 @@ A Listagem~\ref{code:example_message} apresenta um exemplo de uma mensagem receb
 \end{minipage}
 \end{figure}
 
-\section{Acesso aos Dados}
-\label{sec:rest_definition}
-
-O acesso da base de dados por parte dos clientes é gerido por uma API REST simples (escrita em FastAPI). O endpoint principal desta API é \texttt{/data/{sensor}}, que constroi uma \textit{query} para um sensor específico a partir dos seguintes parâmetros:
-\begin{itemize}
-    \item \textbf{start e end}: janela temporal, em ms, para a qual queremos obter os dados.
-    \item \textbf{uuid}: o \ac{UUID} do utilizador a que pertencem os dados.
-    \item \textbf{agg}: o tipo de agregação (opcional) (MEAN, COUNT, SUM, MIN, MAX). Por defeito (ou se utilizar NONE), os valores não são agregados.
-    \item \textbf{field}: o campo (ou campos, separados por vírgula) a retornar. O valor por defeito é \texttt{value}.
-    \item \textbf{interval}: o intervalo de tempo (opcional) para agregação (deverá incluir o valor e a unidade de tempo, por exemplo \texttt{1s}). Se omitido os valores não são agregados por tempo.
-\end{itemize}
-O uso desta API e de parâmetros evita que agentes externos tenham acesso à base de dados, reduzindo por isso o risco de vulnerabilidades.
-
-\section{Estado Final da Solução}
-
-Após um período de desenvolvimento de vários meses, considero ter desenvolvido uma solução que cumpre com todos os objetivos e requisitos que defini no início deste projeto.
-
-\subsection{Servidor}
-
-O servidor consiste num ambiente de contentores (Docker Compose) que comunicam entre si, mantendo o isolamento necessário para que este sistema possa ser executado em cloud (caso desejado), ao mesmo tempo que permite a execução mais unificada do servidor em ambientes mais locais.
-
-O principal ponto de acesso para ingestão de dados é um \textit{broker} Mosquitto (sendo que cada tópico com o prefixo \texttt{sensors/} é considerado um tipo de sensor diferente) que permite a ingestão unificada de dados de vários utilizadores. Estes registos são depois transferidos para o Kafka (que possui melhor resiliência de dados) de forma automática e agnóstica via Kafka Connect antes de serem inseridos de forma assíncrona na base de dados (novamente usando Kafka Connect), onde cada tópico \ac{MQTT} é inserido numa tabela (\textit{measurement}) distinta no InfluxDB. Esta abordagem agnóstica e aberta permite não só acrescentar sensores sem ter de modificar o servidor, mas também a possibilidade de integrar com sistemas pré-existentes (necessitando apenas de usar o prefixo "sensors/" no tópico e incluir \texttt{uuid} e \texttt{timestamp} na mensagem).
-
-Finalmente, ao contrário da ingestão, o acesso aos dados ingeridos é feito via uma API REST utilizando o endpoint \texttt{/data/{sensor}} (a definição da API pode ser encontrada na Subsecção~\ref{sec:rest_definition})
-
 \subsection{Cliente}
 
 A aplicação para \textit{desktop} foi criada para ser simultaneamente uma demonstração das capacidades do sistema e de como interagir com este para quem deseje criar o seu próprio \textit{frontend}, mas também uma base funcional que permite integrar de forma célere novos tipos de sensores, conforme as necessidades de cada investigação.
 
-De modo a facilitar a extensão, a app utiliza um sistema de \textit{plugins} com uma interface pré-estabelicida, divididos em dois tipos principais: \textit{plugins} de sensores e \textit{plugins} de visualização.
+De modo a facilitar a extensão, a app utiliza um sistema de \textit{plugins} (utilizando um sistema de \textit{entry points} gerido pela biblioteca \textit{pluggy}) com uma interface pré-estabelicida, divididos em dois tipos principais: \textit{plugins} de sensores e \textit{plugins} de visualização.
 \begin{itemize}
-    \item \textbf{\textit{Plugins} de sensores:} são responsáveis pela interação direta (ou indireta no caso de sensores externos) com os sensores, recolhendo informações. Os sensores podem ser controlados de forma unificada (selecionar os sensores pretendidos e começar/parar a recolha de dados) a partir de um painel de controlo (ver Figura~\ref{fig:painel_controlo}). Para demonstrar a recolha de dados, foram criados 3 \textit{plugins} para sensores distintos (2 internos e 1 externo): um para controlo da app para WearOS, um para obter direção do olhar e grau de abertura dos olhos via \textit{webcam} e outro para registar a cadência e o tipo de teclas premidas num teclado.
+    \item \textbf{\textit{Plugins} de sensores:} são responsáveis pela interação direta (ou indireta no caso de sensores externos) com os sensores, recolhendo informações. Os sensores podem ser controlados de forma unificada (selecionar os sensores pretendidos e começar/parar a recolha de dados) a partir de um painel de controlo (ver Figura~\ref{fig:painel_controlo}). Para demonstrar a recolha de dados, foram criados 3 \textit{plugins} para sensores distintos (2 internos e 1 externo): um para controlo da app para \textit{WearOS}, um para obter direção do olhar e grau de abertura dos olhos via \textit{webcam} e outro para registar a cadência e o tipo de teclas premidas num teclado.
     \item \textbf{\textit{Plugins} de visualização:} atuam na camada da interface, sendo responsáveis por consumir os dados obtidos via API REST de um ou mais sensores e transformá-los em representações gráficas (ver Figura~\ref{fig:hrv}). No caso de gráficos de linha, será necessário apenas implementar métodos para a recolha e tratamento dos dados, sendo que a visualização destes já está estabelecida na classe que herdam. Foram criados 3 \textit{plugins} de visualização: dois focados na visualização direta de dados de um sensor (\ac{BPM} e caracteres por minuto) e outro que utiliza os dados dos 3 sensores para estimar o nível de atenção.
 \end{itemize}
 
@@ -181,7 +129,6 @@ De forma a permitir a monitorização dos dados do lado do servidor, foi também
     \caption{\textit{Dashboard} do Grafana}
     \label{fig:grafana}
 \end{figure}
-
 
 \section{Fluxo \textit{end-to-end}}
 
