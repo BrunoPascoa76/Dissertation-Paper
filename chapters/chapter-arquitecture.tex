@@ -2,7 +2,7 @@
 \label{chap:arquitetura}
 
 \begin{introduction}
-Este capítulo detalha de que forma os objetivos influenciaram a arquitetura, apresenta a arquitetura conceptual e descreve as tecnologias escolhidas para a concretizar.
+Este capítulo detalha de que forma os objetivos influenciaram a arquitetura, apresenta a arquitetura lógica e descreve as tecnologias escolhidas para a concretizar.
 \end{introduction}
 
 \section{Impacto dos Objetivos na Arquitetura}
@@ -14,9 +14,9 @@ Os objetivos definidos na secção~\ref{sec:objectives} estabelecem um conjunto 
     \item O incentivo a facilitar a modificação do cliente para adicionar mais sensores favorece a adoção de uma estrutura modular com baixo acoplamento com os sensores (como um sistema de \textit{plugins}).
 \end{itemize}
 
-\section{Arquitetura Conceptual}
+\section{Arquitetura Logical}
 
-O diagrama de componentes presente na Figura~\ref{fig:sys_arq_concept} apresenta a estrutura a alto nível do sistema, podendo ser dividido em dois subsistemas:
+O diagrama de componentes presente na Figura~\ref{fig:sys_arq_logic} apresenta a estrutura a alto nível do sistema, podendo ser dividido em dois subsistemas:
 \begin{itemize}
     \item \textbf{Subsistema Local (Cliente):} Este subsistema é executado no computador do utilizador e tem como objetivo recolher e agregar dados de sensores. Para além dos sensores (que podem ser parte do próprio computador ou serem externos a este), este subsistema é composto por uma \textbf{Aplicação} responsável pelo controlo dos sensores e por um \textbf{\textit{Broker} Local}, que serve como intermediário para a comunicação com sensores externos e como \textit{buffer} no envio de dados para o servidor.
     \item \textbf{Subsistema Remoto (Servidor):} Este subsistema é executado num servidor remoto e tem como objetivo a recolha, armazenamento e disponibilização dos dados de forma contínua. Este subsistema é composto por uma \textbf{\textit{Pipeline} para recolha de dados} capaz de os processar em \textit{streaming} contínuo, uma \textbf{Base de dados} para os armazenar e finalmente uma \textbf{API} para gerir a consulta de dados.
@@ -24,9 +24,9 @@ O diagrama de componentes presente na Figura~\ref{fig:sys_arq_concept} apresenta
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{figs/conceptual_arquitecture.png}
+    \includegraphics[width=\linewidth]{figs/logical_arquitecture.png}
     \caption{Diagrama de componentes do sistema}
-    \label{fig:sys_arq_concept}
+    \label{fig:sys_arq_logic}
 \end{figure}
 
 \section{Tecnologias Escolhidas}
