@@ -2,7 +2,7 @@
     \label{chap:introduction}
 
     \begin{introduction}
-    Este capítulo apresenta uma introdução ao tema da dissertação ao contextualizar a sua motivação e descrever os objetivos e metodologia.
+    Este capítulo apresenta uma introdução ao tema da dissertação ao contextualizar a sua motivação e descrever os objetivos.
     \end{introduction}
 
     \section{Contexto e Motivação}
@@ -10,7 +10,10 @@
     O uso prolongado do computador em contexto profissional ou estudantil cria oportunidades únicas para a monitorização contínua do estado do utilizador, visto que permite não só o uso de sensores tradicionais (como sensores autónomos ou os sensores embutidos num dispositivo \textit{wearable}), mas também aproveitar os próprios periféricos de entrada do computador (como o rato, o teclado ou a \textit{webcam}).
     Estes dispositivos, embora não sejam tipicamente classificados como sensores, possibilitam a extração de dados biométricos e comportamentais capazes de refletir o estado do utilizador, permitindo, por exemplo, inferir o estado emocional com base na dinâmica de digitação no teclado~\cite{keyboard_speed_study,keyboard_correction_study}.
 
-    
+    De forma a aproveitar esta oportunidade, este trabalho foca-se num cenário de monitorização simultânea do estado de vários utilizadores durante o uso normal do computador, utilizando periféricos presentes no próprio computador (como o teclado, o rato ou a \textit{webcam}), bem como sensores \textit{wearable off-the-shelf} de uso comum (como \textit{smartwatches}). 
+    Com base neste cenário, a \textit{framework} proposta neste trabalho poderá ser utilizada, por exemplo, para medir o nível de \textit{stress} em situações de teletrabalho (utilizando a frequência cardíaca proveniente de um \textit{smartwatch} e a dinâmica de digitação no teclado) ou para medir o nível  de atenção de alunos em situação de \textit{e-learning} (recorrendo à direção do olhar e a frequência do pestanejar através de uma \textit{webcam}).
+
+    Adicionalmente, o trabalho pretende também explorar o uso de uma \textit{pipeline} baseada em \textit{streaming} para a monitorização dos utilizadores durante a utilização normal do computador, permitindo assim a recolha, processamento e armazenamento contínuos dos dados. Para isso, a validação deste paradigma torna-se mais conclusiva ao recorrer, sempre que possível, a tecnologias já consolidadas, em vez de desenvolver uma infraestrutura de raiz.
 
     \section{Objetivos}\label{sec:objectives}
 
