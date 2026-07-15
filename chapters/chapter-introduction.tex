@@ -7,10 +7,10 @@
 
     \section{Contexto e Motivação}
 
-    O uso prolongado do computador em contextos de trabalho e estudo cria oportunidades únicas para a monitorização contínua do estado do utilizador através dos sensores integrados ou conectáveis a este dispositivo~\cite{keyboard_correction_study,keyboard_speed_study,facial_hrv_study}. Estes sensores permitem recolher não só dados biométricos, como a frequência cardíaca ou expressões faciais~\cite{facial_hrv_study}, mas também dados comportamentais, como padrões de digitação no teclado~\cite{keyboard_speed_study,keyboard_correction_study}.
+    O uso prolongado do computador em contexto profissional ou estudantil cria oportunidades únicas para a monitorização contínua do estado do utilizador, visto que permite não só o uso de sensores tradicionais (como sensores autónomos ou os sensores embutidos num dispositivo \textit{wearable}), mas também aproveitar os próprios periféricos de entrada do computador (como o rato, o teclado ou a \textit{webcam}).
+    Estes dispositivos, embora não sejam tipicamente classificados como sensores, possibilitam a extração de dados biométricos e comportamentais capazes de refletir o estado do utilizador, permitindo, por exemplo, inferir o estado emocional com base na dinâmica de digitação no teclado~\cite{keyboard_speed_study,keyboard_correction_study}.
 
-    Como se verá no Capítulo~\ref{chap:estadodaarte}, as plataformas \textit{open-source} existentes para recolha de dados de sensores (como o RADAR-base~\cite{radarbase} ou a AWARE Framework~\cite{aware}, por exemplo) focam-se maioritariamente em dispositivos móveis e não suportam sensores de computador, não existindo atualmente nenhuma solução adequada à recolha contínua e remota de dados em estudos longitudinais neste contexto. 
-    Este trabalho propõe, por isso, uma infraestrutura em \textit{streaming} que permite a monitorização contínua e assíncrona de dados de sensores de forma modular, extensível e agnóstica ao tipo de sensor.
+    
 
     \section{Objetivos}\label{sec:objectives}
 
