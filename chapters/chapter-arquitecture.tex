@@ -5,13 +5,13 @@
 Este capítulo detalha de que forma os objetivos influenciaram a arquitetura, apresenta a arquitetura lógica e descreve as tecnologias escolhidas para a concretizar.
 \end{introduction}
 
-\section{Impacto dos Objetivos na Arquitetura}
+\section{Requisitos e o seu Impacto na Arquitetura}
 
-Os objetivos definidos na secção~\ref{sec:objectives} estabelecem um conjunto de requisitos sobre a arquitetura do sistema:
+Com base nos objetivos descritos na Secção~\ref{sec:objectives}, foram estabelecidos os seguintes requisitos para o sistema:
 \begin{itemize}
-    \item A necessidade de recolher dados de vários utilizadores motiva uma estrutura cliente-servidor. Adicionalmente, a necessidade de recolher dados de vários sensores para um mesmo utilizar favorece a agregação e coordenação desses dados do lado do cliente.
-    \item A necessidade de suportar a adição de novos sensores com esforço de integração reduzido e localizado, motivam a separação do sistema em duas subsistemas: um servidor agnóstico às características do sensor, que se mantém constante independentemente do caso de uso e um cliente que é adaptado consoante as necessidades desse caso de uso.
-    \item O incentivo a facilitar a modificação do cliente para adicionar mais sensores favorece a adoção de uma estrutura modular com baixo acoplamento com os sensores (como um sistema de \textit{plugins}).
+    \item Suporte para recolha de dados de múltiplos utilizadores em simultâneo, o que suporta arquiteturas que separem o sistema em componentes locais e remotos, como a arquitetura cliente-servidor.
+    \item Suporte para o uso de múltiplos periféricos nativos do computador e dispositivos \textit{wearable off-the-shelf}, o que favorece o controlo e agregação local dos dados no computador do utilizador, visto que os periféricos e muitos dos dispositivos \textit{wearables} são incapazes de comunicar diretamente com um servidor remoto.
+    \item O sistema tem de possuir baixo acoplamento para reduzir e localizar o esforço de acoplamento, o que implica o uso de uma arquitetura de \textit{plug-ins} ou microsserviços e uma preferência por manter o servidor agnóstico ao tipo de sensor (sendo, por isso, apenas necessário alterar o sistema).
 \end{itemize}
 
 \section{Arquitetura Logical}

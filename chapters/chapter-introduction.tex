@@ -2,7 +2,7 @@
     \label{chap:introduction}
 
     \begin{introduction}
-    Este capítulo apresenta uma introdução ao tema da dissertação ao contextualizar a sua motivação e descrever os objetivos.
+    Este capítulo contextualiza e motiva o trabalho, ao apresentar o computador como fonte de dados para monitorização contínua do estado do utilizador, apresenta o foco principal e exemplos de casos de uso para a \textit{framework} proposta e define os objetivos esperados para este trabalho.
     \end{introduction}
 
     \section{Contexto e Motivação}
@@ -10,25 +10,26 @@
     O uso prolongado do computador em contexto profissional ou estudantil cria oportunidades únicas para a monitorização contínua do estado do utilizador, visto que permite não só o uso de sensores tradicionais (como sensores autónomos ou os sensores embutidos num dispositivo \textit{wearable}), mas também aproveitar os próprios periféricos de entrada do computador (como o rato, o teclado ou a \textit{webcam}).
     Estes dispositivos, embora não sejam tipicamente classificados como sensores, possibilitam a extração de dados biométricos e comportamentais capazes de refletir o estado do utilizador, permitindo, por exemplo, inferir o estado emocional com base na dinâmica de digitação no teclado~\cite{keyboard_speed_study,keyboard_correction_study}.
 
-    De forma a aproveitar esta oportunidade, este trabalho foca-se num cenário de monitorização simultânea do estado de vários utilizadores durante o uso normal do computador, utilizando periféricos presentes no próprio computador (como o teclado, o rato ou a \textit{webcam}), bem como sensores \textit{wearable off-the-shelf} de uso comum (como \textit{smartwatches}). 
-    Com base neste cenário, a \textit{framework} proposta neste trabalho poderá ser utilizada, por exemplo, para medir o nível de \textit{stress} em situações de teletrabalho (utilizando a frequência cardíaca proveniente de um \textit{smartwatch} e a dinâmica de digitação no teclado) ou para medir o nível  de atenção de alunos em situação de \textit{e-learning} (recorrendo à direção do olhar e a frequência do pestanejar através de uma \textit{webcam}).
+    De forma a aproveitar esta oportunidade, este trabalho foca-se principalmente na criação de uma \texit{framework} para monitorização simultânea do estado de vários utilizadores durante o uso normal do computador, utilizando periféricos presentes no próprio computador (como o teclado, o rato ou a \textit{webcam}), bem como sensores \textit{wearable off-the-shelf} de uso comum (como \textit{smartwatches}). 
+    Com base nestas características, esta \textit{framework} pode ser útil em várias situações como, por exemplo, para medir o nível de \textit{stress} em situações de teletrabalho (utilizando a frequência cardíaca proveniente de um \textit{smartwatch} e a dinâmica de digitação no teclado) ou para medir o nível  de atenção de alunos em situação de \textit{e-learning} (recorrendo à direção do olhar e a frequência do pestanejar através de uma \textit{webcam}).
 
-    Adicionalmente, o trabalho pretende também explorar o uso de uma \textit{pipeline} baseada em \textit{streaming} para a monitorização dos utilizadores durante a utilização normal do computador, permitindo assim a recolha, processamento e armazenamento contínuos dos dados. Para isso, a validação deste paradigma torna-se mais conclusiva ao recorrer, sempre que possível, a tecnologias já consolidadas, em vez de desenvolver uma infraestrutura de raiz.
+    Contudo, o valor deste trabalho não reside apenas na criação de uma framework de monitorização funcional, mas também na exploração do \textit{streaming} como estratégia para recolha de dados de forma contínua neste tipo de cenários, utilizando ferramentas de \textit{streaming} já estabelecidas sempre que possível e descrevendo possíveis vantagens e problemas encontrados.
 
     \section{Objetivos}\label{sec:objectives}
-
-    Os objetivos concretos do trabalho são:
+    
+    Com base no cenário descrito acima, os objetivos específicos do trabalho são:
     \begin{itemize}
-        \item Desenvolver um servidor de ingestão de dados baseado em \textit{streaming}, capaz de receber dados de múltiplos sensores e de múltiplos utilizadores em simultâneo.
-        \item Suportar a adição de novos tipos de sensores com um esforço de integração reduzido e localizado, minimizando os componentes que precisam de ser adaptados.
-        \item Desenvolver uma aplicação de \textit{desktop} para demonstração das capacidades do sistema. Esta aplicação deverá ter uma estrutura modular que facilite a integração de novos sensores.
-        \item Integrar um sensor externo \textit{off-the-shelf} através de um dispositivo \textit{wearable}.
-        \item Validar o sistema através de um fluxo \textit{end-to-end} com dados reais e realizar uma análise analítica de escalabilidade.
+        \item Conceber e implementar uma \textit{framework} que recorre ao \textit{streaming} para a monitorização contínua de vários utilizadores durante o uso normal do computador.
+        \item Integrar fontes de dados heterogénias, permitindo a recolha de dados de periféricos nativos do computador e de dispositivos \textit{wearable off-the-shelf}.
+        \item Explorar o uso de ferramentas já estabelecidas para a criação da \textit{pipeline} de ingestão de dados, sempre que possível.
+        \item Assegurar a extensibilidade da \textit{framework} para periféricos de computador e dispositivos \textit{wearable off-the-shelf}, minimizando e localizando tanto quanto possível o esforço de integração destas fontes de dados.
+        \item Documentar as vantagens e dificuldades encontradas na implementação desta \textit{framework}.
+        \item Validar o funcionamento do sistema através de um fluxo \textit{end-to-end} com dados reais e realizar uma análise analítica de escalabilidade.
     \end{itemize}
 
     
     \section{Estrutura do Documento}
-    Este documento está organizado em cinco capítulos. O Capítulo~\ref{chap:introduction} apresenta uma introdução, contextualizando a sua motivação, descrevendo os objetivos pretendidos e a metodologia adotada para os atingir.
+    Este documento está organizado em cinco capítulos. O Capítulo~\ref{chap:introduction} descreve o contexto e motivação, apresente o cenário principal e casos de uso e define os objetivos base do trabalho.
     O Capítulo~\ref{chap:estadodaarte} apresenta o estado da arte atual, bem como trabalhos relacionados a esta dissertação.
     O Capítulo~\ref{chap:arquitetura} descreve os objetivos estabelecidos, bem como a arquitetura criada com base nesses requisitos.
     O Capítulo~\ref{chap:resultados} descreve os resultados obtidos, bem como o processo de validação da solução final e ilustra um fluxo \textit{end-to-end}.
