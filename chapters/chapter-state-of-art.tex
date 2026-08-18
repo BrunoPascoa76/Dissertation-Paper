@@ -16,7 +16,7 @@ Durante a pandemia de COVID-19, a necessidade de minimizar a progressão da doen
 Esta transição, embora necessária, introduziu problemas específicos que não se verificavam com a mesma intensidade no ensino presencial, como a dificuldade de o docente monitorizar todos os alunos em simultâneo.
 Esta limitação torna-se particularmente evidente durante a partilha de ecrã, momento em que o docente deixa de conseguir observar diretamente todos os participantes. Além disso, estando os alunos no seu próprio ambiente e tendo acesso ao telemóvel e ao computador, existe uma maior facilidade para se distraírem durante a aula~\cite{online_classes_sharma}.
 
-Estas limitações motivam a investigação de métodos de monitorização contínua dos alunos, complementares à supervisão realizada pelo docente. Neste sentido, a integração de biosensores e dados multimodais (\textit{Multimodal Learning Analytics}) tem vindo a ganhar relevância como forma de captar estados cognitivos e emocionais dos alunos durante o ensino remoto~\cite{Becerra2026}. Contudo, de acordo com uma revisão sistemática realizada por Becerra \textit{et al.} (2026)~\cite{Becerra2026}, que analisou 54 estudos nesta área, a maioria da investigação existente ainda é realizada em ambientes laboratoriais controlados e com amostras pequenas e homogéneas — a mediana de participantes por estudo é de apenas 29{,}5 (média de 50{,}82), sendo que só um dos 54 estudos monitorizou mais de 100 alunos.
+Estas limitações motivam a investigação de métodos de monitorização contínua dos alunos, complementares à supervisão realizada pelo docente. Neste sentido, a integração de biossensores e dados multimodais (\textit{Multimodal Learning Analytics}) tem vindo a ganhar relevância como forma de captar estados cognitivos e emocionais dos alunos durante o ensino remoto~\cite{Becerra2026}. Contudo, de acordo com uma revisão sistemática realizada por Becerra \textit{et al.} (2026)~\cite{Becerra2026}, que analisou 54 estudos nesta área, a maioria da investigação existente ainda é realizada em ambientes laboratoriais controlados e com amostras pequenas e homogéneas — a mediana de participantes por estudo é de apenas 29{,}5 (média de 50{,}82), sendo que só um dos 54 estudos monitorizou mais de 100 alunos.
 Os próprios autores identificam esta limitação como uma barreira à validade externa e à generalização dos resultados, apontando a necessidade de estudos de maior escala e mais longitudinais, realizados em ambientes de aprendizagem reais.
 
 Esta lacuna motiva o desenvolvimento de \textit{frameworks} abertas de monitorização, capazes de monitorizar os alunos de forma não intrusiva durante a utilização normal do computador.
@@ -26,17 +26,43 @@ Em vez de se limitarem a configurações experimentais controladas com um númer
 
 Com o crescente reconhecimento do impacto do stresse na produtividade dos trabalhadores e na sua saúde mental, existe um interesse crescente na monitorização contínua do stresse do trabalhador durante o dia de trabalho.
 Historicamente, esta monitorização era realizada através de questionários subjetivos, contudo estes questionários não são fiáveis como método único de monitorização~\cite{Kafkov2024,Kallio2025}, pois, apesar de se basearem em princípios sólidos de psicologia (e visto que o stresse é naturalmente subjetivo), sofrem de limitações inerentes: possuem baixa frequência de amostragem devido ao esforço necessário para o seu preenchimento~\cite{Kallio2025} e exibem um viés de negatividade (\textit{negativity skew}), tendendo a atribuir maior peso a experiências negativas do que a positivas~\cite{Kallio2025}.
+
 Mais recentemente, com os avanços nas tecnologias \textit{wearable} e de Inteligência Artificial, o foco das investigações passou para a monitorização passiva utilizando \textit{smartphones} e \textit{wearables} ou dispositivos embarcados como os periféricos do próprio computador~\cite{Kafkov2024}.
+Contudo, como aponta Kallio \textit{et al.} (2025)~\cite{Kallio2025}, existe uma clara dicotomia na literatura: enquanto que as abordagens baseadas em \textit{smartphones} e \textit{wearables} possuem diversos estudos longitudinais, estudos envolvendo periféricos ou sensores ambientais ainda são maioritariamente realizados em ambiente laboratorial, existindo apenas um pequeno número de estudos que os avaliam em situações não controladas.
+Adicionalmente, o mesmo estudo apresenta também outro desafio: a falta de um critério objetivo confiável para determinar o nível de stresse~\cite{Kallio2025}, necessitando assim de recorrer à perceção do próprio trabalhador para determinar o \textit{ground truth} (tendo, por isso, os mesmos problemas que os questionários)~\cite{Kallio2025}.
 
 \section{Fontes de Dados para Monitorização do Utilizador}
 
+\subsection{Questionários}
+
+%são baseados em psicologia e bem fundados, mas têm problemas de skew e de infrequência, falar de forma resumida e usar "como descrito em cima" para não parecer tão mal repetir
+
 \subsection{Periféricos do Computador}
+
+%teclado e rato: falar que métricas podemos extrair, que são convenientes mas têm problemas de privacidade, mas é menos problema se nos focarmos nos padrões
+
+%câmara: permite várias métricas (pose e movimentos,expressões,movimentos do olho e dilatação da pupila e diferenças térmicas na face). São precisos (e novamente conveniente) mas a captação constante de imagens é um problema de privacidade.
+
+\subsection{\textit{Smartphones}}
+
+% novamente convenientes. permitem obter informação não só de sensores (acelerómetro,...) mas também da sua interação (tempo com ecrã ligado, chamadas,...) e permitem realizar os questionários no próprio dispositivo. Mas têm problemas com a duração da bateria e problemas de privacidade
+
+\subsection{Sensores Ambientais}
+
+% falar do que se fez mas dizer que ainda existe poucos estudos por ser uma fase inicial
+
+\subsection{Sensores Fisiológicos Convencionais}
+
+%referir os tipos. Dizer que são precisos mas impráticos de usar
 
 \subsection{Sensores Wearable Off-the-Shelf}
 
-\subsection{Sensores Convencionais ou Laboratoriais}
+%referir smartwatches e etc. como alternativa aos acima, sendo mais confortáveis de usar e assim mais práticos em situações reais. Contudo têm ainda um problema com bateria
+
 
 \section{Soluções Existentes de Monitorização e Integração de Dados}
+
+%se for difícil falar em separado, falar junto
 
 \subsection{Soluções em Contexto Educativo}
 
@@ -48,7 +74,7 @@ Mais recentemente, com os avanços nas tecnologias \textit{wearable} e de Inteli
 
 %use kafková here
 
-\subsection{Limitações das Soluções Existentes}
+%look for software
 
 \section{Tecnologias de Recolha e Processamento em \textit{Streaming}}
 
