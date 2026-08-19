@@ -35,13 +35,24 @@ Adicionalmente, o mesmo estudo apresenta também outro desafio: a falta de um cr
 
 \subsection{Questionários}
 
-%são baseados em psicologia e bem fundados, mas têm problemas de skew e de infrequência, falar de forma resumida e usar "como descrito em cima" para não parecer tão mal repetir
+Como referido anteriormente, os questionários foram historicamente utilizados para monitorizar o estado do utilizador, sendo especialmente importantes para monitorizar os níveis de stresse, visto que ambos partilham uma natureza subjetiva~\cite{Kafkov2024}.
+Adicionalmente, estes questionários funcionam frequentemente para estabelecer uma \textit{ground truth} que permite validar a precisão das estimativas geradas por outras fontes~\cite{Kallio2025} (sendo por isso particularmente útil durante a fase de conceção).
 
-\subsection{Periféricos do Computador}
+Contudo, estes questionários continuam a ser um método de recolha ativo (ou seja, que requer esforço do utilizador), o que limita a frequência de realização destes questionários (e, consequentemente, o número de amostras obtidas).
+Adicionalmente, estes questionários estão sujeitos a ``viés de negatividade'', em que o sujeito tende a atribuir mais peso a momentos e emoções negativas do que a positivas\cite{Kallio2025}, o que frequentemente leva a uma sobrestimação dos níveis de stresse reportados.
 
-%teclado e rato: falar que métricas podemos extrair, que são convenientes mas têm problemas de privacidade, mas é menos problema se nos focarmos nos padrões
+\subsection{Computador}
 
-%câmara: permite várias métricas (pose e movimentos,expressões,movimentos do olho e dilatação da pupila e diferenças térmicas na face). São precisos (e novamente conveniente) mas a captação constante de imagens é um problema de privacidade.
+Uma vez que o objetivo passa por monitorizar o utilizador durante o uso normal do computador, uma das opções mais económicas e menos intrusivas consiste em utilizar o próprio computador e os seus periféricos como fontes de dados.
+Neste contexto, a recolha de informação pode ser efetuada a diferentes níveis da infraestrutura digital e dos seus dispositivos periféricos.
+
+Em primeiro lugar, o rato e teclado, como métodos de interação com o computador, permitem estimar o estado afetivo do utilizador com base nas mudanças na dinâmica de digitação e de movimento, como a velocidade, o ritmo, a taxa de correção ou o tempo de retenção de teclas~\cite{Keystore_k2025,Zimmermann2003}.
+Adicionalmente, como estes métodos focam-se mais frequentemente nos padrões em si e não no conteúdo, os dados podem ser anonimizados para evitar problemas com privacidade e assim aumentar a taxa de aceitação destes métodos~\cite{Kallio2025}.
+
+Para além disso, as \textit{webcams} do computador, por já se encontrarem presentes na maioria dos portáteis (e por serem relativamente acessíveis de adquirir, no caso de \textit{desktops}), podem fornecer também dados como expressões faciais, postura, direção do olhar ou dilatação das pupilas~\cite{Kallio2025,online_classes_sharma}.
+Apesar deste método ter uma boa taxa de precisão (em ambientes laboratoriais), a perda de privacidade causada pela captação constante de imagens torna este método difícil de aplicar na prática~\cite{Kallio2025}.
+
+Finalmente, também é possível monitorizar a telemetria dos programas utilizados ou a comunicação utilizando o computador (como \textit{e-mails}). Contudo o uso de telemetria é demasiado específico à ferramenta em si e a monitorização de \textit{e-mails} representa uma quebra de privacidade grave, sendo também estes difíceis de aplicar em prática.
 
 \subsection{\textit{Smartphones}}
 
