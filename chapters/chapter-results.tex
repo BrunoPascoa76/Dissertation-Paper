@@ -121,7 +121,7 @@ Como referido acima, foram utilizados os seguintes sensores para a aquisição d
 
 \subsection{Monitorização}
 
-De forma a permitir a monitorização dos dados do lado do servidor, foi também criado o \textit{dashboard} Grafana presente na Figura~\ref{fig:grafana}. Este \textit{dashboard} consome dados diretamente do InfluxDB e permite selecionar o \textit{UUID} do utilizador pretendido através de um \textit{dropdown}, apresentando para cada sensor o último valor registado, bem como a sua evolução temporal (sendo que a janela temporada é indicada através do próprio Grafana).
+De forma a permitir a monitorização dos dados do lado do servidor, foi também criado o \textit{dashboard} Grafana presente na Figura~\ref{fig:grafana}. Este \textit{dashboard} consome dados diretamente do InfluxDB e permite selecionar o \ac{UUID} do utilizador pretendido através de um \textit{dropdown}, apresentando para cada sensor o último valor registado, bem como a sua evolução temporal (sendo que a janela temporada é indicada através do próprio Grafana).
 
 \begin{figure}
     \centering
@@ -182,7 +182,7 @@ Para além de garantir que a arquitetura do sistema cumpre com os objetivos prop
 
 \subsection{Tamanho das Mensagens}
 
-A estrutura da mensagem, serializada em formato JSON (como visto na Listagem~\ref{code:example_message}), foi desenhada para ser concisa, apresentando um payload médio de 133B para o JSON em si (valor obtido através da serialização de uma das mensagens) e cerca de 173B se incluirmos os \textit{headers} de TCP/IP.
+A estrutura da mensagem, serializada em formato \ac{JSON} (como visto na Listagem~\ref{code:example_message}), foi desenhada para ser concisa, apresentando um payload médio de 133B para o \ac{JSON} em si (valor obtido através da serialização de uma das mensagens) e cerca de 173B se incluirmos os \textit{headers} de TCP/IP.
 
 Considerando este volume de dados inexpressivo, o fator determinante para a escalabilidade da infraestrutura é exclusivamente o número de mensagens simultâneas que o broker consegue processar por segundo, e não o tamanho individual de cada pacote. Uma vez que a estrutura é simples e não exige processamento complexo ao nível da camada de transporte, o sistema é capaz de suportar um débito elevado de eventos, sendo a capacidade de ingestão limitada primariamente pela cadência de publicação (\textit{throughput}) e não pela ocupação da largura de banda.
 
