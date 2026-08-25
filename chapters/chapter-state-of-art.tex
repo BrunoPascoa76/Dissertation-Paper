@@ -16,7 +16,7 @@ Durante a pandemia de COVID-19, a necessidade de minimizar a progressão da doen
 Esta transição, embora necessária, introduziu problemas específicos que não se verificavam com a mesma intensidade no ensino presencial, como a dificuldade de o docente monitorizar todos os alunos em simultâneo.
 Esta limitação torna-se particularmente evidente durante a partilha de ecrã, momento em que o docente deixa de conseguir observar diretamente todos os participantes. Além disso, estando os alunos no seu próprio ambiente e tendo acesso ao telemóvel e ao computador, existe uma maior facilidade para se distraírem durante a aula~\cite{online_classes_sharma}.
 
-Estas limitações motivam a investigação de métodos de monitorização contínua dos alunos, complementares à supervisão realizada pelo docente. Neste sentido, a integração de biossensores e dados multimodais (\textit{Multimodal Learning Analytics}) tem vindo a ganhar relevância como forma de captar estados cognitivos e emocionais dos alunos durante o ensino remoto~\cite{Becerra2026}. Contudo, de acordo com uma revisão sistemática realizada por Becerra \textit{et al.} (2026)~\cite{Becerra2026}, que analisou 54 estudos nesta área, a maioria da investigação existente ainda é realizada em ambientes laboratoriais controlados e com amostras pequenas e homogéneas — a mediana de participantes por estudo é de apenas 29{,}5 (média de 50{,}82), sendo que só um dos 54 estudos monitorizou mais de 100 alunos.
+Estas limitações motivam a investigação de métodos de monitorização contínua dos alunos, complementares à supervisão realizada pelo docente. Neste sentido, a integração de biossensores e dados multimodais (\textit{Multimodal Learning Analytics}) tem vindo a ganhar relevância como forma de captar estados cognitivos e emocionais dos alunos durante o ensino remoto~\cite{Becerra2026}. Contudo, de acordo com uma revisão sistemática realizada por Becerra \textit{et al.}~\cite{Becerra2026}, que analisou 54 estudos nesta área, a maioria da investigação existente ainda é realizada em ambientes laboratoriais controlados e com amostras pequenas e homogéneas — a mediana de participantes por estudo é de apenas 29{,}5 (média de 50{,}82), sendo que só um dos 54 estudos monitorizou mais de 100 alunos.
 Os próprios autores identificam esta limitação como uma barreira à validade externa e à generalização dos resultados, apontando a necessidade de estudos de maior escala e mais longitudinais, realizados em ambientes de aprendizagem reais.
 
 Esta lacuna motiva o desenvolvimento de \textit{frameworks} abertas de monitorização, capazes de monitorizar os alunos de forma não intrusiva durante a utilização normal do computador.
@@ -28,7 +28,7 @@ Com o crescente reconhecimento do impacto do stresse na produtividade dos trabal
 Historicamente, esta monitorização era realizada através de questionários subjetivos, contudo estes questionários não são fiáveis como método único de monitorização~\cite{Kafkov2024,Kallio2025}, pois, apesar de se basearem em princípios sólidos de psicologia (e visto que o stresse é naturalmente subjetivo), sofrem de limitações inerentes: possuem baixa frequência de amostragem devido ao esforço necessário para o seu preenchimento~\cite{Kallio2025} e exibem um viés de negatividade (\textit{negativity skew}), tendendo a atribuir maior peso a experiências negativas do que a positivas~\cite{Kallio2025}.
 
 Mais recentemente, com os avanços nas tecnologias \textit{wearable} e de Inteligência Artificial, o foco das investigações passou para a monitorização passiva utilizando \textit{smartphones} e \textit{wearables} ou dispositivos embarcados como os periféricos do próprio computador~\cite{Kafkov2024}.
-Contudo, como aponta Kallio \textit{et al.} (2025)~\cite{Kallio2025}, existe uma clara dicotomia na literatura: enquanto que as abordagens baseadas em \textit{smartphones} e \textit{wearables} possuem diversos estudos longitudinais, estudos envolvendo periféricos ou sensores ambientais ainda são maioritariamente realizados em ambiente laboratorial, existindo apenas um pequeno número de estudos que os avaliam em situações não controladas.
+Contudo, como aponta Kallio \textit{et al.}~\cite{Kallio2025}, existe uma clara dicotomia na literatura: enquanto que as abordagens baseadas em \textit{smartphones} e \textit{wearables} possuem diversos estudos longitudinais, estudos envolvendo periféricos ou sensores ambientais ainda são maioritariamente realizados em ambiente laboratorial, existindo apenas um pequeno número de estudos que os avaliam em situações não controladas.
 Adicionalmente, o mesmo estudo apresenta também outro desafio: a falta de um critério objetivo confiável para determinar o nível de stresse~\cite{Kallio2025}, necessitando assim de recorrer à perceção do próprio trabalhador para determinar o \textit{ground truth} (tendo, por isso, os mesmos problemas que os questionários)~\cite{Kallio2025}.
 
 \section{Fontes de Dados para Monitorização do Utilizador}
@@ -50,51 +50,71 @@ Em primeiro lugar, o rato e teclado, como métodos de interação com o computad
 Adicionalmente, como estes métodos focam-se mais frequentemente nos padrões em si e não no conteúdo, os dados podem ser anonimizados para evitar problemas com privacidade e assim aumentar a taxa de aceitação destes métodos~\cite{Kallio2025}.
 
 Para além disso, as \textit{webcams} do computador, por já se encontrarem presentes na maioria dos portáteis (e por serem relativamente acessíveis de adquirir, no caso de \textit{desktops}), podem fornecer também dados como expressões faciais, postura, direção do olhar ou dilatação das pupilas~\cite{Kallio2025,online_classes_sharma}.
-Apesar deste método ter uma boa taxa de precisão (em ambientes laboratoriais), a perda de privacidade causada pela captação constante de imagens torna este método difícil de aplicar na prática~\cite{Kallio2025}.
+Apesar deste método ter uma boa taxa de precisão em ambientes laboratoriais, a perda de privacidade causada pela captação constante de imagens torna este método difícil de aplicar na prática~\cite{Kallio2025}.
 
 Apesar da literatura já comprovar a eficácia e precisão destas abordagens em ambientes controlados de laboratório, a investigação realizada em situações reais é ainda relativamente escassa~\cite{Kallio2025}.
 Devido a esta lacuna, e tendo em conta a maior complexidade e imprevisibilidade do ambiente real, considero que ainda não existem exemplos suficientes para confirmar a aplicabilidade destes métodos em ambiente real, sendo por isso necessária a realização de mais estudos em ambiente real.
 
 Finalmente, também é possível monitorizar a telemetria dos programas utilizados ou a comunicação utilizando o computador (como \textit{e-mails}). Contudo o uso de telemetria é demasiado específico à ferramenta em si e a monitorização de \textit{e-mails} representa uma quebra de privacidade grave, sendo por isso pouco viáveis em prática na maioria das situações.
 
-\subsection{Sensores Fisiológicos Convencionais}
+\subsection{Sensores Fisiológicos Especializados}
 
-%referir os tipos. Dizer que são precisos mas impráticos de usar
+Conforme delineado por Cowley \textit{et al.}~\cite{Cowley2016}, existem diversos sensores especializados que permitem medir diretamente dados fisiológicos do utilizador durante a interação com um computador.
 
-\subsection{Sensores Wearable Off-the-Shelf}
+\subsubsection{Atividade Cardiovascular}
 
-%referir smartwatches e etc. como alternativa aos acima, sendo mais confortáveis de usar e assim mais práticos em situações reais. Contudo têm ainda um problema com bateria
+No que respeita aos parâmetros cardiovasculares, existem 3 principais métodos de recolha de dados: \ac{ECG}, \ac{PPG} e medição da pressão sanguínea.
+O \ac{ECG} é um método de medição que utiliza elétrodos posicionados no peito do utilizador para medir os sinais elétricos produzidos pela atividade cardiovascular, permitindo obter dados como o batimento do coração ou o \ac{HRV} (um termo geral para referir às métricas que descrevem a variação no ritmo cardíaco).
+O \ac{PPG} é uma técnica ótica que utiliza mudanças na absorção de luz pelo corpo para medir alterações no volume sanguíneo, permitindo assim monitorizar a frequência cardíaca.
+Finalmente, apesar de ser menos prático e necessitar de equipamento mais especializado, é possível também medir a pressão sanguínea de forma contínua utilizando um dispositivo num dos dedos do utilizador.
+
+\subsubsection{Atividade Endotérmica}
+
+Atividade endotérmica é a medição das variações das propriedades elétricas da pele provocadas pela produção de suor, visto que a produção de suor pode ser considerado um indicador de atividade cognitiva ou emocional.
+
+Como este método é estudado à mais de 100 anos, existem diversos tipos de aparelhos a nível laboratorial, sendo que a maioria destes utiliza elétrodos ligados a um amplificador. O tamanho deste amplificador, em conjunção com a necessidade de manter uma posição estática para não afetar as medições limitou a sua aplicabilidade fora de cenários laboratorias, contudo, com as novidades nas tecnologias \textit{wearable}, estes aparelhos tornaram-se progressivamente mais portáteis e, por isso, mais práticos para uso em situações reais.
+
+\subsubsection{Respiração}
+
+Apesar da medição da variação nos padrões de respiração ser uma área ainda pouco estudada, analisar mudanças na forma como os utilizadores respiram pode ser útil para estimar o estado psicológico ou físico. Em termos de sensores, apesar de ser possível medir a inspiração e expiração diretamente vai um espirómetro, a necessidade de utilizar este dispositivo no nariz torna-o imprático para uso prolongado, sendo por isso preferível os movimentos do peito ao posicionar dois cintos: um no peito abaixo das axilas e outro no abdómen.
+
+\subsubsection{Eletromiografia}
+
+A eletromiografia é um método de recolha de dados que utiliza elétrodos superficiais para detetar contrações musculares. Esta análise muscular é particularmente útil para distinguir entre emoções positivas e negativas ao monitorizar a contração dos músculos da face, sendo este método considerado mais preciso que observação direta pois permite detetar contrações que não são normalmente detetáveis a olho nu, permitindo, por exemplo, distinguir entre um sorriso genuíno e um sorriso forçado.
+
+\subsubsection{Atividade Cerebral}
+
+A medição da atividade cerebral é normalmente realizada através de eletroencefalografia, uma técnica que utiliza elétrodos posicionadas em pontos específicos do escalpe de modo a medir a atividade neuronal. Esta técnica é não só útil em contexto médico, mas também por permitir detetar diretamente fatores psicológicos como stress, cansaço ou respostas emocionais ao medir a atividade cerebral nas regiões correspondentes.
+
+\subsubsection{Atividade Ocular}
+
+Finalmente, outra fonte de dados frequentemente utilizada é a atividade ocular. A atividade ocular é normalmente medida através de câmaras e normalmente foca-se na direção do olhar, a velocidade e frequência do movimento ocular e a frequência e duração do piscar de olhos. Adicionalmente, existem também estudos que analizam a dilatação da pupila como indicador, contudo este estudo ainda se encontra limitado a ambientes laboratoriais controlados, visto que a dilatação pupilar não só depende do indivíduo e da distância do objeto em foco, mas também das condições luminosas, sendo que por isso a sua aplicabilidade em situações reais ainda é limitada.
+
+\subsubsection{Desvantagens Principais dos Sensores Convencionais}
+
+Este tipo de sensores fisiológicos, apesar de precisos, possuem alguns problemas em termos de escalabilidade e aplicabilidade em situações reais. 
+Apesar de a maioria destes dispositivos terem versões suficientemente portáteis para o uso quotadiano, o desconforto durante o uso (em particular de sensores na face ou peito) e o facto que os utilizadores necessitam de manter os dispositivos carregados leva a um elevado abandono destes dispositivos~\cite{Kallio2025}.
+Adicionalmente, para além da dificuldade de adoção, estes dispositivos estão ainda sujeitos a imprecisões de dados causadas pelo uso de forma incorreta ou até mesmos pelos movimentos normalmente realizados durante o quotidiano~\cite{Kallio2025}.
+
+\subsection{Dispositivos \textit{Wearable} de Uso Geral}
+
+Com base nas desvantagens acima, uma alternativa a considerar são dispositivos \textit{wearable} de uso comum como \textit{smartwatches} e \textit{smartrings}.
+Apesar destes dispositivos terem necessidade de serem carregados frequentemente à semelhança dos sensores fisiológicos convencionais, a sua localização no pulso e dedo respetivamente (locais onde o uso de objetos já é normal) leva a menores queixas de desconforto~\cite{Kallio2025}.
+Para além disso, o facto de muitos destes dispositivos possuirem funcionalidades para além da medição fisiológica (como atendimento de chamadas, leitura de notificações ou controlos multimédia) poderá servir como incentivo para diminuir a taxa de abandono destes dispositivos.
 
 \subsection{Sensores Ambientais}
 
-% falar do que se fez mas dizer que ainda existe poucos estudos por ser uma fase inicial
+Finalmente, com recentes estudos que estabelecem correlações as condições ambientais do espaço e fatores como a produtividade e saúde de trabalhadores~\cite{Kallio2025}, uma nova possibilidade é a de monitorizar não só o utilizador, mas também as condições do espaço que se encontra, como qualidade do ar, temperatura, humidade relativa, luminosidade e níveis de barulho.
 
-
+Uma vantagem específica deste método é que, apesar de ter os seus custos de instalação e manutenção e de ser limitada a espaços interiores, o número de sensores aplicado aumenta com base no número e tamanho das divisões e não no número de ocupantes, sendo por isso particularmente útil em ambientes partilhados como escritórios. Contudo, a relativa escassez de estudos realizados de forma contínua nesta área~\cite{Kallio2025} leva a que não possa garantir a sua eficácia em situações reais.
 
 \section{Soluções Existentes de Monitorização e Integração de Dados}
 
-%se for difícil falar em separado, falar junto
 
-\subsection{Soluções em Contexto Educativo}
-
-%talk about becerra
-
-%look for software
-
-\subsection{Soluções em Contexto Empresarial}
-
-%use kafková here
-
-%look for software
-
-\subsection{Lacunas Identificadas}
 
 \section{Tecnologias de Recolha e Processamento de Dados}
 
-Para além das soluções já existentes para recolha de dados, é também relevante considerar que tecnologias existem que possam auxiliar o desenvolvimento de uma nova solução de monitorização contínua.
-
 \subsection{Paradigmas de Recolha de Dados}
-
 
 \subsection{Aquisição e Ingestão de Dados em Tempo Real}
 
