@@ -6,10 +6,12 @@ Este capítulo apresenta potenciais cenários (e a sua relevância) de monitoriz
 Adicionalmente, este capítulo analisa não só soluções de monitorização e integração de dados já existentes, mas também tecnologias relacionadas a \textit{streaming} que poderão ser utilizadas para este propósito.
 \end{introduction}
 
-\section{Monitorização do Estado do Utilizador durante o Uso do Computador}
+\section{Cenários de Monitorização do Estado do Utilizador durante o Uso do Computador}
+
+Dada a generalidade da abordagem proposta — a monitorização do estado do utilizador durante o uso do computador, recorrendo a periféricos do próprio computador e a \textit{wearables} de uso comum — esta pode ser aplicada a uma ampla variedade de cenários.
+Neste sentido, de modo a melhor demonstrar a utilidade deste tipo de solução, apresento dois exemplos de situações nas quais este tipo de monitorização é útil: na monitorização da atenção dos alunos durante o ensino remoto e a deteção de stresse em ambiente empresarial.
 
 \subsection{Monitorização da Atenção dos Alunos durante o Ensino Remoto}
-
 
 Durante a pandemia de COVID-19, a necessidade de minimizar a progressão da doença levou à adoção obrigatória de aulas de forma remota.
 
@@ -22,7 +24,7 @@ Os próprios autores identificam esta limitação como uma barreira à validade 
 Esta lacuna motiva o desenvolvimento de \textit{frameworks} abertas de monitorização, capazes de monitorizar os alunos de forma não intrusiva durante a utilização normal do computador.
 Em vez de se limitarem a configurações experimentais controladas com um número reduzido de participantes, estas soluções necessitam de ser testadas em contextos reais de aprendizagem, recorrendo sempre que possível a fontes de dados de baixo custo ou de uso comum, como os próprios periféricos do computador.
 
-\subsection{Monitorização em Ambiente Empresarial}
+\subsection{Monitorização do Stresse em Ambiente Empresarial}
 
 Com o crescente reconhecimento do impacto do stresse na produtividade dos trabalhadores e na sua saúde mental, existe um interesse crescente na monitorização contínua do stresse do trabalhador durante o dia de trabalho.
 Historicamente, esta monitorização era realizada através de questionários subjetivos, contudo estes questionários não são fiáveis como método único de monitorização~\cite{Kafkov2024,Kallio2025}, pois, apesar de se basearem em princípios sólidos de psicologia (e visto que o stresse é naturalmente subjetivo), sofrem de limitações inerentes: possuem baixa frequência de amostragem devido ao esforço necessário para o seu preenchimento~\cite{Kallio2025} e exibem um viés de negatividade (\textit{negativity skew}), tendendo a atribuir maior peso a experiências negativas do que a positivas~\cite{Kallio2025}.
@@ -30,6 +32,10 @@ Historicamente, esta monitorização era realizada através de questionários su
 Mais recentemente, com os avanços nas tecnologias \textit{wearable} e de Inteligência Artificial, o foco das investigações passou para a monitorização passiva utilizando \textit{smartphones} e \textit{wearables} ou dispositivos embarcados como os periféricos do próprio computador~\cite{Kafkov2024}.
 Contudo, como aponta Kallio \textit{et al.}~\cite{Kallio2025}, existe uma clara dicotomia na literatura: enquanto que as abordagens baseadas em \textit{smartphones} e \textit{wearables} possuem diversos estudos longitudinais, estudos envolvendo periféricos ou sensores ambientais ainda são maioritariamente realizados em ambiente laboratorial, existindo apenas um pequeno número de estudos que os avaliam em situações não controladas.
 Adicionalmente, o mesmo estudo apresenta também outro desafio: a falta de um critério objetivo confiável para determinar o nível de stresse~\cite{Kallio2025}, necessitando assim de recorrer à perceção do próprio trabalhador para determinar o \textit{ground truth} (tendo, por isso, os mesmos problemas que os questionários)~\cite{Kallio2025}.
+
+
+
+
 
 \section{Fontes de Dados para Monitorização do Utilizador}
 
@@ -108,15 +114,14 @@ Finalmente, com recentes estudos que estabelecem correlações as condições am
 
 Uma vantagem específica deste método é que, apesar de ter os seus custos de instalação e manutenção e de ser limitada a espaços interiores, o número de sensores aplicado aumenta com base no número e tamanho das divisões e não no número de ocupantes, sendo por isso particularmente útil em ambientes partilhados como escritórios. Contudo, a relativa escassez de estudos realizados de forma contínua nesta área~\cite{Kallio2025} leva a que não possa garantir a sua eficácia em situações reais.
 
+
+
+
 \section{Soluções Existentes de Monitorização e Integração de Dados}
 
-\subsection{Monitorização Direta da Atividade de Computadores}
+\subsection{Ferramentas de Monitorização de Atividade ou Produtividade}
 
-\subsection{Software de monitorização de Trabalhadores}
-
-\subsection{Ferramentas de Registo de Dados para Investigação}
-
-\subsection{Integração e Sincronização de Sensores Durante a Utilização do Computador}
+\subsection{}
 
 
 \section{Tecnologias de Recolha e Processamento de Dados}
