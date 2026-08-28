@@ -122,18 +122,21 @@ Uma vantagem específica deste método é que, apesar de ter os seus custos de i
 Como discutido na secção anterior, existem já diversos exemplos de estudos que procuram monitorizar o estado do utilizador durante o uso do computador.
 Contudo, a validação científica nem sempre se traduz na existência de soluções reais (comerciais ou de livre uso) que possam realmente ser utilizadas, sendo por isso necessário analisar que tipos de soluções realmente existam para quem deseje monitorizar o estado numa situação real.
 
-\subsection{Ferramentas de Monitorização de Atividade ou Produtividade}
+\subsection{Contexto Empresarial}
 
-\subsection{Plataformas de Bem-Estar Organizacional}
+No contexto empresarial, existem já diversas soluções que monitorizam continuamente os trabalhadores, como por exemplo o Toggl Track~\cite{toggletrack}, o Hubstaff~\cite{hubstaff} ou o Time Doctor~\cite{timedoctor}.
 
-\subsection{Plataformas de Monitorização Fisiológica via \textit{Wearables}}
+Estas ferramentas recorrem tipicamente a dois tipos de abordagens: através da monitorização do tipo de atividade (quer via capturas de ecrã ou ao integrar diretamente com \textit{browsers} e \textit{software} empresarial como \ac{IDE}s) ou através da monitorização de periféricos como rato e teclado.
 
-\subsection{Instrumentação Multi-Utilizador com \textit{Wearables} de Uso Comum}
+Apesar da diferença de métodos, o que a grande maioria destes serviços tem em comum é o seu foco na monitorização das atividades e medição de produtividade. Contudo, apesar desta ser uma métrica apelativa para empresas e gestores, o problema de apresentar apenas a produtividade é que não permite inferir a causa da baixa produtividade, sendo difícil inferir através dos dados, por exemplo, se um trabalhador com baixo desempenho sofre de \textit{burnout}, tem dificuldade com aquela tarefa em específico ou simplesmente não tem empenho suficiente.
 
-\subsection{Ferramentas de Investigação e Instrumentação Multimodal}
+\subsection{Contexto Educativo}
 
-\subsection{Síntese}
+No contexto educativo, apesar de existirem soluções comerciais de monitorização dos alunos como a ClassEngage AI~\cite{classengage}, estas destinam-se sobretudo a salas de aula físicas, recorrendo a câmaras fixas e externas ao dispositivo de cada aluno. Para o contexto de ensino remoto especificamente, onde este tipo de monitorização é frequentemente mais necessária~\cite{online_classes_sharma}, existem apenas projetos de menor dimensão e maturidade, como o \textit{Online Classroom Attention Tracker}~\cite{ocat}, o Attentive~\cite{attentive} ou o ClassCam~\cite{classcam}, sem equivalente de escala e adoção comparável.
 
+A maioria destes projetos assenta na captura e transmissão de imagem ou vídeo do aluno para um servidor, onde é processada — seja através de um \textit{feed} de vídeo contínuo~\cite{classcam}, seja através de imagens periódicas~\cite{attentive}. Uma vez que as aulas remotas se centram sobretudo na receção passiva de conteúdo, e não em interação direta com o computador, os periféricos do computador (teclado e rato) oferecem pouco sinal útil neste contexto, permanecendo a \textit{webcam} como fonte de dados mais relevante.
+
+A captura e transmissão de imagem ou vídeo em bruto levanta, contudo, dois problemas: um requisito de largura de banda que pode ser incompatível com ligações mais fracas, e uma perda de privacidade decorrente do envio de dados visuais para um servidor externo. Uma alternativa seria o pré-processamento local das características faciais relevantes no dispositivo do aluno, transmitindo apenas os dados extraídos e não a imagem em si — abordagem que mitigaria ambos os problemas, mas que nenhum dos projetos encontrados demonstra adotar de forma clara e documentada.
 
 
 
