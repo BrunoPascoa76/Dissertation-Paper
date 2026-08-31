@@ -143,9 +143,30 @@ A captura e transmissão de imagem ou vídeo em bruto levanta, contudo, dois pro
 
 \section{Tecnologias de Recolha e Processamento de Dados}
 
-\subsection{Paradigmas de Recolha de Dados}
+Como visto anteriormente, mesmo quando nos restringimos ao cenário de monitorização de utilizadores apenas enquanto estes interagem com o computador, não existe ainda uma solução que possa ser utilizada em qualquer situação, sendo por vezes necessário criar uma solução adaptada ao caso de uso específico.
+Por isso, torna-se relevante analisar não só as soluções existentes, mas também que ferramentas e tecnologias já estabelecidas existem que possam ser utilizadas na criação de uma nova solução de recolha de dados.
 
-\subsection{Aquisição e Ingestão de Dados em Tempo Real}
+\subsection{Paradigmas de Recolha e Processamento de Dados}
+
+Contudo, antes de analisar tecnologias específicas, é importante estabelecer qual o paradigma mais adequado para este tipo de sistemas, distinguindo-se tradicionalmente dois: o processamento em \textit{batch} e o processamento em \textit{streaming}~\cite{Akidau2018}.
+
+Segundo Akidau \textit{et al.}~\cite{Akidau2018}, a distinção entre estes paradigmas assenta fundamentalmente na natureza dos dados: dados limitados (\textit{bounded}), em que o conjunto de dados é finito e com um tamanho conhecido à partida, e dados não limitados (\textit{unbounded}), em que o conjunto de dados cresce continuamente e o tamanho total nunca é conhecido.
+
+O processamento em \textit{batch} foi historicamente concebido para dados limitados, sendo o processamento deste tipo de dados considerado direto e bem compreendido~\cite{Akidau2018}.
+Embora um sistema de \textit{streaming} bem desenhado seja capaz de processar dados limitados, o esforço de otimização realizado pelos sistemas de \textit{batch} modernos, nomeadamente ao nível do agrupamento de dados (\textit{bundling}) e do transporte durante \textit{shuffle} torna-os capazes de processar maiores quantidades de dados mesmo em \textit{hardware} limitado~\cite{Akidau2018}.
+Apesar de não terem sido concebidos para esse propósito, os sistemas de \textit{batch} podem ser adaptados para processarem dados não limitados, ao dividir o fluxo em janelas de tamanho fixo independentes, essencialmente tratando um fluxo contínuo de dados não limitados como se se tratasse de uma lista de conjuntos de dados limitados~\cite{Akidau2018}. Esta abordagem introduz, contudo, uma latência inerente entre a chegada dos dados e o momento em que são efetivamente processados, uma vez que é necessário aguardar o fecho de cada janela antes de os processar~\cite{Akidau2018}.
+
+O processamento em \textit{streaming}, por outro lado, foi desenhado de raiz para conjuntos de dados não limitados, visto que processa cada evento de forma individual sem esperar pelo fim do lote~\cite{Akidau2018}, permitindo assim uma menor latência entre a criação e o processamento dos eventos.
+
+Finalmente, existe ainda uma abordagem intermédia, o \textit{micro-batching} que, apesar de se basear no processamento em \textit{batch}, procura aproximar-se da baixa latência do \textit{streaming} ao utilizar lotes com janelas temporais bastante pequenas~\cite{Dendane2019}. Apesar deste sistema possuir maior latência que \textit{streaming}, é mais adequado para sistemas que exijam consistência do tipo \textit{exactly once}, visto que a sua melhor tolerância a falhas ajuda a garantir que todas as mensagens sejam recebidas uma e apenas uma vez~\cite{Dendane2019}.
+
+Num contexto de monitorização contínua do estado de utilizadores durante o uso normal do computador, os dados produzidos pelos periféricos e pelos \textit{wearables} constituem, por definição, um fluxo contínuo de dados não limitados: não só pelos períodos prolongados de recolha mas também pelo facto de que algumas fontes de dados, como por exemplo o teclado, produzem dados de forma não periódica, não sendo por isso possível prever a quantidade de dados produzida por cada utilizador.
+Adicionalmente, como estes sistemas precisam de ser capazes de lidar com o ruído e dados anormais naturalmente produzidos pelas fontes de dados, não é também necessário garantir uma consistência \textit{exactly once}.
+Por estas razões, posso concluir que o paradigma de processamento em \textit{streaming} é o mais apropriado para os objetivos pretendidos, sendo por isso o restante da análise focada em tecnologias utilizadas no processamento em \textit{streaming}.
+
+\subsection{Aquisição de Dados}
+
+\subsection{Ingestão de Dados}
 
 \subsection{Processamento e Transformação de Dados}
 
