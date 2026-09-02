@@ -18,7 +18,7 @@ Durante a pandemia de COVID-19, a necessidade de minimizar a progressão da doen
 Esta transição, embora necessária, introduziu problemas específicos que não se verificavam com a mesma intensidade no ensino presencial, como a dificuldade de o docente monitorizar todos os alunos em simultâneo.
 Esta limitação torna-se particularmente evidente durante a partilha de ecrã, momento em que o docente deixa de conseguir observar diretamente todos os participantes. Além disso, estando os alunos no seu próprio ambiente e tendo acesso ao telemóvel e ao computador, existe uma maior facilidade para se distraírem durante a aula~\cite{online_classes_sharma}.
 
-Estas limitações motivam a investigação de métodos de monitorização contínua dos alunos, complementares à supervisão realizada pelo docente. Neste sentido, a integração de biossensores e dados multimodais (\textit{Multimodal Learning Analytics}) tem vindo a ganhar relevância como forma de captar estados cognitivos e emocionais dos alunos durante o ensino remoto~\cite{Becerra2026}. Contudo, de acordo com uma revisão sistemática realizada por Becerra \textit{et al.}~\cite{Becerra2026}, que analisou 54 estudos nesta área, a maioria da investigação existente ainda é realizada em ambientes laboratoriais controlados e com amostras pequenas e homogéneas — a mediana de participantes por estudo é de apenas 29{,}5 (média de 50{,}82), sendo que só um dos 54 estudos monitorizou mais de 100 alunos.
+Estas limitações motivam a investigação de métodos de monitorização contínua dos alunos, complementares à supervisão realizada pelo docente. Neste sentido, a integração de biossensores e dados multimodais (\textit{Multimodal Learning Analytics}) tem ganho relevância como forma de captar estados cognitivos e emocionais dos alunos durante o ensino remoto~\cite{Becerra2026}. Contudo, de acordo com uma revisão sistemática realizada por Becerra \textit{et al.}~\cite{Becerra2026}, que analisou 54 estudos nesta área, a maioria da investigação existente ainda é realizada em ambientes laboratoriais controlados e com amostras pequenas e homogéneas — a mediana de participantes por estudo é de apenas 29{,}5 (média de 50{,}82), sendo que só um dos 54 estudos monitorizou mais de 100 alunos.
 Os próprios autores identificam esta limitação como uma barreira à validade externa e à generalização dos resultados, apontando a necessidade de estudos de maior escala e mais longitudinais, realizados em ambientes de aprendizagem reais.
 
 Esta lacuna motiva o desenvolvimento de \textit{frameworks} abertas de monitorização, capazes de monitorizar os alunos de forma não intrusiva durante a utilização normal do computador.
@@ -32,9 +32,6 @@ Historicamente, esta monitorização era realizada através de questionários su
 Mais recentemente, com os avanços nas tecnologias \textit{wearable} e de Inteligência Artificial, o foco das investigações passou para a monitorização passiva utilizando \textit{smartphones} e \textit{wearables} ou dispositivos embarcados como os periféricos do próprio computador~\cite{Kafkov2024}.
 Contudo, como aponta Kallio \textit{et al.}~\cite{Kallio2025}, existe uma clara dicotomia na literatura: enquanto que as abordagens baseadas em \textit{smartphones} e \textit{wearables} possuem diversos estudos longitudinais, estudos envolvendo periféricos ou sensores ambientais ainda são maioritariamente realizados em ambiente laboratorial, existindo apenas um pequeno número de estudos que os avaliam em situações não controladas.
 Adicionalmente, o mesmo estudo apresenta também outro desafio: a falta de um critério objetivo confiável para determinar o nível de stresse~\cite{Kallio2025}, necessitando assim de recorrer à perceção do próprio trabalhador para determinar o \textit{ground truth} (tendo, por isso, os mesmos problemas que os questionários)~\cite{Kallio2025}.
-
-
-
 
 
 \section{Fontes de Dados para Monitorização do Utilizador}
@@ -55,13 +52,13 @@ Neste contexto, a recolha de informação pode ser efetuada a diferentes níveis
 Em primeiro lugar, o rato e teclado, como métodos de interação com o computador, permitem estimar o estado afetivo do utilizador com base nas mudanças na dinâmica de digitação e de movimento, como a velocidade, o ritmo, a taxa de correção ou o tempo de retenção de teclas~\cite{Keystore_k2025,Zimmermann2003}.
 Adicionalmente, como estes métodos focam-se mais frequentemente nos padrões em si e não no conteúdo, os dados podem ser anonimizados para evitar problemas com privacidade e assim aumentar a taxa de aceitação destes métodos~\cite{Kallio2025}.
 
-Para além disso, as \textit{webcams} do computador, por já se encontrarem presentes na maioria dos portáteis (e por serem relativamente acessíveis de adquirir, no caso de \textit{desktops}), podem fornecer também dados como expressões faciais, postura, direção do olhar ou dilatação das pupilas~\cite{Kallio2025,online_classes_sharma}.
+Além disso, as \textit{webcams} do computador, por já se encontrarem presentes na maioria dos portáteis (e por serem relativamente acessíveis de adquirir, no caso de \textit{desktops}), podem fornecer também dados como expressões faciais, postura, direção do olhar ou dilatação das pupilas~\cite{Kallio2025,online_classes_sharma}.
 Apesar deste método ter uma boa taxa de precisão em ambientes laboratoriais, a perda de privacidade causada pela captação constante de imagens torna este método difícil de aplicar na prática~\cite{Kallio2025}.
 
 Apesar da literatura já comprovar a eficácia e precisão destas abordagens em ambientes controlados de laboratório, a investigação realizada em situações reais é ainda relativamente escassa~\cite{Kallio2025}.
 Devido a esta lacuna, e tendo em conta a maior complexidade e imprevisibilidade do ambiente real, considero que ainda não existem exemplos suficientes para confirmar a aplicabilidade destes métodos em ambiente real, sendo por isso necessária a realização de mais estudos em ambiente real.
 
-Finalmente, também é possível monitorizar a telemetria dos programas utilizados ou a comunicação utilizando o computador (como \textit{e-mails}). Contudo o uso de telemetria é demasiado específico à ferramenta em si e a monitorização de \textit{e-mails} representa uma quebra de privacidade grave, sendo por isso pouco viáveis em prática na maioria das situações.
+Finalmente, também é possível monitorizar a telemetria dos programas utilizados ou a comunicação utilizando o computador (como \textit{e-mails}). Contudo, o uso de telemetria é demasiado específico à ferramenta em si e a monitorização de \textit{e-mails} representa uma quebra de privacidade grave, sendo por isso pouco viáveis em prática na maioria das situações.
 
 \subsection{Sensores Fisiológicos Especializados}
 
@@ -78,15 +75,15 @@ Finalmente, apesar de ser menos prático e necessitar de equipamento mais especi
 
 Atividade endotérmica é a medição das variações das propriedades elétricas da pele provocadas pela produção de suor, visto que a produção de suor pode ser considerado um indicador de atividade cognitiva ou emocional.
 
-Como este método é estudado à mais de 100 anos, existem diversos tipos de aparelhos a nível laboratorial, sendo que a maioria destes utiliza elétrodos ligados a um amplificador. O tamanho deste amplificador, em conjunção com a necessidade de manter uma posição estática para não afetar as medições limitou a sua aplicabilidade fora de cenários laboratorias, contudo, com as novidades nas tecnologias \textit{wearable}, estes aparelhos tornaram-se progressivamente mais portáteis e, por isso, mais práticos para uso em situações reais.
+Como este método é estudado à mais de 100 anos, existem diversos tipos de aparelhos a nível laboratorial, sendo que a maioria destes utiliza elétrodos ligados a um amplificador. O tamanho deste amplificador, em conjunção com a necessidade de manter uma posição estática para não afetar as medições limitou a sua aplicabilidade fora de cenários laboratoriais, contudo, com as novidades nas tecnologias \textit{wearable}, estes aparelhos tornaram-se progressivamente mais portáteis e, por isso, mais práticos para uso em situações reais.
 
 \subsubsection{Respiração}
 
-Apesar da medição da variação nos padrões de respiração ser uma área ainda pouco estudada, analisar mudanças na forma como os utilizadores respiram pode ser útil para estimar o estado psicológico ou físico. Em termos de sensores, apesar de ser possível medir a inspiração e expiração diretamente vai um espirómetro, a necessidade de utilizar este dispositivo no nariz torna-o imprático para uso prolongado, sendo por isso preferível os movimentos do peito ao posicionar dois cintos: um no peito abaixo das axilas e outro no abdómen.
+Apesar da medição da variação nos padrões de respiração ser uma área ainda pouco estudada, analisar mudanças na forma como os utilizadores respiram pode ser útil para estimar o estado psicológico ou físico. Em termos de sensores, apesar de ser possível medir a inspiração e expiração diretamente vai um espirómetro, a necessidade de utilizar este dispositivo no nariz torna-o impraticável para uso prolongado, sendo por isso preferível os movimentos do peito ao posicionar dois cintos: um no peito abaixo das axilas e outro no abdómen.
 
 \subsubsection{Eletromiografia}
 
-A eletromiografia é um método de recolha de dados que utiliza elétrodos superficiais para detetar contrações musculares. Esta análise muscular é particularmente útil para distinguir entre emoções positivas e negativas ao monitorizar a contração dos músculos da face, sendo este método considerado mais preciso que observação direta pois permite detetar contrações que não são normalmente detetáveis a olho nu, permitindo, por exemplo, distinguir entre um sorriso genuíno e um sorriso forçado.
+A eletromiografia é um método de recolha de dados que utiliza elétrodos superficiais para detetar contrações musculares. Esta análise muscular é particularmente útil para distinguir entre emoções positivas e negativas ao monitorizar a contração dos músculos da face, sendo este método considerado mais preciso que observação direta, pois permite detetar contrações que não são normalmente detetáveis a olho nu, permitindo, por exemplo, distinguir entre um sorriso genuíno e um sorriso forçado.
 
 \subsubsection{Atividade Cerebral}
 
@@ -94,19 +91,19 @@ A medição da atividade cerebral é normalmente realizada através de eletroenc
 
 \subsubsection{Atividade Ocular}
 
-Finalmente, outra fonte de dados frequentemente utilizada é a atividade ocular. A atividade ocular é normalmente medida através de câmaras e normalmente foca-se na direção do olhar, a velocidade e frequência do movimento ocular e a frequência e duração do piscar de olhos. Adicionalmente, existem também estudos que analizam a dilatação da pupila como indicador, contudo este estudo ainda se encontra limitado a ambientes laboratoriais controlados, visto que a dilatação pupilar não só depende do indivíduo e da distância do objeto em foco, mas também das condições luminosas, sendo que por isso a sua aplicabilidade em situações reais ainda é limitada.
+Finalmente, outra fonte de dados frequentemente utilizada é a atividade ocular. A atividade ocular é normalmente medida através de câmaras e normalmente foca-se na direção do olhar, a velocidade e frequência do movimento ocular e a frequência e duração do piscar de olhos. Adicionalmente, existem também estudos que analisam a dilatação da pupila como indicador, contudo este estudo ainda se encontra limitado a ambientes laboratoriais controlados, visto que a dilatação pupilar não só depende do indivíduo e da distância do objeto em foco, mas também das condições luminosas, sendo que por isso a sua aplicabilidade em situações reais ainda é limitada.
 
 \subsubsection{Desvantagens Principais dos Sensores Convencionais}
 
 Este tipo de sensores fisiológicos, apesar de precisos, possuem alguns problemas em termos de escalabilidade e aplicabilidade em situações reais. 
-Apesar de a maioria destes dispositivos terem versões suficientemente portáteis para o uso quotadiano, o desconforto durante o uso (em particular de sensores na face ou peito) e o facto que os utilizadores necessitam de manter os dispositivos carregados leva a um elevado abandono destes dispositivos~\cite{Kallio2025}.
+Apesar de a maioria destes dispositivos terem versões suficientemente portáteis para o uso quotidiano, o desconforto durante o uso (em particular de sensores na face ou peito) e o facto que os utilizadores necessitam de manter os dispositivos carregados leva a um elevado abandono destes dispositivos~\cite{Kallio2025}.
 Adicionalmente, para além da dificuldade de adoção, estes dispositivos estão ainda sujeitos a imprecisões de dados causadas pelo uso de forma incorreta ou até mesmos pelos movimentos normalmente realizados durante o quotidiano~\cite{Kallio2025}.
 
 \subsection{Dispositivos \textit{Wearable} de Uso Geral}
 
-Com base nas desvantagens acima, uma alternativa a considerar são dispositivos \textit{wearable} de uso comum como \textit{smartwatches} e \textit{smartrings}.
+Com base nas desvantagens acima, uma alternativa a considerar são dispositivos \textit{wearable} de uso comum como \textit{smartwatches} e \textit{smart rings}.
 Apesar destes dispositivos terem necessidade de serem carregados frequentemente à semelhança dos sensores fisiológicos convencionais, a sua localização no pulso e dedo respetivamente (locais onde o uso de objetos já é normal) leva a menores queixas de desconforto~\cite{Kallio2025}.
-Para além disso, o facto de muitos destes dispositivos possuirem funcionalidades para além da medição fisiológica (como atendimento de chamadas, leitura de notificações ou controlos multimédia) poderá servir como incentivo para diminuir a taxa de abandono destes dispositivos.
+Além disso, o facto de muitos destes dispositivos possuírem funcionalidades para além da medição fisiológica (como atendimento de chamadas, leitura de notificações ou controlos multimédia) poderá servir como incentivo para diminuir a taxa de abandono destes dispositivos.
 
 \subsection{Sensores Ambientais}
 
@@ -124,7 +121,7 @@ Contudo, a validação científica nem sempre se traduz na existência de soluç
 
 \subsection{Contexto Empresarial}
 
-No contexto empresarial, existem já diversas soluções que monitorizam continuamente os trabalhadores, como por exemplo o Toggl Track~\cite{toggletrack}, o Hubstaff~\cite{hubstaff} ou o Time Doctor~\cite{timedoctor}.
+No contexto empresarial, existem já diversas soluções que monitorizam continuamente os trabalhadores, como, por exemplo, o Toggl Track~\cite{toggletrack}, o Hubstaff~\cite{hubstaff} ou o Time Doctor~\cite{timedoctor}.
 
 Estas ferramentas recorrem tipicamente a dois tipos de abordagens: através da monitorização do tipo de atividade (quer via capturas de ecrã ou ao integrar diretamente com \textit{browsers} e \textit{software} empresarial como \ac{IDE}s) ou através da monitorização de periféricos como rato e teclado.
 
@@ -160,14 +157,42 @@ O processamento em \textit{streaming}, por outro lado, foi desenhado de raiz par
 
 Finalmente, existe ainda uma abordagem intermédia, o \textit{micro-batching} que, apesar de se basear no processamento em \textit{batch}, procura aproximar-se da baixa latência do \textit{streaming} ao utilizar lotes com janelas temporais bastante pequenas~\cite{Dendane2019}. Apesar deste sistema possuir maior latência que \textit{streaming}, é mais adequado para sistemas que exijam consistência do tipo \textit{exactly once}, visto que a sua melhor tolerância a falhas ajuda a garantir que todas as mensagens sejam recebidas uma e apenas uma vez~\cite{Dendane2019}.
 
-Num contexto de monitorização contínua do estado de utilizadores durante o uso normal do computador, os dados produzidos pelos periféricos e pelos \textit{wearables} constituem, por definição, um fluxo contínuo de dados não limitados: não só pelos períodos prolongados de recolha mas também pelo facto de que algumas fontes de dados, como por exemplo o teclado, produzem dados de forma não periódica, não sendo por isso possível prever a quantidade de dados produzida por cada utilizador.
+Num contexto de monitorização contínua do estado de utilizadores durante o uso normal do computador, os dados produzidos pelos periféricos e pelos \textit{wearables} constituem, por definição, um fluxo contínuo de dados não limitados: não só pelos períodos prolongados de recolha mas também pelo facto de que algumas fontes de dados, como, por exemplo, o teclado, produzem dados de forma não periódica, não sendo por isso possível prever a quantidade de dados produzida por cada utilizador.
 Adicionalmente, como estes sistemas precisam de ser capazes de lidar com o ruído e dados anormais naturalmente produzidos pelas fontes de dados, não é também necessário garantir uma consistência \textit{exactly once}.
 Por estas razões, posso concluir que o paradigma de processamento em \textit{streaming} é o mais apropriado para os objetivos pretendidos, sendo por isso o restante da análise focada em tecnologias utilizadas no processamento em \textit{streaming}.
 
 \subsection{Ingestão de Dados}
 
+Em situações que requeiram a monitorização de vários utilizadores em simultâneo, não é prático armazenar e processar os dados de cada utilizador localmente, logo torna-se necessário criar uma arquitetura capaz de transmitir estes dados de forma contínua e fiável para um local onde os dados possam ser armazenados e acedidos de forma conjunta. Para este propósito existem diversas tecnologias dedicadas ao transporte destes dados em \textit{streaming}, sendo que podem ser geralmente agrupadas em quatro categorias:
+
+\subsubsection{\textit{Message Brokers}}
+
+\textit{Message Brokers} são sistemas de \textit{middleware} que gerem o encaminhamento de mensagens e facilitam a comunicação desacoplada entre serviços, mesmo quando estes utilizam tecnologias distintas~\cite{IBM_brokers}.
+
+Em geral, \textit{message brokers} utilizam dois padrões de mensagens básicos: ponto-a-ponto (\textit{point-to-point messaging}), em que cada mensagem é entregue a apenas um subscritor utilizando uma fila física, e publicação/subscrição (\textit{publish/subscribe} ou \textit{pub/sub}), em que cada mensagem publicada num dado tópico é propagada de forma assíncrona a múltiplos subscritores interessados~\cite{IBM_brokers}.
+
+Em termos de protocolos suportados por estes \textit{brokers}, os mais relevantes são o \ac{AMQP}, focado no melhor roteamento e persistência de mensagens~\cite{amqp_mqtt_definitions}, o \ac{STOMP}, um protocolo simples baseado em texto~\cite{STOMP} e o \ac{MQTT}, que pode ser executado mesmo em \textit{hardware} mais limitado~\cite{amqp_mqtt_definitions}.
+
+\subsubsection{Plataformas de \textit{streaming} de \textit{logs} distribuídas}
+
+As plataformas de \textit{streaming} de \textit{logs} distribuídas são uma alternativa aos \textit{message brokers} tradicionais, sendo o Apache Kafka o pioneiro e principal exemplo desta categoria~\cite{Kafka2011}.
+
+Embora se assemelhem ao modelo \textit{publish-subscribe} na sua utilização de tópicos e na sua subscrição, estas plataformas distinguem-se dos \textit{message brokers} por utilizarem \textit{logs append-only} gravados em disco como principal estrutura de dados~\cite{Kafka2011}, em vez de uma \textit{message queue}.
+
+Esta arquitetura permite uma escalabilidade horizontal e tolerância a falhas de forma nativa através do particionamento de dados, permitindo assim a distribuição da carga pelos vários nós do \textit{cluster}~\cite{Kafka2011}.
+Adicionalmente, a persistência direta em disco não só permite absorver picos súbitos de dados, visto que o espaço de disco é geralmente menos limitado e mais estável que a memória, mas também permite manter um registo histórico imutável das mensagens, funcionalidade particularmente útil para efeitos de recuperação de dados ou diagnóstico em caso de falha catastrófica da base de dados.
+
+Contudo, apesar de o Kafka permitir um \textit{throughput} bastante melhor que a competição na data da sua conceção~\cite{Kafka2011}, o uso de \textit{Message Brokers} ainda é preferível em cenários de recursos bastante limitados (como, por exemplo, em microprocessadores) ou em situações que requeiram regras de roteamento mais avançadas (como, por exemplo, roteamento baseado no conteúdo ou utilizando \textit{wildcards}).
+
+\subsubsection{Protocolos de comunicação local com \textit{wearables} (\ac{BLE})}
+
+Finalmente, como algumas situações justificam o uso de \textit{wearables} externos, e considerando que nem todos permitem a execução de terceiros, torna-se relevante mencionar formas comuns de transmitir os dados de um dispositivo \textit{wearable} para um dispositivo intermediário.
+Apesar de existirem outros protocolos, o protocolo mais suportado em dispositivos \textit{wearable} é o \ac{BLE}~\cite{RootsAnalysis2026}. 
+
+O \ac{BLE} é um protocolo baseado em \textit{Bluetooth} que permite conexão de curto alcance entre dispositivos utilizando ondas de rádio na banda de 2.4GHz. Contudo, ao contrário do \textit{Bluetooth} clássico, o \ac{BLE} permite um consumo menor de energia ao permanecer num estado de hibernação sempre que não esteja ativamente a transmitir dados, limitando a sua atividade a breves de conexão~\cite{Proctor2023}.
+Esta tecnologia é particularmente útil em dispositivos \textit{wearable} por drasticamente reduzir o consumo de energia, permitindo assim a criação de dispositivos mais compactos (como anéis) sem comprometer a sua funcionalidade.
+Contudo, apesar da sua elevada adoção, este protocolo não é explicitamente aberto, sendo que algumas marcas ou modelos utilizam \textit{firmware} proprietário que pode dificultar a sua integração no sistema~\cite{blexiaomi}.
+
 \subsection{Processamento e Transformação de Dados}
 
 \subsection{Armazenamento de Dados}
-
-\subsection{Visualização e Telemetria}
