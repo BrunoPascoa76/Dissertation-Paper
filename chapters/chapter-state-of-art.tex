@@ -184,6 +184,14 @@ Adicionalmente, a persistência direta em disco não só permite absorver picos 
 
 Contudo, apesar de o Kafka permitir um \textit{throughput} bastante melhor que a competição na data da sua conceção~\cite{Kafka2011}, o uso de \textit{Message Brokers} ainda é preferível em cenários de recursos bastante limitados (como, por exemplo, em microprocessadores) ou em situações que requeiram regras de roteamento mais avançadas (como, por exemplo, roteamento baseado no conteúdo ou utilizando \textit{wildcards}).
 
+\subsubsection{Motores de Conectividade e Integração (Kafka Connect)}
+
+Além de ser necessária a ingestão de dados da fonte, é também frequentemente necessário transportar os dados entre dois componentes, como, por exemplo, entre \textit{brokers} \ac{MQTT} locais instalados em cada escritório e um \textit{cluster} Kafka central ou para automaticamente inserir os dados presentes num tópico Kafka na base de dados.
+Para este propósito, apesar de ser possível simplesmente criar um \textit{worker} personalizado para assegurar a transferência dos dados, existem serviços e ferramentas dedicadas a conectar serviços heterogéneos que permitem não só realizar esta tarefa com um esforço de integração muito menor, mas também oferecem as mesmas garantias de resiliência e robustez que as restantes ferramentas.
+
+Por exemplo, em arquiteturas que utilizem o Apache Kafka como motor base de ingestão, a opção mais recomendada seria o Kafka Connect, uma ferramenta que padroniza a transferência de dados entre o Apache Kafka e outros sistemas. Este serviço funciona à base de conectores de dois tipos: conectores \textit{source} que definem a ingestão de dados de outras fontes para um tópico Kafka (como, por exemplo, dados armazenados em ficheiro ou num \textit{Message Broker}) e conectores \textit{sink} que definem a exportação das mensagens de um tópico Kafka para um sistema externo (como, por exemplo, uma base de dados)~\cite{kafka_connect_docs}.
+Adicionalmente, para além da transferência de dados, é também possível realizar conversões de tipo (por exemplo, transformar uma mensagem codificada em \textit{bytes} para formato \ac{JSON} ou vice-versa)~\cite{kafka_connect_docs} ou transformações simples a mensagens individuais (como, por exemplo, eliminar campos desnecessários ou filtrar mensagens com base em condições simples).~\cite{kafka_connect_docs_smt}
+
 \subsubsection{Protocolos de comunicação local com \textit{wearables} (\ac{BLE})}
 
 Finalmente, como algumas situações justificam o uso de \textit{wearables} externos, e considerando que nem todos permitem a execução de terceiros, torna-se relevante mencionar formas comuns de transmitir os dados de um dispositivo \textit{wearable} para um dispositivo intermediário.
@@ -193,6 +201,17 @@ O \ac{BLE} é um protocolo baseado em \textit{Bluetooth} que permite conexão de
 Esta tecnologia é particularmente útil em dispositivos \textit{wearable} por drasticamente reduzir o consumo de energia, permitindo assim a criação de dispositivos mais compactos (como anéis) sem comprometer a sua funcionalidade.
 Contudo, apesar da sua elevada adoção, este protocolo não é explicitamente aberto, sendo que algumas marcas ou modelos utilizam \textit{firmware} proprietário que pode dificultar a sua integração no sistema~\cite{blexiaomi}.
 
+
 \subsection{Processamento e Transformação de Dados}
 
+
 \subsection{Armazenamento de Dados}
+
+Finalmente, é necessário também armazenar os dados obtidos para permitir a sua consulta futura, sendo por isso necessário escolher uma base de dados com base nas necessidades.
+
+Em termos de bases de dados, as base de dados relacionais (\ac{SQL}) são considerados a opção por defeito que pode ser utilizada em qualquer situação (incluindo a recolha de dados de sensores, sendo especialmente útil quando é necessário associar estes dados a outros registos como os dados do trabalhador), contudo existem opções não relacionais que, devido à sua arquitetura mais especializada que podem ser mais apropriadas para este cenário.
+
+Dentro das bases de dados não relacionais, a que mais se destaca são as \ac{TSDB} (como o InfluxDB ou o TimescaleDB), visto serem desenhadas especificamente para armazenar dados associados a um ponto específico no tempo, como os dados recolhidos pelos periféricos ou \textit{wearables}~\cite{ClickHouse2025}.
+Por serem feitas para indexarem os dados com base no tempo, este tipo de base de dados não só se tornam mais eficientes nas \textit{queries} de agregação temporal~\cite{ClickHouse2025} usadas frequentemente no processo analítico deste tipo de dados (como, por exemplo, obter médias horárias ou diárias), mas também o armazenamento dos próprios dados, comprimindo sequências de valores repetidos ou similares ao armazenar apenas os deltas~\cite{ClickHouse2025} (diferença entre cada registo e o registo anterior).
+
+Finalmente, em casos particulares que envolvam pesquisas textuais frequentes (como, por exemplo, a análise de \textit{logs}), poderá ser relevante utilizar um motor de busca distribuído como o ElasticSearch, pois, como estas bases de dados dividem o texto em tokens, permitem não só pesquisar por texto literal, mas também, por exemplo, por proximidade~\cite{elastic_fulltext}.
