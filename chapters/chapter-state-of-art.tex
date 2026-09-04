@@ -189,7 +189,7 @@ Contudo, apesar de o Kafka permitir um \textit{throughput} bastante melhor que a
 Além de ser necessária a ingestão de dados da fonte, é também frequentemente necessário transportar os dados entre dois componentes, como, por exemplo, entre \textit{brokers} \ac{MQTT} locais instalados em cada escritório e um \textit{cluster} Kafka central ou para automaticamente inserir os dados presentes num tópico Kafka na base de dados.
 Para este propósito, apesar de ser possível simplesmente criar um \textit{worker} personalizado para assegurar a transferência dos dados, existem serviços e ferramentas dedicadas a conectar serviços heterogéneos que permitem não só realizar esta tarefa com um esforço de integração muito menor, mas também oferecem as mesmas garantias de resiliência e robustez que as restantes ferramentas.
 
-Por exemplo, em arquiteturas que utilizem o Apache Kafka como motor base de ingestão, a opção mais recomendada seria o Kafka Connect, uma ferramenta que padroniza a transferência de dados entre o Apache Kafka e outros sistemas. Este serviço funciona à base de conectores de dois tipos: conectores \textit{source} que definem a ingestão de dados de outras fontes para um tópico Kafka (como, por exemplo, dados armazenados em ficheiro ou num \textit{Message Broker}) e conectores \textit{sink} que definem a exportação das mensagens de um tópico Kafka para um sistema externo (como, por exemplo, uma base de dados)~\cite{kafka_connect_docs}.
+Por exemplo, em arquiteturas que utilizem o Apache Kafka como motor base de ingestão, a opção oficialmente recomendada seria o Kafka Connect, uma ferramenta que padroniza a transferência de dados entre o Apache Kafka e outros sistemas. Este serviço funciona à base de conectores de dois tipos: conectores \textit{source} que definem a ingestão de dados de outras fontes para um tópico Kafka (como, por exemplo, dados armazenados em ficheiro ou num \textit{Message Broker}) e conectores \textit{sink} que definem a exportação das mensagens de um tópico Kafka para um sistema externo (como, por exemplo, uma base de dados)~\cite{kafka_connect_docs}.
 Adicionalmente, para além da transferência de dados, é também possível realizar conversões de tipo (por exemplo, transformar uma mensagem codificada em \textit{bytes} para formato \ac{JSON} ou vice-versa)~\cite{kafka_connect_docs} ou transformações simples a mensagens individuais (como, por exemplo, eliminar campos desnecessários ou filtrar mensagens com base em condições simples).~\cite{kafka_connect_docs_smt}
 
 \subsubsection{Protocolos de comunicação local com \textit{wearables} (\ac{BLE})}
@@ -201,9 +201,12 @@ O \ac{BLE} é um protocolo baseado em \textit{Bluetooth} que permite conexão de
 Esta tecnologia é particularmente útil em dispositivos \textit{wearable} por drasticamente reduzir o consumo de energia, permitindo assim a criação de dispositivos mais compactos (como anéis) sem comprometer a sua funcionalidade.
 Contudo, apesar da sua elevada adoção, este protocolo não é explicitamente aberto, sendo que algumas marcas ou modelos utilizam \textit{firmware} proprietário que pode dificultar a sua integração no sistema~\cite{blexiaomi}.
 
+\subsection{Análise e Processamento de Dados}
 
-\subsection{Processamento e Transformação de Dados}
+Num cenário que envolva monitorizar de forma contínua o estado atual do utilizador, não basta apenas recolher e armazenar os dados de forma contínua, é também necessário estabelecer um \textit{pipeline} capaz de processar e analisar os dados de forma contínua e automática.
 
+Esta necessidade motivou o desenvolvimento de \textit{stream processing frameworks} como, por exemplo, o Apache Flink ou o Kafka Streams, ferramentas focadas na vertente computacional do fluxo, permitindo operações como filtragem, agregação, transformação ou análise dos dados em transporte~\cite{ibm_stream_processing}.
+A maioria pode ser integrada diretamente com o \textit{pipeline} de transporte de dados ao utilizar os tópicos de plataformas como o Kafka como origem ou fonte de dados~\cite{ibm_stream_processing}, contudo algumas destas ferramentas, como o Apache Flink, por exemplo, permitem inserir os dados diretamente na base de dados~\cite{flink_connectors}, conectando assim estes dois componentes.
 
 \subsection{Armazenamento de Dados}
 
