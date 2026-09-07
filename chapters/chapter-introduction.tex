@@ -14,20 +14,15 @@
     Contudo, ao contrário dos estudos laboratoriais, onde os dados apenas interessam no final da recolha, num cenário real o objetivo é responder às mudanças do estado de cada indivíduo à medida que estas occorem. Por esta razão, a tomada de decisões exige a atualização dos dados em tempo real (ou com latência reduzida), sendo por isso necessário adotar uma abordagem em \textit{streaming}.
 
     \section{Objetivos}\label{sec:objectives}
-    
-    %Para aproveitar esta oportunidade, este trabalho foca-se na criação de uma \textit{framework} para monitorização simultânea do estado de vários utilizadores durante o uso normal do computador, utilizando periféricos presentes no próprio computador (como o teclado, o rato ou a \textit{webcam}), bem como sensores \textit{wearable off-the-shelf} de uso comum (como \textit{smartwatches}). 
-    %Com base nestas características, esta \textit{framework} pode ser útil em várias situações como, por exemplo, para medir o nível de \textit{stress} em situações de teletrabalho (utilizando a frequência cardíaca proveniente de um \textit{smartwatch} e a dinâmica de digitação no teclado) ou para medir o nível  de atenção de alunos em situação de \textit{e-learning} (recorrendo à direção do olhar e a frequência do pestanejar através de uma \textit{webcam}).
 
-    %Contudo, o valor deste trabalho não reside apenas na criação de uma framework de monitorização funcional, mas também na exploração do \textit{streaming} como estratégia para recolha de dados de forma contínua neste tipo de cenários, utilizando ferramentas de \textit{streaming} já estabelecidas sempre que possível e descrevendo possíveis vantagens e problemas encontrados.
+    Com base no cenário acima descrito, este trabalho foca-se na criação de uma \textit{framework} baseada em \textit{streaming} para monitorização simultânea do estado de vários utilizadores durante o uso normal do computador, utilizando periféricos presentes no próprio computador ou dispositivos \textit{wearables off-the-shelf}, com o objetivo de demonstrar a exequibilidade de uma solução baseada em \textit{streaming} para monitorização contínua, bem como explorar alguns dos periféricos (e métricas deles extraídos) utilizados na literatura para estimar o estado do utilizador.
 
-    Com base no cenário descrito acima, os objetivos específicos do trabalho são:
+    Para concretizar esta meta global, definem-se os seguintes objetivos específicos:
     \begin{itemize}
-        \item Conceber e implementar uma \textit{framework} que recorre ao \textit{streaming} para a monitorização contínua de vários utilizadores durante o uso normal do computador.
-        \item Integrar fontes de dados heterogéneas, permitindo a recolha de dados de periféricos nativos do computador e de dispositivos \textit{wearable off-the-shelf}.
-        \item Explorar o uso de ferramentas já estabelecidas para a criação da \textit{pipeline} de ingestão de dados, sempre que possível.
-        \item Assegurar a extensibilidade da \textit{framework} para periféricos de computador e dispositivos \textit{wearable off-the-shelf}, minimizando e localizando tanto quanto possível o esforço de integração destas fontes de dados.
-        \item Documentar as vantagens e dificuldades encontradas na implementação desta \textit{framework}.
-        \item Validar o funcionamento do sistema através de um fluxo \textit{end-to-end} com dados reais e realizar uma análise analítica de escalabilidade.
+        \item \textbf{Demonstrar a exequibilidade do paradigma de \textit{streaming}:} Comprovar a viabilidade técnica de uma arquitetura de processamento contínuo baseada em \textit{streaming} para a monitorização contínua de vários utilizadores durante o uso do computador, utilizando sensores heterogénios.
+        \item \textbf{Integrar fontes de dados fundamentadas na literatura:} Integrar fontes de dados e métricas fundamentados em estudos científicos anteriores, evitando escolhas arbitrárias, para estimar o estado do utilizador no âmbito da prova de conceito.
+        \item \textbf{Ilustrar a monitorização em tempo real:} Integrar um mecanismo de visualização e agregação de dados (recorrendo a ferramentas como o \textit{InfluxDB} e o \textit{Grafana}) para demonstrar o comportamento funcional do fluxo \textit{end-to-end} num cenário controlado.
+        \item \textbf{Projetar uma arquitetura modular:} Desenvolver a solução técnica garantindo que a estrutura conceptual sirva de base sólida para futuras expansões de novos tipos de sensores ou fontes de dados.
     \end{itemize}
 
     
