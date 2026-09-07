@@ -7,19 +7,41 @@ Este capítulo detalha de que forma os objetivos influenciaram a arquitetura, ap
 
 \section{Requisitos e o seu Impacto na Arquitetura}
 
-Com base nos objetivos descritos na Secção~\ref{sec:objectives}, foram estabelecidos os seguintes requisitos para o sistema:
+\subsection{Objetivos e Requisitos}
+
+Como descrito na Secção~\ref{sec:objectives}, os objetivos principais para este trabalho são:
 \begin{itemize}
-    \item Suporte para recolha de dados de múltiplos utilizadores em simultâneo, o que suporta arquiteturas que separem o sistema em componentes locais e remotos, como a arquitetura cliente-servidor.
-    \item Suporte para o uso de múltiplos periféricos nativos do computador e dispositivos \textit{wearable off-the-shelf}, o que favorece o controlo e agregação local dos dados no computador do utilizador, visto que os periféricos e muitos dos dispositivos \textit{wearables} são incapazes de comunicar diretamente com um servidor remoto.
-    \item O sistema tem de possuir baixo acoplamento para reduzir e localizar o esforço de acoplamento, o que implica o uso de uma arquitetura de \textit{plug-ins} ou microsserviços e uma preferência por manter o servidor agnóstico ao tipo de sensor (sendo, por isso, apenas necessário alterar o sistema).
+    \item Demonstrar a exequibilidade do paradigma de \textit{streaming}
+    \item Integrar fontes de dados fundamentadas na literatura
+    \item Ilustrar a monitorização em tempo real
+    \item Projetar uma arquitetura modular
 \end{itemize}
+
+Tendo em conta estes objetivos para este trabalho, decidi estabelecer os seguintes requisitos para o sistema:
+\begin{itemize}
+    \item \textbf{Suporte para recolha de dados de múltiplos utilizadores em simultâneo:} de modo a cumprir com o cenário estabelecido, o sistema tem de ser projetado para receber dados de vários clientes em simultâneo
+    \item \textbf{Suporte para o uso de múltiplos periféricos e dispositivos \textit{wearable off-the-shelf}}: o sistema tem de ser capaz de ingerir dados de periféricos (teclado e câmara) e de dispositivos \textit{wearable off-the-shelf} (\textit{smartwatch wearOS}) para um mesmo utilizador.
+    \item \textbf{Suporte para ferramentas de visualização:} de modo a permitir a visualização dos dados (em tempo real ou históricos), o sistema tem de ser capaz de integrar \textit{software} de visualização
+    \item \textbf{Suporte à adição de sensores:} devido à diversidade de casos de uso dentro do cenário indicado, o sistema tem de ser capaz de permitir que novos \textit{wearables} ou periféricos sejam adicionados e que novas métricas sejam extraídas com base nas necessidades específicas.
+\end{itemize}
+
+\subsection{Impacto dos Requisitos no Sistema}
+
+Em primeiro lugar, a necessidade de suportar a recolha de múltiplos utilizadores, bem como a escolha do \textit{streaming} como paradigma levou à separação do sistema em dois blocos lógicos: o subsistema do cliente presente em cada computador e um subsistema remoto partilhado para onde os clientes enviam os dados para serem processados e armazenados.
+Contudo, a necessidade de suportar várias fontes de dados, especialmente tendo em conta que alguns \textit{wearables} não conseguem comunicar diretamente com o servidor, leva à transferência da responsabilidade de coordenação dos vários sensores de cada utilizador para o subsistema do cliente, servindo assim como agregador (ou \textit{buffer} local dos dados).
+Esta separação de responsabilidades facilita também o cumprimento do requisito do suporte à adição de sensores, pois permite que o servidor seja geralmente agnóstico à origem dos dados e as suas características, isolando assim o esforço de modificação ao subsistema do cliente.
+
+Em segundo lugar, a necessidade de visualização, favorece o armazenamento dos dados numa base de dados (ou um sistema de persistência equivalente), visto que assim é possível não só analisar o estado atual, mas também consultar dados históricos (permitindo, por exemplo, diferenciar entre um momento pontual de cansaço e uma tendência regular provocada por \textit{burnout}).
+Contudo, devido à natureza heterogénea dos dados (bem como a necessidade de agrupar os dados por tipo de sensor), torna-se necessário armazenar os dados em estruturas de dados diferentes (tendo cada estrutura um \textit{schema} diferente) o que poderá ser assegurado ao estabelecer um esquema de roteamento automático, o que pode ser realizado utilizando diferentes tópicos com um prefixo comum ou através da injeção do tipo de sensor no \textit{payload} enviado.
+
+Finalmente, como um dos objetivos do trabalho é utilizar especificamente o paradigma de \textit{streaming} para a recolha destes dados, para assim demonstrar a sua exequibilidade neste cenário, não só torna mais relevante a escolha ponderada das tecnologias a utilizar, mas também favorece a resolução de problemas explorando soluções de \textit{streaming} existentes, em vez de recorrer a código escrito de raiz. 
 
 \section{Arquitetura Lógica}
 
 O diagrama de componentes presente na Figura~\ref{fig:sys_arq_logic} apresenta a estrutura a alto nível do sistema, podendo ser dividido em dois subsistemas:
 \begin{itemize}
-    \item \textbf{Subsistema Local (Cliente):} Este subsistema é executado no computador do utilizador e tem como objetivo recolher e agregar dados de sensores. Para além dos sensores (que podem ser parte do próprio computador ou serem externos a este), este subsistema é composto por uma \textbf{Aplicação} responsável pelo controlo dos sensores e por um \textbf{\textit{Broker} Local}, que serve como intermediário para a comunicação com sensores externos e como \textit{buffer} no envio de dados para o servidor.
-    \item \textbf{Subsistema Remoto (Servidor):} Este subsistema é executado num servidor remoto e tem como objetivo a recolha, armazenamento e disponibilização dos dados de forma contínua. Este subsistema é composto por uma \textbf{\textit{Pipeline} para recolha de dados} capaz de os processar em \textit{streaming} contínuo, uma \textbf{Base de dados} para os armazenar e finalmente uma \textbf{API} para gerir a consulta de dados.
+    \item \textbf{Subsistema Local (Cliente):} Este subsistema é executado no computador do utilizador e pretende recolher e agregar dados de sensores. Para além dos sensores (que podem ser parte do próprio computador ou serem externos a este), este subsistema é composto por uma \textbf{Aplicação} responsável pelo controlo dos sensores e por um \textbf{\textit{Broker} Local}, que serve como intermediário para a comunicação com sensores externos e como \textit{buffer} no envio de dados para o servidor.
+    \item \textbf{Subsistema Remoto (Servidor):} Este subsistema é executado num servidor remoto e visa a recolha, armazenamento e disponibilização dos dados de forma contínua. Este subsistema é composto por uma \textbf{\textit{Pipeline} para recolha de dados} capaz de os processar em \textit{streaming} contínuo, uma \textbf{Base de dados} para os armazenar e finalmente uma \textbf{API} para gerir a consulta de dados.
 \end{itemize}
 
 \begin{figure}
