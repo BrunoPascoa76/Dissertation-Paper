@@ -89,7 +89,15 @@ Em termos de periféricos, decidi escolher o teclado e a câmara devido ao seu d
 
 \section{Fluxo de Dados}
 
-De modo a ilustrar como estes componentes comunicam entre si, a Figura~\ref{fig:end2end} mapeia o fluxo de dados \textit{end-to-end}, utilizando como exemplo os dados faciais obtidos via \textit{webcam}:
+De modo a compreensão do funcionamento do sistema e como estes componentes comunicam entre si, a Figura~\ref{fig:end2end} mapeia o fluxo de dados \textit{end-to-end}, utilizando como exemplo os dados faciais obtidos via \textit{webcam}:
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figs/end2end.png}
+    \caption{Fluxo de dados \textit{end-to-end}}
+    \label{fig:end2end}
+\end{figure}
 
 \begin{itemize}
     \item \textbf{Captura e ingestão} (passos 1 a 3): O \textit{plugin} da \textit{webcam} presente na aplicação \textit{desktop} captura uma \textit{frame} e extrai as \textit{features} faciais. Estas \textit{features} são convertidas em métricas (de modo a reduzir o volume de dados a enviar) e enviadas para o \textit{broker} Mosquitto local.
@@ -98,10 +106,3 @@ De modo a ilustrar como estes componentes comunicam entre si, a Figura~\ref{fig:
     \item \textbf{Armazenamento} (passos 8 a 10): Após a inserção no Kafka, um segundo conector \textit{sink} de Kafka Connect consome as mensagens e armazena-as na base de dados.
     \item \textbf{Acesso e visualização} (secção ``Visualização de dados''): Após o armazenamento dos dados, estes são acedidos via API REST pela app \textit{desktop} a cada segundo para gerar uma visualização dos dados.
 \end{itemize}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{figs/end2end.png}
-    \caption{Fluxo de dados \textit{end-to-end}}
-    \label{fig:end2end}
-\end{figure}
