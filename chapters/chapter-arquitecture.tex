@@ -38,7 +38,11 @@ Finalmente, como um dos objetivos do trabalho é utilizar especificamente o para
 
 \section{Arquitetura Lógica}
 
-O diagrama de componentes presente na Figura~\ref{fig:sys_arq_logic} apresenta a estrutura a alto nível do sistema, podendo ser dividido em dois subsistemas:
+Com base nos requisitos assim, podemos separar o sistema em dois subsistemas (local e remoto) com responsabilidades diferentes:
+\begin{itemize}
+    \item \textbf{Subsistema Local (Cliente):} Este subsistema é executado no computador do utilizador e tem como responsabilidade coordenar as várias fontes de dados utilizadas por aquele utilizador, incluindo a comunicação com dispositivos \textit{wearable}.
+\end{itemize}
+
 \begin{itemize}
     \item \textbf{Subsistema Local (Cliente):} Este subsistema é executado no computador do utilizador e pretende recolher e agregar dados de sensores. Para além dos sensores (que podem ser parte do próprio computador ou serem externos a este), este subsistema é composto por uma \textbf{Aplicação} responsável pelo controlo dos sensores e por um \textbf{\textit{Broker} Local}, que serve como intermediário para a comunicação com sensores externos e como \textit{buffer} no envio de dados para o servidor.
     \item \textbf{Subsistema Remoto (Servidor):} Este subsistema é executado num servidor remoto e visa a recolha, armazenamento e disponibilização dos dados de forma contínua. Este subsistema é composto por uma \textbf{\textit{Pipeline} para recolha de dados} capaz de os processar em \textit{streaming} contínuo, uma \textbf{Base de dados} para os armazenar e finalmente uma \textbf{API} para gerir a consulta de dados.
@@ -50,6 +54,8 @@ O diagrama de componentes presente na Figura~\ref{fig:sys_arq_logic} apresenta a
     \caption{Diagrama de componentes do sistema}
     \label{fig:sys_arq_logic}
 \end{figure}
+
+\section{Fluxo Conceitual}
 
 \section{Tecnologias Escolhidas}
 
