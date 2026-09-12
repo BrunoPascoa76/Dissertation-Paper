@@ -105,20 +105,19 @@ Em termos de periféricos, decidi escolher o teclado e a câmara devido ao seu d
 
 \section{Fluxo de Dados}
 
-De modo a compreensão do funcionamento do sistema e como estes componentes comunicam entre si, a Figura~\ref{fig:end2end} mapeia o fluxo de dados \textit{end-to-end}, utilizando como exemplo os dados faciais obtidos via \textit{webcam}:
+Para além da escolha de cada tecnologia influenciar a escolha das restantes, as tecnologias escolhidos tiveram também impacto no fluxo dos dados, sendo importante redesenhar o fluxo de dados com base nesta escolha (Figura~\ref{fig:end2end_technology}).
+De modo a facilitar a interpretação, decidi restringir a análise do fluxo de dados a um cenário de monitorização utilizando apenas uma \textit{webcam}:
 
+\begin{itemize}
+   \item \textbf{Recolha de dados:} Os dados são recolhidos pela aplicação, pré-processados (se necessário) e inseridos no \textit{broker} \ac{MQTT} local
+   \item \textbf{Redirecionamento:} Os dados são redirecionados de forma assíncrona do \textit{broker} \ac{MQTT} local para o \textit{broker} \ac{MQTT} remoto (utilizando o mecanismo de \textit{MQTT Bridging})
+   \item \textbf{Transporte:} Os dados são transportados do \textit{broker} \ac{MQTT} local para um tópico Kafka via conector Kafka Connect
+   \item \textbf{Armazenamento:} Os dados são consumidos do tópico Kafka e inseridos na base de dados através de um segundo conector Kafka Connect
+\end{itemize}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{figs/end2end_technology.png}
     \caption{Fluxo de dados \textit{end-to-end}}
-    \label{fig:end2end}
+    \label{fig:end2end_technology}
 \end{figure}
-
-\begin{itemize}
-    \item \textbf{Captura e ingestão} (passos 1 a 3): O \textit{plugin} da \textit{webcam} presente na aplicação \textit{desktop} captura uma \textit{frame} e extrai as \textit{features} faciais. Estas \textit{features} são convertidas em métricas (de modo a reduzir o volume de dados a enviar) e enviadas para o \textit{broker} Mosquitto local.
-    \item \textbf{Redirecionamento} (passo 4) Os dados presentes no broker local (em tópicos com o prefixo \texttt{sensors/}) são redirecionados para um \textit{broker} remoto automaticamente.
-    \item \textbf{Transporte:} (passos 5 a 7) Após a chegada de novos dados ao \textit{broker}, o conector \textit{source} do Kafka Connect recolhe estes dados e insere-os no Kafka (que possui melhor resiliência que o Mosquitto, permitindo ingestão assíncrona).
-    \item \textbf{Armazenamento} (passos 8 a 10): Após a inserção no Kafka, um segundo conector \textit{sink} de Kafka Connect consome as mensagens e armazena-as na base de dados.
-    \item \textbf{Acesso e visualização} (secção ``Visualização de dados''): Após o armazenamento dos dados, estes são acedidos via API REST pela app \textit{desktop} a cada segundo para gerar uma visualização dos dados.
-\end{itemize}
