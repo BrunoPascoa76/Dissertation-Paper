@@ -25,28 +25,31 @@ Tendo em conta estes objetivos para este trabalho, decidi estabelecer os seguint
     \item \textbf{Suporte à adição de sensores:} devido à diversidade de casos de uso dentro do cenário indicado, o sistema tem de ser capaz de permitir que novos \textit{wearables} ou periféricos sejam adicionados e que novas métricas sejam extraídas com base nas necessidades específicas.
 \end{itemize}
 
-\subsection{Impacto dos Requisitos no Sistema}
+\subsection{Fundamentação e Racional da Arquitetura}
 
-Em primeiro lugar, a necessidade de suportar a recolha de múltiplos utilizadores, bem como a escolha do \textit{streaming} como paradigma levou à separação do sistema em dois blocos lógicos: o subsistema do cliente presente em cada computador e um subsistema remoto partilhado para onde os clientes enviam os dados para serem processados e armazenados.
-Contudo, a necessidade de suportar várias fontes de dados, especialmente tendo em conta que alguns \textit{wearables} não conseguem comunicar diretamente com o servidor, leva à transferência da responsabilidade de coordenação dos vários sensores de cada utilizador para o subsistema do cliente, servindo assim como agregador (ou \textit{buffer} local dos dados).
-Esta separação de responsabilidades facilita também o cumprimento do requisito do suporte à adição de sensores, pois permite que o servidor seja geralmente agnóstico à origem dos dados e as suas características, isolando assim o esforço de modificação ao subsistema do cliente.
+Com base nestes requisitos, e nos objetivos para este trabalho, posso deduzir uma visão geral da arquitetura.
 
-Em segundo lugar, a necessidade de visualização, favorece o armazenamento dos dados numa base de dados (ou um sistema de persistência equivalente), visto que assim é possível não só analisar o estado atual, mas também consultar dados históricos (permitindo, por exemplo, diferenciar entre um momento pontual de cansaço e uma tendência regular provocada por \textit{burnout}).
-Contudo, devido à natureza heterogénea dos dados (bem como a necessidade de agrupar os dados por tipo de sensor), torna-se necessário armazenar os dados em estruturas de dados diferentes (tendo cada estrutura um \textit{schema} diferente) o que poderá ser assegurado ao estabelecer um esquema de roteamento automático, o que pode ser realizado utilizando diferentes tópicos com um prefixo comum ou através da injeção do tipo de sensor no \textit{payload} enviado.
+Em primeiro lugar, a necessidade de recolher dados de múltiplos utilizadores em simultâneo torna inconveniente o armazenamento destes dados de forma local, exigindo por isso um servidor capaz de armazenar estes dados num único local.
+Contudo, como é também necessário suportar várias fontes de dados para cada utilizador, sendo muitas delas incapazes de enviar os dados autonomamente para o servidor, torna-se também necessário um cliente que coordene estas fontes de dados.
+Estabelece-se assim uma arquitetura baseada em dois subsistemas: um subsistema local, executado no computador de cada utilizador e responsável pela coordenação dos sensores e pela recolha de dados e um subsistema remoto partilhado, executado num servidor e responsável pelo transporte, armazenamento e visualização destes dados.
 
-Finalmente, como um dos objetivos do trabalho é utilizar especificamente o paradigma de \textit{streaming} para a recolha destes dados, para assim demonstrar a sua exequibilidade neste cenário, não só torna mais relevante a escolha ponderada das tecnologias a utilizar, mas também favorece a resolução de problemas explorando soluções de \textit{streaming} existentes, em vez de recorrer a código escrito de raiz. 
+Com base nesta divisão, a responsabilidade de interagir diretamente com os sensores recai unicamente no cliente, sendo o servidor responsável apenas por interagir com as mensagens enviadas pelo cliente. 
+Logo, como o sistema necessita de suportar a adição de novos sensores, torna-se vantajoso manter o servidor agnóstico à tipologia das fontes de dados ao utilizar um fluxo único de dados independentemente da sua origem porque assim o esforço de adição de novos sensores limita-se apenas ao cliente e ao \textit{software} de visualização, mantendo inalterado o \textit{pipeline} de transporte.
+Contudo, esta decisão tem como consequência o facto de, como o servidor desconhece a origem e natureza específica dos dados, o servidor perde a capacidade de estabelecer fluxos de processamento separados para cada fonte de dados, sendo por isso necessário realizar operações como o cálculo de métricas no próprio \textit{software} de visualização (ou, em certos casos, no próprio cliente).
+
+Finalmente, como o objetivo deste trabalho não é apenas desenvolver uma solução funcional, mas sim demonstrar a viabilidade do \textit{streaming} neste cenário de monitorização contínua, decidi também evitar a resolução de problemas através do desenvolvimento de raiz em prol do uso de soluções de \textit{streaming} pré-existentes.
 
 \section{Arquitetura Lógica}
 
-Com base nos requisitos assim, podemos separar o sistema em dois subsistemas (local e remoto) com responsabilidades diferentes:
-\begin{itemize}
-    \item \textbf{Subsistema Local (Cliente):} Este subsistema é executado no computador do utilizador e tem como responsabilidade coordenar as várias fontes de dados utilizadas por aquele utilizador, incluindo a comunicação com dispositivos \textit{wearable}.
-\end{itemize}
+Apesar dos requisitos fundamentarem uma arquitetura em dois subsistemas, de modo a melhor visualizar o fluxo de dados, torna-se necessário decompor estes subsistemas numa arquitetura lógica baseada em componentes.
 
-\begin{itemize}
-    \item \textbf{Subsistema Local (Cliente):} Este subsistema é executado no computador do utilizador e pretende recolher e agregar dados de sensores. Para além dos sensores (que podem ser parte do próprio computador ou serem externos a este), este subsistema é composto por uma \textbf{Aplicação} responsável pelo controlo dos sensores e por um \textbf{\textit{Broker} Local}, que serve como intermediário para a comunicação com sensores externos e como \textit{buffer} no envio de dados para o servidor.
-    \item \textbf{Subsistema Remoto (Servidor):} Este subsistema é executado num servidor remoto e visa a recolha, armazenamento e disponibilização dos dados de forma contínua. Este subsistema é composto por uma \textbf{\textit{Pipeline} para recolha de dados} capaz de os processar em \textit{streaming} contínuo, uma \textbf{Base de dados} para os armazenar e finalmente uma \textbf{API} para gerir a consulta de dados.
-\end{itemize}
+Ao nível do cliente, o componente central é uma aplicação responsável por extrair os dados dos sensores e enviá-los para o servidor.
+Contudo, prevendo a possibilidade de falhas temporárias na conexão ao servidor, torna-se também necessário criar um \textit{buffer} para evitar a perda de dados.
+Apesar de ser possível criar um \textit{buffer} interno à própria aplicação, decidi utilizar um \textit{message broker} local leve separado porque assim posso-o utilizar não só como \textit{buffer} mas também como intermediário na comunicação com dispositivos \textit{wearable} para os periféricos do computador, mas também como intermediário na comunicação e recolha de dados de dispositivos \textit{wearables}.
+
+Ao nível do servidor, o elemento central é uma \textit{pipeline} de transporte de dados.
+Contudo, apesar de ser teoricamente possível visualizar os dados diretamente da \textit{pipeline}, a criação de um base de dados como motor de persistência permite também enriquecer estes dados em tempo real com dados históricos, permitindo assim distinguir entre tendências regulares e eventos pontuais.
+Finalmente, antevendo a possibilidade de integração com sistemas externos de análise, decidi também adicionar uma interface que uniformize a consulta dos dados armazenados, com a intenção de facilitar o estabelecimento de regras de acesso aos dados.
 
 \begin{figure}[h]
     \centering
@@ -56,6 +59,13 @@ Com base nos requisitos assim, podemos separar o sistema em dois subsistemas (lo
 \end{figure}
 
 \section{Fluxo Conceitual}
+
+Com base nesta arquitetura de componentes, podemos já estabelecer um fluxo inicial para os dados baseada em 3 etapas:
+\begin{enumerate}
+    \item \textbf{Captura e Ingestão:} os dados gerados pelas fontes de dados são recolhidos pela aplicação e enviados para o \textit{broker local}.
+    \item \textbf{Redirecionamento:} de forma assíncrona, os dados do \textit{broker} local são enviados para o \textit{pipeline} do servidor.
+    \item \textbf{Transporte e Armazenamento:} estes dados são transportados ao longo do \textit{pipeline} e inseridos na base de dados.
+\end{enumerate}
 
 \section{Tecnologias Escolhidas}
 
@@ -100,7 +110,7 @@ De modo a compreensão do funcionamento do sistema e como estes componentes comu
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\linewidth]{figs/end2end.png}
+    \includegraphics[width=\linewidth]{figs/end2end_technology.png}
     \caption{Fluxo de dados \textit{end-to-end}}
     \label{fig:end2end}
 \end{figure}
