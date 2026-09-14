@@ -2,7 +2,7 @@
 \label{chap:resultados}
 
 \begin{introduction}
-Este capítulo apresenta o estado final da solução, as decisões tomadas durante o desenvolvimento e discute os pontos fortes e fracos do sistema escolhido
+Este capítulo apresenta o estado final da solução, as decisões tomadas durante o desenvolvimento e discute os pontos fortes e fracos do sistema escolhido.
 \end{introduction}
 
 \section{Estado Final da Solução e Decisões de Implementação}
@@ -17,15 +17,21 @@ Por esta razão, apresento a seguir o estado final da solução (Figura~\ref{sys
     \label{fig:sys_arq_deployment}
 \end{figure}
 
-\subsection{Servidor}
+\subsection{Instanciação Tecnológica da \textit{Pipeline} de Ingestão de Dados}
 
-\subsection{Cliente}
+Apesar da escolha mais importante ser no tipo de tecnologia (como \ac{MQTT} ou \ac{TSDB}), o desenvolvimento de uma solução real requer que escolhamos as ferramentas específicas que implementem estas tecnologias.
 
-\subsection{App de WearOS}
+Para os \textit{brokers} local e remoto, escolhi optar pelo Mosquitto.
+Apesar de existirem outras implementações de \ac{MQTT} como o ActiveMQ que possuem melhor \textit{performance} em escala (por utilizarem todos os recursos disponíveis), o Mosquitto continua a ter uma melhor \textit{performance} em cenários com recursos limitados~\cite{Mishra2021}.
+Esta qualidade pode ser útil para o \textit{broker} remoto em cenários N:1 (como o descrito na Secção~\ref{sec:chosen_technologies}), mas torna-se particularmente útil para o \textit{broker} local quando este é executado em computadores com recursos mais limitados (como, por exemplo, \textit{Chromebooks}), onde a execução em paralelo com \textit{software} de videochamada (como o Zoom) poderá limitar severamente os recursos disponíveis.
+Outra vantagem inerente ao Mosquitto que levou a esta decisão, foi o mecanismo de redirecionamento \textit{\ac{MQTT} Bridge} que permite enviar as mensagens do \textit{broker} local para o \textit{broker} remoto de forma automática sem comprometer as garantias de entrega.
 
-\subsection{Aquisição de Dados dos Sensores}
+Em termos de armazenamento de dados, decidi optar pelo InfluxDB por ser uma base de dados criada de raiz para lidar com séries temporais, ao contrário de bases de dados como o TimescaleDB, que foi criada como extensão ao PostgreSQL~\cite{influxdata2026}.
+Esta diferença permite ao InfluxDB oferecer maior velocidade de ingestão, o que é uma qualidade útil neste caso de uso, que consiste maioritariamente de escritas constantes de pequeno tamanho~\cite{OctaByte2025}.
+Finalmente, após a versão 3, o InfluxDB oferece agora a possibilidade de realizar \textit{queries} utilizando \ac{SQL} \textit{standard}~\cite{influxdata2026}, removendo assim a barreira de aprendizagem para programadores, uma das vantagens atribuídas ao TimescaleDB
 
-\subsection{Monitorização}
+
+
 
 \section{Fluxo \textit{end-to-end}}
 

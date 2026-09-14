@@ -68,6 +68,7 @@ Com base nesta arquitetura de componentes, podemos já estabelecer um fluxo inic
 \end{enumerate}
 
 \section{Tecnologias Escolhidas}
+\label{sec:chosen_technologies}
 
 Após o estabelecimento dos blocos lógicos do sistema, torna-se necessário escolher as tecnologias e fontes de dados apropriados para este sistema.
 
@@ -80,7 +81,7 @@ Para conectar estes dois serviços, apesar de ter inicialmente considerado criar
 Por esta razão decidi utilizar o Kafka Connect como método de ligação entre serviços, já que o próprio integra-se diretamente no \textit{cluster} Kafka.
 
 Contudo, apesar de ser teoricamente possível conectar o \textit{broker} local diretamente ao Kafka via Kafka Connect, esta abordagem não só traria possíveis problemas de escalabilidade, mas também esta ligação poderia ser bloqueada por uma \textit{firewall} (especialmente no caso de trabalhadores remotos, em que a empresa não consegue manipular a \textit{firewall} para permitir o acesso).
-Por esta razão, decidi optar por implementar um \textit{broker} \ac{MQTT} remoto (sendo que escolhi especificamente um segundo \textit{broker} Dummy38, pois o mecanismo de \ac{MQTT} \textit{Bridging} permite o redirecionamento automático entre \textit{brokers} \ac{MQTT} sem quebrar as garantias de entrega).
+Por esta razão, decidi optar por implementar um \textit{broker} \ac{MQTT} remoto (sendo que escolhi especificamente um segundo \textit{broker} \ac{MQTT}, pois o mecanismo de \ac{MQTT} \textit{Bridging} permite o redirecionamento automático entre \textit{brokers} \ac{MQTT} sem quebrar as garantias de entrega).
 Adicionalmente, uma vantagem secundária desta estrutura é que, apesar desta prova de conceito focar-se numa relação 1:1 entre o \textit{broker} remoto e o Kafka, esta arquitetura suporta naturalmente uma relação N:1, permitindo, por exemplo, a empresas com vários escritórios agrupar utilizadores pela sua localização fixa, ao instalar um \textit{broker} \ac{MQTT} em cada escritório utilizando o mesmo endereço IP local.
 
 Finalmente, para armazenamento de dados, decidi optar por uma \ac{TSDB}, pois, como descrito em detalhe na Subsecção~\ref{sec:technologies_storage}, este tipo de base de dados foi desenhado especificamente para armazenar e aceder a dados indexados no tempo, como dados de sensores (sendo que a maioria dos casos não requer o tipo de análise textual que justificaria um motor de busca como ElasticSearch).
