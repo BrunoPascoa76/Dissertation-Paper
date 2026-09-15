@@ -17,7 +17,7 @@ Por esta razão, apresento a seguir o estado final da solução (Figura~\ref{sys
     \label{fig:sys_arq_deployment}
 \end{figure}
 
-\subsection{Instanciação Tecnológica da \textit{Pipeline} de Ingestão de Dados}
+\subsection{Servidor}
 
 Apesar da escolha mais importante ser no tipo de tecnologia (como \ac{MQTT} ou \ac{TSDB}), o desenvolvimento de uma solução real requer que escolhamos as ferramentas específicas que implementem estas tecnologias.
 
@@ -28,10 +28,24 @@ Outra vantagem inerente ao Mosquitto que levou a esta decisão, foi o mecanismo 
 
 Em termos de armazenamento de dados, decidi optar pelo InfluxDB por ser uma base de dados criada de raiz para lidar com séries temporais, ao contrário de bases de dados como o TimescaleDB, que foi criada como extensão ao PostgreSQL~\cite{influxdata2026}.
 Esta diferença permite ao InfluxDB oferecer maior velocidade de ingestão, o que é uma qualidade útil neste caso de uso, que consiste maioritariamente de escritas constantes de pequeno tamanho~\cite{OctaByte2025}.
-Finalmente, após a versão 3, o InfluxDB oferece agora a possibilidade de realizar \textit{queries} utilizando \ac{SQL} \textit{standard}~\cite{influxdata2026}, removendo assim a barreira de aprendizagem para programadores, uma das vantagens atribuídas ao TimescaleDB
+Adicionalmente, após a versão 3, o InfluxDB oferece agora a possibilidade de realizar \textit{queries} utilizando \ac{SQL} \textit{standard}~\cite{influxdata2026}, removendo assim a barreira de aprendizagem para programadores, uma das vantagens atribuídas ao TimescaleDB
 
+Finalmente, durante a integração do Kafka Connect no servidor, foi registado um erro pontual na conversão entre os formatos \textit{Bytes} e \ac{JSON} (necessário para a inserção na base de dados): se um sensor produzir um valor do tipo \textit{Float} com parte decimal nula (por exemplo, \texttt{1.0}), este valor é convertido para \textit{Integer} após a conversão para formato \ac{JSON}, o que causa um erro de inserção na base de dados (que apenas aceita um \textit{Float} para aquele campo).
+Apesar de reconhecer a existência de soluções conceptualmente mais robustas, como, por exemplo, a inclusão explícita do \textit{schema} na própria mensagem, a raridade deste erro dificultou a sua deteção precoce. Por esta razão, os constrangimentos temporais tornaram necessária a adoção de uma solução mais pragmática: a adição de um valor decimal infinitesimal (inferior à margem de erro da própria fonte de dados) em todos os valores do tipo \textit{Float}, evitando assim que sejam convertidos para \textit{Integers}.
 
+\subsection{Aplicação}
 
+Para além de servir como ponto principal de interação para os utilizadores monitorizados, a aplicação é também, geralmente, o único componente (para além da visualização) que necessita ser modificado para suportar uma nova fonte de dados, já que é o único componente que processa os dados de cada sensor de forma diferente.
+
+Por estas razões, o foco principal das decisões de implementação da aplicação não foi necessariamente otimizar \textit{performance}, mas sim facilitar a utilização e modificação da aplicação, mesmo para indivíduos sem experiência em programação.
+
+Em termos de modificação, para além de escolher o Python como linguagem de programação por ser uma linguagem fácil de aprender e compreender para principiantes~\cite{John2025}, decidi mitigar ainda mais o esforço de modificação ao isolar a lógica de interação com cada sensor em classes separadas carregadas dinamicamente durante a inicialização da aplicação.
+Desta forma, para recolher dados de um novo sensor, é apenas necessário estender uma classe base (que possui dois métodos: uma para iniciar a recolha e uma para terminar a recolha) e adicionar a nova classe a uma pasta específica.
+
+Em termos de interação, como considero importante cada utilizador monitorizado ser capaz de começar e terminar a monitorização de forma autónoma, e tendo em conta que não é exequível pressupor que todos os utilizadores tenham experiência com terminais, decidi optar por uma interface gráfica, de modo a facilitar a interação e para permitir a possível adição futura de mecanismos de alarme em caso de falha de sensores (sendo a escolha do PyQT6 como implementação específica comparativamente trivial)
+
+Finalmente, em termos de ambiente de execução, apesar de ter inicialmente considerado a utilização do Docker para isolamento do sistema do seu ambiente, a necessidade de acesso a baixo nível aos periféricos para recolha de dados tornou a contentorização da aplicação impraticável.
+Contudo, decidi optar por uma abordagem intermédia, utilizando contentores Docker apenas para o \textit{broker} local e atribuindo a responsabilidade de inicializar e interromper a execução do \textit{broker} à aplicação, removendo assim a necessidade de executar o \textit{broker} separadamente.
 
 \section{Fluxo \textit{end-to-end}}
 
@@ -80,4 +94,4 @@ Webcam\tnote{3} & Processamento de vídeo/metadados & $10$ \\
 \end{table}
 
 Devido à reduzida carga operacional, o sistema apresenta baixos requisitos computacionais, sendo capaz de operar estavelmente em praticamente qualquer servidor moderno ou computador pessoal, sem necessidade de hardware especializado.
-Em termos de número de utilizadores simultâneos, apesar de alguns estudos involverem centenas de voluntários, a necessidade de monitorizar os voluntários tende a limitar este número para um máximo de cerca de 50 utilizadores em simultâneo. Com base neste valor, podemos estimar que a carga máxima esperada para o servidor não irá superar as 800 mensagens por segundo (o que equivale a cerca de 138.4KB/s). 
+Em termos de número de utilizadores simultâneos, apesar de alguns estudos envolverem centenas de voluntários, a necessidade de monitorizar os voluntários tende a limitar este número para um máximo de cerca de 50 utilizadores em simultâneo. Com base neste valor, podemos estimar que a carga máxima esperada para o servidor não irá superar as 800 mensagens por segundo (o que equivale a cerca de 138.4KB/s). 
