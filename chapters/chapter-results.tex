@@ -31,7 +31,7 @@ Esta diferença permite ao InfluxDB oferecer maior velocidade de ingestão, o qu
 Adicionalmente, após a versão 3, o InfluxDB oferece agora a possibilidade de realizar \textit{queries} utilizando \ac{SQL} \textit{standard}~\cite{influxdata2026}, removendo assim a barreira de aprendizagem para programadores, uma das vantagens atribuídas ao TimescaleDB
 
 Finalmente, durante a integração do Kafka Connect no servidor, foi registado um erro pontual na conversão entre os formatos \textit{Bytes} e \ac{JSON} (necessário para a inserção na base de dados): se um sensor produzir um valor do tipo \textit{Float} com parte decimal nula (por exemplo, \texttt{1.0}), este valor é convertido para \textit{Integer} após a conversão para formato \ac{JSON}, o que causa um erro de inserção na base de dados (que apenas aceita um \textit{Float} para aquele campo).
-Apesar de reconhecer a existência de soluções conceptualmente mais robustas, como, por exemplo, a inclusão explícita do \textit{schema} na própria mensagem, a raridade deste erro dificultou a sua deteção precoce. Por esta razão, os constrangimentos temporais tornaram necessária a adoção de uma solução mais pragmática: a adição de um valor decimal infinitesimal (inferior à margem de erro da própria fonte de dados) em todos os valores do tipo \textit{Float}, evitando assim que sejam convertidos para \textit{Integers}.
+Apesar de reconhecer a existência de soluções conceptualmente mais robustas, como, por exemplo, a inclusão explícita do \textit{schema} na própria mensagem, a raridade deste erro dificultou a sua deteção precoce. Por esta razão, os constrangimentos temporais tornaram necessária a adoção de uma solução mais pragmática: a adição de um valor decimal infinitesimal (inferior à margem de erro do próprio sensor) em todos os valores do tipo \textit{Float}, evitando assim que sejam convertidos para \textit{Integers}.
 
 \subsection{Aplicação}
 
@@ -46,6 +46,30 @@ Em termos de interação, como considero importante cada utilizador monitorizado
 
 Finalmente, em termos de ambiente de execução, apesar de ter inicialmente considerado a utilização do Docker para isolamento do sistema do seu ambiente, a necessidade de acesso a baixo nível aos periféricos para recolha de dados tornou a contentorização da aplicação impraticável.
 Contudo, decidi optar por uma abordagem intermédia, utilizando contentores Docker apenas para o \textit{broker} local e atribuindo a responsabilidade de inicializar e interromper a execução do \textit{broker} à aplicação, removendo assim a necessidade de executar o \textit{broker} separadamente.
+
+\subsection{\textit{Smart Watch}}
+
+%dizer a escolha do BPM em vez de HRV
+
+%dizer a escolha do MQTT em vez de BLE. Dizer que a descoberta do broker local é via código de emparelhamento
+
+%dizer como funciona
+
+\subsection{Periféricos}
+
+%frase introdutória a relembrar que os periféricos foram escolhidos pelo seu valor demonstrativo, não necessariamente por serem os mais usados
+%frase introdutória a explicar que é importante detalhar os métodos de recolha e as considerações de privacidade
+
+\subsubsection{Câmara}
+
+%dizer que métricas utilizei
+
+%explicar o processamento para formato e porque coloquei logo métricas
+
+\subsubsection{Teclado}
+
+%explicar porque é que dar as keys raw é mau, e dizer que não precisamos de saber a tecla específica apenas o tipo de tecla
+
 
 \section{Fluxo \textit{end-to-end}}
 
