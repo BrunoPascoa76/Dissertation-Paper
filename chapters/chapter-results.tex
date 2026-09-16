@@ -47,28 +47,47 @@ Em termos de interação, como considero importante cada utilizador monitorizado
 Finalmente, em termos de ambiente de execução, apesar de ter inicialmente considerado a utilização do Docker para isolamento do sistema do seu ambiente, a necessidade de acesso a baixo nível aos periféricos para recolha de dados tornou a contentorização da aplicação impraticável.
 Contudo, decidi optar por uma abordagem intermédia, utilizando contentores Docker apenas para o \textit{broker} local e atribuindo a responsabilidade de inicializar e interromper a execução do \textit{broker} à aplicação, removendo assim a necessidade de executar o \textit{broker} separadamente.
 
-\subsection{\textit{Smart Watch}}
+\subsection{Recolha de Dados}
 
-%dizer a escolha do BPM em vez de HRV
+Apesar da escolha de fontes de dados ter apenas como propósito demonstrar o sistema em funcionamento, a escolha destas fontes de dados continua a ter um impacto no sistema, quer seja devido a restrições associadas a certos modelos de \textit{wearable} ou devido à natureza possivelmente sensível de alguns dos dados recolhidos.
 
-%dizer a escolha do MQTT em vez de BLE. Dizer que a descoberta do broker local é via código de emparelhamento
+\subsubsection{\textit{Smartwatch}}
 
-%dizer como funciona
+Em primeiro lugar, de forma a demonstrar a integração com fontes de dados externas, foi-me disponibilizado pelo orientador o \textit{smartwatch} \textit{Xiaomi Watch 2}.
 
-\subsection{Periféricos}
+Embora a intenção durante a conceção inicial do projeto tenha sido a extração do \ac{HRV} (por ser a métrica utilizadas nos artigos revistos~\cite{facial_hrv_study}) via \ac{BLE} (por ser uma interface exposta de forma nativa pelo próprio \textit{wearable}), a falta de documentação e experiências empíricas levaram à conclusão de que ambas as funcionalidades seriam inviáveis, pelo menos para este modelo, sendo que por isso optei por extrair o \ac{BPM} e comunicar com a aplicação via \ac{MQTT}.
+Apesar da mudança de métricas ter sido uma escolha comparativamente trivial, a decisão de comunicar via \ac{MQTT} teve um maior impacto na arquitetura, pois não só exigiu a criação de uma aplicação executada no próprio \textit{smartwatch} mas também foi um dos fatores que solidificou a adição do \textit{broker} local à arquitetura.
 
-%frase introdutória a relembrar que os periféricos foram escolhidos pelo seu valor demonstrativo, não necessariamente por serem os mais usados
-%frase introdutória a explicar que é importante detalhar os métodos de recolha e as considerações de privacidade
+Esta aplicação comunica principalmente através do \textit{broker} local, não só enviando os dados diretamente para este \textit{broker} mas também subscrevendo a um tópico de onde recebe instruções para iniciar ou terminar a recolha (sendo que a instrução de início de recolha contém também o \ac{UUID} necessário para a identificação do utilizador).
+
+Finalmente, como o endereço IP do \textit{broker} local é diferente para cada utilizador, torna-se também necessário implementar um mecanismo de descoberta. 
+Como este processo é geralmente realizado apenas uma vez, não considerei necessário implementar um mecanismo de descoberta automática, optando pela geração e introdução de um código de emparelhamento de 12 dígitos (que codifica o endereço IP e porta do \textit{broker}), codificado utilizando o padrão Crockford Base64 (uma variante do Base64 que remove caracteres visualmente similares para evitar erros de digitação).
 
 \subsubsection{Câmara}
 
-%dizer que métricas utilizei
+A câmara foi escolhida como periférico por duas razões: por ser uma fonte de dados periódica, ou seja, que produz dados a um ritmo constante (ao contrário do teclado), mas também por produzir dados que necessitam ser processados antes de serem inseridos na base de dados.
 
-%explicar o processamento para formato e porque coloquei logo métricas
+Para a recolha destes dados, decidi utilizar a biblioteca ``Mediapipe'', não só por se integrar diretamente no Python, mas também porque permitir a extração em tempo real de \textit{landmarks} faciais através de um modelo local (suportando um total de 478 pontos faciais), realizando assim de forma automática o primeiro passo no processamento: a transformação de uma imagem num conjunto de coordenadas.
+
+Contudo, apesar de ser tecnicamente possível armazenar diretamente estes \textit{landmarks} na base de dados (ao atribuir um campo a cada ponto), os \textit{landmarks} faciais continuam a ser um dado sensível (por permitirem a reconstrução da face), exigindo por isso cuidados especiais para garantir a privacidade do utilizador.
+Por esta razão, e tendo em conta que os dados dos sensores têm um propósito meramente demonstrativo, decidi adotar uma política de "privatização na fonte", calculando as métricas (orientação facial e \ac{EAR}) diretamente na aplicação e enviando apenas estes dados, mitigando assim problemas como privacidade.
 
 \subsubsection{Teclado}
 
-%explicar porque é que dar as keys raw é mau, e dizer que não precisamos de saber a tecla específica apenas o tipo de tecla
+Finalmente, como ambas as fontes de dados anteriores possuem uma natureza periódica, ou seja, produzem amostras a uma frequência constante, decidi também recolher dados do teclado pela sua natureza aperiódica, já que é apenas produzindo um valor quando o utilizador pressiona uma tecla, sendo por isso a frequência de amostragem não só irregular, mas também uma das métricas para análise.
+
+Em termos de privacidade, apesar do teclado não permitir identificar diretamente o indivíduo, ao contrário da câmara, os dados de digitação puros continuam a ser dados altamente sensíveis, pois não só permitem monitorizar conversas privadas, mas também extrair credenciais como palavras-passe.
+Felizmente, como o objetivo geral é monitorizar a dinâmica de digitação em si e não o conteúdo do texto, é possível anonimizar os dados ao atribuir uma categoria a cada tecla (alfanumérico, caractere especial, \textit{whitespace} ou \textit{delete/backspace}). Considerei esta abordagem como a mais apropriada, pois evita a reconstrução do conteúdo digitado sem afetar o cálculo de métricas como velocidade de digitação ou taxa de correção.
+
+\subsection{Visualização e Interface do Utilizador}
+
+Para permitir ilustrar o sistema em funcionamento, decidi implementar um \textit{dashboard} Grafana (Figura~\ref{fig:grafana}). Este \textit{dashboard} utiliza o InfluxDB como fonte primária de dados e permite, para um dado utilizador (identificado via \ac{UUID}), não só visualizar em tempo real os últimos valores registados pelas três fontes de dados, mas possui também um gráfico para cada que demonstra a evolução histórica de cada métrica associada (sendo a métrica associada ao teclado calculada dinamicamente pelo próprio Grafana).
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figs/grafana}
+    \caption{\textit{Dashboard} do Grafana}
+    \label{fig:grafana}
+\end{figure}
 
 
 \section{Fluxo \textit{end-to-end}}
