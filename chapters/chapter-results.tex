@@ -145,7 +145,45 @@ Para demonstrar esta interface em funcionamento, decidi adicionar uma \textit{da
     \label{fig:desktop_visualization}
 \end{figure}
 
-\section{Fluxo \textit{end-to-end}}
+\section{Demonstração Prática do Fluxo \textit{End-to-End}}
+
+Embora as decisões de implementação tenham tido um impacto local em cada componente, o fluxo de dados mantém-se inalterado em relação ao fluxo estabelecido na Secção~\ref{sec:flow_technologies}.
+Contudo, apesar de não ser necessário redesenhar o fluxo de dados, continua a ser relevante demonstrar o sistema em prática para fundamentar o seu correto funcionamento.
+Para este propósito, recorri a ferramentas de observabilidade e inspeção, como o Kafdrop ou o MQTT5 Explorer para rastrear e visualizar uma mensagem ao longo do seu trajeto no sistema (Figura~\ref{fig:end2end_example}).
+
+\begin{figure}[H]
+     \centering
+     \begin{subfigure}[t]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/example/local_broker}
+         \caption{Passo 1: Publicação da mensagem no \textit{broker} local~\footnotemark}
+         \label{fig:example_1}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/example/remote_broker}
+         \caption{Passo 2: Redirecionamento da mensagem para o \textit{broker} remoto via \ac{MQTT} Bridge}
+         \label{fig:example_2}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/example/kafka}
+         \caption{Passo 3: Inserção da mensagem no Apache Kafka}
+         \label{fig:example_3}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/example/influx_query}
+         \caption{Passo 4: Armazenamento das métricas no InfluxDB}
+         \label{fig:example_4}
+     \end{subfigure}
+     \hfill  
+     \caption{Demonstração sequencial do percurso de uma mensagem de orientação facial pela infraestrutura do sistema.}
+     \label{fig:end2end_example} 
+\end{figure}
 
 \footnotetext{O MQTT5 Explorer apenas apresenta a última mensagem recebida por tópico, não o histórico completo de mensagens.}
 
@@ -159,6 +197,21 @@ Dado o caráter demonstrativo do protótipo e o foco do trabalho na validação 
 A estrutura da mensagem, serializada em formato \ac{JSON} (como visto na Listagem~\ref{code:example_message}), foi desenhada para ser concisa, apresentando um payload médio de 133B para o \ac{JSON} em si (valor obtido através da serialização de uma das mensagens) e cerca de 173B se incluirmos os \textit{headers} de TCP/IP.
 
 Considerando este volume de dados inexpressivo, o fator determinante para a escalabilidade da infraestrutura é exclusivamente o número de mensagens simultâneas que o broker consegue processar por segundo, e não o tamanho individual de cada pacote. Uma vez que a estrutura é simples e não exige processamento complexo ao nível da camada de transporte, o sistema é capaz de suportar um débito elevado de eventos, sendo a capacidade de ingestão limitada primariamente pela cadência de publicação (\textit{throughput}) e não pela ocupação da largura de banda.
+
+\begin{figure}[h!]
+\centering
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[language=json, caption={Exemplo da estrutura de uma mensagem ingerida}, label={code:example_message}]
+{
+  "uuid": "550e8400-e29b-41d4-a716-446655440000",
+  "message_id": 12345,
+  "sensor": "heart_rate_sensor",
+  "timestamp": 1747926855.123,
+  "value": 72.5
+}
+\end{lstlisting}
+\end{minipage}
+\end{figure}
 
 \subsection{Volume de Mensagens Esperado}
 
