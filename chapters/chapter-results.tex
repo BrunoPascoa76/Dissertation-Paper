@@ -63,6 +63,47 @@ Esta aplicação comunica principalmente através do \textit{broker} local, não
 Finalmente, como o endereço IP do \textit{broker} local é diferente para cada utilizador, torna-se também necessário implementar um mecanismo de descoberta. 
 Como este processo é geralmente realizado apenas uma vez, não considerei necessário implementar um mecanismo de descoberta automática, optando pela geração e introdução de um código de emparelhamento de 12 dígitos (que codifica o endereço IP e porta do \textit{broker}), codificado utilizando o padrão Crockford Base64 (uma variante do Base64 que remove caracteres visualmente similares para evitar erros de digitação).
 
+\begin{figure}[H]
+     \centering
+     \begin{subfigure}[t]{0.19\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/wearos/wearos_pairing}
+         \caption{Emparelhamento}
+         \label{fig:wearos_pairing}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.19\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/wearos/wearos_connecting}
+         \caption{Estabelecimento de Conexão}
+         \label{fig:wearos_connecting}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.19\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/wearos/wearos_waiting}
+         \caption{Escuta de comandos}
+         \label{fig:wearos_waiting}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.19\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/wearos/wearos_preparing}
+         \caption{Inicialização de sensores}
+         \label{fig:wearos_preparing}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.19\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figs/wearos/wearos_sending}
+         \caption{Envio de dados~\footnotemark}
+         \label{fig:wearos_sending}
+     \end{subfigure}     
+     \caption{Interface da aplicação para WearOS}
+\end{figure}
+
+\footnotetext{No envio de dados, o Intervalo R-R (\textit{RR Interval}) não é extraído diretamente e é meramente uma estimativa calculada a partir do \ac{BPM}}
+
 \subsubsection{Câmara}
 
 A câmara foi escolhida como periférico por duas razões: por ser uma fonte de dados periódica, ou seja, que produz dados a um ritmo constante (ao contrário do teclado), mas também por produzir dados que necessitam ser processados antes de serem inseridos na base de dados.
@@ -79,9 +120,11 @@ Finalmente, como ambas as fontes de dados anteriores possuem uma natureza perió
 Em termos de privacidade, apesar do teclado não permitir identificar diretamente o indivíduo, ao contrário da câmara, os dados de digitação puros continuam a ser dados altamente sensíveis, pois não só permitem monitorizar conversas privadas, mas também extrair credenciais como palavras-passe.
 Felizmente, como o objetivo geral é monitorizar a dinâmica de digitação em si e não o conteúdo do texto, é possível anonimizar os dados ao atribuir uma categoria a cada tecla (alfanumérico, caractere especial, \textit{whitespace} ou \textit{delete/backspace}). Considerei esta abordagem como a mais apropriada, pois evita a reconstrução do conteúdo digitado sem afetar o cálculo de métricas como velocidade de digitação ou taxa de correção.
 
-\subsection{Visualização e Interface do Utilizador}
+\subsection{Visualização}
 
 Para permitir ilustrar o sistema em funcionamento, decidi implementar um \textit{dashboard} Grafana (Figura~\ref{fig:grafana}). Este \textit{dashboard} utiliza o InfluxDB como fonte primária de dados e permite, para um dado utilizador (identificado via \ac{UUID}), não só visualizar em tempo real os últimos valores registados pelas três fontes de dados, mas possui também um gráfico para cada que demonstra a evolução histórica de cada métrica associada (sendo a métrica associada ao teclado calculada dinamicamente pelo próprio Grafana).
+A escolha do Grafana como \textit{software} de visualização deve-se não só à sua facilidade de uso e compatibilidade com InfluxDB, mas também por ser compatível com ferramentas de observabilidade como o Prometheus ou Jaeger, permitindo assim a deteção mais fácil de falhas na aplicação (esta última funcionalidade, apesar de planeada, não foi implementada devido a constrangimentos temporais).
+
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{figs/grafana}
@@ -89,17 +132,27 @@ Para permitir ilustrar o sistema em funcionamento, decidi implementar um \textit
     \label{fig:grafana}
 \end{figure}
 
+Adicionalmente, como mencionado anteriormente, decidi também criar um interface REST para controlar o acesso de serviços externos.
+Apesar da escolha da implementação específica do protocolo REST (FastAPI) ter sido uma escolha relativamente trivial, a escolha do mecanismo de construção de \textit{queries} exigiu alguma deliberação, já que considero importante garantir flexibilidade na seleção de critérios de agregação mas também é necessário restringir ações de modificação dos dados e prevenir a ocorrência de \textit{query injection} (ou seja, a manipulação de queries para a realização de ações não permitidas).
+Por esta razão, decidi adotar uma abordagem intermédia, realizando a construção de \textit{queries} através da especificação de parâmetros pré-selecionados.
+
+Para demonstrar esta interface em funcionamento, decidi adicionar uma \textit{dashboard} ilustrativo à aplicação do cliente (Figura~\ref{fig:desktop_visualization}) que utiliza esta interface como fonte de dados, permitindo não só verificar o funcionamento correto desta interface, mas também permitindo detetar erros de transmissão de dados durante o desenvolvimento.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figs/desktop/desktop_grafico_bpm}
+    \caption{\textit{Painel de Visualização}}
+    \label{fig:desktop_visualization}
+\end{figure}
 
 \section{Fluxo \textit{end-to-end}}
 
 \footnotetext{O MQTT5 Explorer apenas apresenta a última mensagem recebida por tópico, não o histórico completo de mensagens.}
 
 
+\section{Estimativa de Carga e Capacidade do Sistema}
 
-
-\section{Validação Analítica de Desempenho}
-
-Para além de garantir que a arquitetura do sistema cumpre com os objetivos propostos, é necessário também garantir que as ferramentas utilizadas (principalmente do servidor) são capazes de lidar com o número esperado de mensagens e clientes.
+Dado o caráter demonstrativo do protótipo e o foco do trabalho na validação concetual da arquitetura, a avaliação de desempenho centrou-se no dimensionamento preliminar da carga e da capacidade de ingestão. Esta análise permite inferir a viabilidade operacional do sistema através da caracterização da pegada de transmissão (\textit{network footprint}) e da estimativa do débito de dados previsível.
 
 \subsection{Tamanho das Mensagens}
 
