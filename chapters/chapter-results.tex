@@ -18,6 +18,7 @@ Por esta razão, apresento a seguir o estado final da solução (Figura~\ref{sys
 \end{figure}
 
 \subsection{Servidor}
+\label{sec:final_state_server}
 
 Apesar da escolha mais importante ser no tipo de tecnologia (como \ac{MQTT} ou \ac{TSDB}), o desenvolvimento de uma solução real requer que escolhamos as ferramentas específicas que implementem estas tecnologias.
 
@@ -244,3 +245,47 @@ Webcam\tnote{3} & Processamento de vídeo/metadados & $10$ \\
 
 Devido à reduzida carga operacional, o sistema apresenta baixos requisitos computacionais, sendo capaz de operar estavelmente em praticamente qualquer servidor moderno ou computador pessoal, sem necessidade de hardware especializado.
 Em termos de número de utilizadores simultâneos, apesar de alguns estudos envolverem centenas de voluntários, a necessidade de monitorizar os voluntários tende a limitar este número para um máximo de cerca de 50 utilizadores em simultâneo. Com base neste valor, podemos estimar que a carga máxima esperada para o servidor não irá superar as 800 mensagens por segundo (o que equivale a cerca de 138.4KB/s). 
+
+\section{Discussão}
+
+Como o objetivo principal deste trabalho era servir como prova de conceito que fundamente a viabilidade do paradigma \textit{streaming} para cenários de monitorização contínua de múltiplos utilizadores durante o uso normal do computador, é necessário não só demonstrar a operabilidade prática, mas também avaliar em que medida esta prova de conceito fundamenta a viabilidade do paradigma de \textit{streaming} e das tecnologias existentes no cenário descrito.
+
+\subsection{Agnosticismo no Servidor}
+\label{sec:discussion_agnostic}
+
+A decisão de manter o servidor agnóstico ao número de fontes de dados e as suas características, sendo conhecidos apenas pela aplicação e pelo \textit{software} de visualização, permitiu que a adição de um novo sensor se limitasse à aplicação, na qual é necessário apenas criar uma nova classe e inserir o respetivo ficheiro na pasta correspondente, e ao \textit{software} de visualização.
+Esta propriedade pode ser comprovada através da análise dos próprios componentes, onde as únicas referências às três fontes de dados (teclado, câmara e \textit{smartwatch}) em código se encontram nestes componentes (e na aplicação para WearOS), apesar de cada fonte de dados possuir características e métricas diferentes.
+
+Contudo, esta escolha tem um custo direto: como o servidor desconhece a natureza dos dados que transporta, não é possível estabelecer fluxos de processamento distintos para cada fonte de dados sem violar este princípio de agnosticidade, sendo por isso necessário realizar o processamento na aplicação ou de forma dinâmica durante a visualização.
+O erro de conversão apresentado na Secção~\ref{sec:final_state_server} é, de certa forma, uma consequência indireta desta limitação, pois, como o Kafka Connect desconhece que dados estão a ser transportados, necessita inferir os seus tipos com base nas mensagens, cuja ambiguidade leva a erros pontuais na inserção.
+
+\subsection{Reutilização de Ferramentas Estabelecidas}
+
+Como o objetivo principal do trabalho não é demonstrar a minha capacidade de implementar um sistema de monitorização contínua de raiz, mas sim demonstrar a viabilidade do \textit{streaming} como paradigma, o que exige demonstrar que as tecnologias e protocolos de \textit{streaming} já existentes são capazes de realizar esta monitorização contínua.
+
+Esta decisão de priorizar soluções já existentes para a resolução de problemas traduziu-se, por exemplo, na ausência de \textit{workers} de transporte construídos de raiz: optando por resolver os problemas de encaminhamento entre o \textit{broker} local e o servidor através do mecanismo \ac{MQTT} Bridge e a interação com o Kafka através do Kafka Connect.
+
+O custo principal desta decisão foi a necessidade de implementar componentes adicionais, como o \textit{broker} remoto, que não seria necessário se um \textit{worker} consumisse os dados do \textit{broker} local e os enviasse diretamente para o Kafka, bem como a exposição às restrições associadas ao funcionamento das próprias ferramentas (por exemplo, o conector \textit{source} \ac{MQTT}, apesar de ser capaz de consumir de múltiplos tópicos \ac{MQTT} através do uso de \textit{wildcards}, apenas consegue inserir num único tópico Kafka).
+
+\subsection{Privatização na Fonte}
+
+A decisão de calcular as métricas referentes aos dados faciais e à atribuição de categorias às teclas premidas, evitando assim a transmissão de dados sensíveis de alto risco como \textit{landmarks} faciais ou texto digitado, bem como a opção da identificação de cada utilizador somente através de um \ac{UUID} aleatório gerado durante a primeira recolha, responde diretamente a uma das barreiras à adoção deste tipo de monitorização identificadas na literatura (Secção~\ref{sec:soa_data_sources}).
+Esta abordagem tira partido da limitação de processamento referida na Secção~\ref{sec:discussion_agnostic}, que incentiva o processamento na fonte, para eliminar o maior risco de segurança neste tipo de sistemas (a recolha de dados sensíveis e o risco do acesso indevido ao mesmo) e, no caso da câmara, reduzir drasticamente o volume de dados transmitidos (reduzindo de 478 pares de valores, no caso do Mediapipe, para apenas 3 métricas).
+
+Contudo, esta escolha tem dois impactos principais: a delegação do processamento para o cliente não só aumenta o consumo de recursos, mesmo que não de forma drástica, mas também implica que os dados estão disponíveis apenas como métricas finais, ou seja, se for necessário ajustar ou alterar as métricas a monitorizar, todos os dados históricos terão de ser descartados por ainda utilizarem as métricas antigas.
+
+\subsection{Heterogeneidade das Fontes de Dados}
+
+A escolha de fontes de dados com comportamentos diferentes permitiu demonstrar a capacidade do sistema para lidar com fontes de dados periódicas e aperiódicas, bem como internas e externas.
+
+Contudo, apesar de demonstrar a integração com \textit{smartwatches} WearOS através de \ac{MQTT}, esta não garante compatibilidade do sistema com todos os dispositivos \textit{wearable off-the-shelf}, como, por exemplo, \textit{smartrings} que comunicam geralmente via \ac{BLE} ou \textit{smartwatches} com outros sistemas operativos, onde a execução de aplicações de terceiros é mais complexa ou até mesmo impossível.
+
+\subsection{Limitações Gerais}
+
+Para além das limitações acima descritas, este trabalho apresenta um conjunto de limitações que decorrem diretamente do seu caráter de prova de conceito e dos constrangimentos temporais associados:
+\begin{itemize}
+    \item O sistema foi avaliado por um único utilizador (o próprio autor) num cenário unipessoal, sendo por isso a \textit{performance} em escala baseada numa estimativa de carga e com base nas características individuais das próprias ferramentas e não em testes de carga empíricos
+    \item Não foi medida de forma automática a latência entre a produção dos dados e o seu armazenamento e visualização. Consequentemente, não foi verificado o possível impacto da distância física entre cliente e servidor no tempo de propagação das mensagens
+    \item A avaliação da extensibilidade do sistema foi baseada no isolamento estrutural da alteração, reduzindo ao máximo a quantidade de código e componentes a serem revistos, e não a testes reais envolvendo utilizadores com diferentes níveis de experiência em programação
+    \item Embora a privatização dos dados ter reduzido drasticamente os riscos de segurança inerentes ao sistema, reconheço que deveria ter implementado melhores mecanismos de segurança e controlo de acesso, nomeadamente ao nível da autenticação e de controlo de acesso ao \textit{broker} remoto. Estas questões foram ponderadas durante o desenho do sistema, mas a sua implementação efetiva acabou por ser deliberadamente omitida face aos constrangimentos temporais da prova de conceção, constituindo uma lacuna relevante para a robustez da solução fora de um ambiente controlado
+\end{itemize}
