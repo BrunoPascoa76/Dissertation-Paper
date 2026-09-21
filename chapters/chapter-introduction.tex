@@ -11,11 +11,11 @@
     Estes dispositivos, embora não sejam tipicamente classificados como sensores, possibilitam a extração de dados biométricos e comportamentais capazes de refletir o estado do utilizador, permitindo, por exemplo, inferir o estado emocional com base na dinâmica de digitação no teclado~\cite{keyboard_speed_study,keyboard_correction_study}.
 
     Este tipo de monitorização é particularmente útil em contextos não presenciais como o ensino remoto ou o teletrabalho, onde a distância física limita a perceção do estado do utilizador~\cite{online_classes_sharma}, bem como em situações presenciais onde a observação direta poderá não ser suficiente, como a deteção de stresse em empregados.
-    Contudo, ao contrário dos estudos laboratoriais, onde os dados apenas interessam no final da recolha, num cenário real o objetivo é responder às mudanças do estado de cada indivíduo à medida que estas occorem. Por esta razão, a tomada de decisões exige a atualização dos dados em tempo real (ou com latência reduzida), sendo por isso necessário adotar uma abordagem em \textit{streaming}.
+    Contudo, ao contrário dos estudos laboratoriais, onde os dados apenas interessam no final da recolha, num cenário real o objetivo é responder às mudanças do estado de cada indivíduo à medida que estas ocorrem. Por esta razão, a tomada de decisões exige a atualização dos dados em tempo real (ou com latência reduzida), sendo por isso necessário adotar uma abordagem em \textit{streaming}.
 
     \section{Objetivos}\label{sec:objectives}
 
-    Com base no cenário acima descrito, este trabalho foca-se na criação de uma \textit{framework} baseada em \textit{streaming} para monitorização simultânea do estado de vários utilizadores durante o uso normal do computador, utilizando periféricos presentes no próprio computador ou dispositivos \textit{wearables off-the-shelf}, com o objetivo de demonstrar a exequibilidade de uma solução baseada em \textit{streaming} para monitorização contínua, bem como explorar alguns dos periféricos (e métricas deles extraídos) utilizados na literatura para estimar o estado do utilizador.
+    O objetivo deste trabalho é mostrar que é possível conjugar uma solução técnica baseadana monitorização simultânea de vários utilizadores durante o uso normal do computador, recorrendo apenas ao uso de periféricos normalmente presentes - interfaces do próprio computador e/ou dispositivos \textit{wearable off-the-shelf}.
 
     Para concretizar esta meta global, definem-se os seguintes objetivos específicos:
     \begin{itemize}
