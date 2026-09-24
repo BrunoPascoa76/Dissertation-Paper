@@ -18,22 +18,19 @@
 
     \section{Cenário Representativo}
 
-    De modo a orientar a escolha dos objetivos, bem como o desenvolvimento da prova de conceito e a sua demonstração, estabelece-se também um cenário representativo concreto: a recolha de dados de três sensores (teclado, câmara e \textit{smartwatch} WearOS) de um utilizador e o cálculo das métricas relevantes em tempo real.
+    De modo a orientar a escolha dos objetivos, bem como o desenvolvimento da prova de conceito e a sua demonstração, estabelece-se também um cenário representativo concreto: a monitorização de um aluno por parte de um tutor durante uma sessão individual remota enquanto este realiza exercícios no computador.
+    Para esta prova de conceito, esta monitorização será realizada através dos padrões de digitação, orientação facial e frequência cardíaca, extraída via \textit{smartwatch}.
+    
     
     Contudo, este cenário assume-se estritamente como um exemplo representativo e não como uma restrição estrita de âmbito. 
     Por esta razão, algumas das decisões foram tomadas considerando a aplicabilidade da prova de conceito a outros cenários de monitorização contínua, como o suporte à monitorização de vários utilizadores ou à adição de novos sensores.
 
     \section{Objetivos}\label{sec:objectives}
 
-    O objetivo deste trabalho é mostrar que é possível conjugar uma solução técnica baseada na monitorização simultânea de utilizadores durante o uso normal do computador, recorrendo apenas ao uso de periféricos normalmente presentes - interfaces do próprio computador e/ou dispositivos \textit{wearable off-the-shelf}.
-
-    Para concretizar esta meta global, definem-se os seguintes objetivos específicos:
-    \begin{itemize}
-        \item \textbf{Verificar a adequação de uma abordagem baseada em \textit{streaming}:} demonstrar, com base nos requisitos típicos do cenário acima descrito - nomeadamente, baixa latência, desacoplamento entre fontes de dado e mecanismos de ingestão e suporte a fontes de dados heterogéneas - que uma arquitetura baseada em \textit{streaming} constitui uma solução válida para este tipo de problema.
-        \item \textbf{Demonstrar o fluxo dos dados e o funcionamento em tempo real:} rastrear uma mensagem ao longo do seu percurso na solução e verificar de forma empírica a produção de métricas relevantes para o teclado, câmara e \textit{smartwatch} WearOS, observando a sua reatividade com base nas ações do utilizador.
-        \item \textbf{Suportar a extensão futura:} Apesar do cenário de referência se restringir a um único utilizador e com um conjunto fixo de sensores, é importante garantir que a arquitetura do sistema suporta a monitorização de múltiplos utilizadores e a adição futura de novos sensores.
-    \end{itemize}
-
+    O objetivo principal deste trabalho é demonstrar a viabilidade de uma solução baseada em \textit{streaming} para a monitorização de um aluno por um tutor enquanto o aluno interage normalmente com o computador, utilizando apenas periféricos de uso comum - interfaces do próprio computador e/ou dispositivos \textit{wearable off-the-shelf}.
+    
+    Para cumprir com esse objetivo, pretende-se apresentar um sistema baseado em \textit{streaming} que permite agregar dados de fontes heterogéneas, como o teclado, câmara e \textit{smartwatch} WearOS, extrair as métricas relevantes (como, por exemplo, caracteres por minuto, orientação facial ou \ac{BPM}) e visualizar essas mesmas métricas e a sua evolução em tempo real.
+    Contudo, de modo a permitir inferir a viabilidade em cenários similares (como, por exemplo, a monitorização do stresse em contexto empresarial ou da atenção durante o ensino remoto), um dos objetivos secundários passa também por desenhar um sistema desacoplado à tipologia da fonte de dados e que permita a monitorização de múltiplos utilizadores em simultâneo.
     
     \section{Estrutura do Documento}
     Este documento está organizado em cinco capítulos. O Capítulo~\ref{chap:introduction} descreve o contexto e motivação, apresente o cenário principal e casos de uso e define os objetivos base do trabalho.
