@@ -202,34 +202,28 @@ Contudo, a relativa escassez de estudos realizados de forma contínua nesta áre
 
 
 
-\section{Tecnologias de Recolha e Processamento de Dados}
+\section{Soluções Gerais de Recolha e Processamento de Dados}
 
-Como visto anteriormente, mesmo quando nos restringimos ao cenário de monitorização de utilizadores apenas enquanto estes interagem com o computador, não existe ainda uma solução que possa ser utilizada em qualquer situação, sendo por vezes necessário criar uma solução adaptada ao caso de uso específico.
-Por isso, torna-se relevante analisar não só as soluções existentes, mas também que ferramentas e tecnologias já estabelecidas existem que possam ser utilizadas na criação de uma nova solução de recolha de dados.
+%apresentar o UDI 2.0 e dizer que componentes vais referir
 
-\subsection{Paradigmas de Recolha e Processamento de Dados}
+\subsection{Integração de Sensores (\textit{Sources})}
 
-Contudo, antes de analisar tecnologias específicas, é importante estabelecer qual o paradigma mais adequado para este tipo de sistemas, distinguindo-se tradicionalmente dois: o processamento em \textit{batch} e o processamento em \textit{streaming}~\cite{Akidau2018}.
+\subsubsection{Protocolos de comunicação local com \textit{wearables} (\ac{BLE})}
 
-Segundo Akidau \textit{et al.}~\cite{Akidau2018}, a distinção entre estes paradigmas assenta fundamentalmente na natureza dos dados: dados limitados (\textit{bounded}), em que o conjunto de dados é finito e com um tamanho conhecido à partida, e dados não limitados (\textit{unbounded}), em que o conjunto de dados cresce continuamente e o tamanho total nunca é conhecido.
+Finalmente, como algumas situações justificam o uso de \textit{wearables} externos, e considerando que nem todos permitem a execução de terceiros, torna-se relevante mencionar formas comuns de transmitir os dados de um dispositivo \textit{wearable} para um dispositivo intermediário.
+Apesar de existirem outros protocolos, o protocolo mais suportado em dispositivos \textit{wearable} é o \ac{BLE}~\cite{RootsAnalysis2026}. 
 
-O processamento em \textit{batch} foi historicamente concebido para dados limitados, sendo o processamento deste tipo de dados considerado direto e bem compreendido~\cite{Akidau2018}.
-Embora um sistema de \textit{streaming} bem desenhado seja capaz de processar dados limitados, o esforço de otimização realizado pelos sistemas de \textit{batch} modernos, nomeadamente ao nível do agrupamento de dados (\textit{bundling}) e do transporte durante \textit{shuffle} torna-os capazes de processar maiores quantidades de dados mesmo em \textit{hardware} limitado~\cite{Akidau2018}.
-Apesar de não terem sido concebidos para esse propósito, os sistemas de \textit{batch} podem ser adaptados para processarem dados não limitados, ao dividir o fluxo em janelas de tamanho fixo independentes, essencialmente tratando um fluxo contínuo de dados não limitados como se se tratasse de uma lista de conjuntos de dados limitados~\cite{Akidau2018}. Esta abordagem introduz, contudo, uma latência inerente entre a chegada dos dados e o momento em que são efetivamente processados, uma vez que é necessário aguardar o fecho de cada janela antes de os processar~\cite{Akidau2018}.
+O \ac{BLE} é um protocolo baseado em \textit{Bluetooth} que permite conexão de curto alcance entre dispositivos utilizando ondas de rádio na banda de 2.4GHz. Contudo, ao contrário do \textit{Bluetooth} clássico, o \ac{BLE} permite um consumo menor de energia ao permanecer num estado de hibernação sempre que não esteja ativamente a transmitir dados, limitando a sua atividade a breves de conexão~\cite{Proctor2023}.
+Esta tecnologia é particularmente útil em dispositivos \textit{wearable} por drasticamente reduzir o consumo de energia, permitindo assim a criação de dispositivos mais compactos (como anéis) sem comprometer a sua funcionalidade.
+Contudo, apesar da sua elevada adoção, este protocolo não é explicitamente aberto, sendo que algumas marcas ou modelos utilizam \textit{firmware} proprietário que pode dificultar a sua integração no sistema~\cite{blexiaomi}.
 
-O processamento em \textit{streaming}, por outro lado, foi desenhado de raiz para conjuntos de dados não limitados, visto que processa cada evento de forma individual sem esperar pelo fim do lote~\cite{Akidau2018}, permitindo assim uma menor latência entre a criação e o processamento dos eventos.
-
-Finalmente, existe ainda uma abordagem intermédia, o \textit{micro-batching} que, apesar de se basear no processamento em \textit{batch}, procura aproximar-se da baixa latência do \textit{streaming} ao utilizar lotes com janelas temporais bastante pequenas~\cite{Dendane2019}. Apesar deste sistema possuir maior latência que \textit{streaming}, é mais adequado para sistemas que exijam consistência do tipo \textit{exactly once}, visto que a sua melhor tolerância a falhas ajuda a garantir que todas as mensagens sejam recebidas uma e apenas uma vez~\cite{Dendane2019}.
-
-Num contexto de monitorização contínua do estado de utilizadores durante o uso normal do computador, os dados produzidos pelos periféricos e pelos \textit{wearables} constituem, por definição, um fluxo contínuo de dados não limitados: não só pelos períodos prolongados de recolha mas também pelo facto de que algumas fontes de dados, como, por exemplo, o teclado, produzem dados de forma não periódica, não sendo por isso possível prever a quantidade de dados produzida por cada utilizador.
-Adicionalmente, como estes sistemas precisam de ser capazes de lidar com o ruído e dados anormais naturalmente produzidos pelas fontes de dados, não é também necessário garantir uma consistência \textit{exactly once}.
-Por estas razões, posso concluir que o paradigma de processamento em \textit{streaming} é o mais apropriado para os objetivos pretendidos, sendo por isso o restante da análise focada em tecnologias utilizadas no processamento em \textit{streaming}.
-
-\subsection{Ingestão de Dados}
+\subsection{\textit{Event Streaming}}
 
 Em situações que requeiram a monitorização de vários utilizadores em simultâneo, não é prático armazenar e processar os dados de cada utilizador localmente, logo torna-se necessário criar uma arquitetura capaz de transmitir estes dados de forma contínua e fiável para um local onde os dados possam ser armazenados e acedidos de forma conjunta. Para este propósito existem diversas tecnologias dedicadas ao transporte destes dados em \textit{streaming}, sendo que podem ser geralmente agrupadas em quatro categorias:
+%diferenciar entre message brokers (messaging) e "streaming"
 
 \subsubsection{\textit{Message Brokers}}
+
 
 \textit{Message Brokers} são sistemas de \textit{middleware} que gerem o encaminhamento de mensagens e facilitam a comunicação desacoplada entre serviços, mesmo quando estes utilizam tecnologias distintas~\cite{IBM_brokers}.
 
@@ -256,35 +250,46 @@ Para este propósito, apesar de ser possível simplesmente criar um \textit{work
 Por exemplo, em arquiteturas que utilizem o Apache Kafka como motor base de ingestão, a opção oficialmente recomendada seria o Kafka Connect, uma ferramenta que padroniza a transferência de dados entre o Apache Kafka e outros sistemas. Este serviço funciona à base de conectores de dois tipos: conectores \textit{source} que definem a ingestão de dados de outras fontes para um tópico Kafka (como, por exemplo, dados armazenados em ficheiro ou num \textit{Message Broker}) e conectores \textit{sink} que definem a exportação das mensagens de um tópico Kafka para um sistema externo (como, por exemplo, uma base de dados)~\cite{kafka_connect_docs}.
 Adicionalmente, para além da transferência de dados, é também possível realizar conversões de tipo (por exemplo, transformar uma mensagem codificada em \textit{bytes} para formato \ac{JSON} ou vice-versa)~\cite{kafka_connect_docs} ou transformações simples a mensagens individuais (como, por exemplo, eliminar campos desnecessários ou filtrar mensagens com base em condições simples).~\cite{kafka_connect_docs_smt}
 
-\subsubsection{Protocolos de comunicação local com \textit{wearables} (\ac{BLE})}
 
-Finalmente, como algumas situações justificam o uso de \textit{wearables} externos, e considerando que nem todos permitem a execução de terceiros, torna-se relevante mencionar formas comuns de transmitir os dados de um dispositivo \textit{wearable} para um dispositivo intermediário.
-Apesar de existirem outros protocolos, o protocolo mais suportado em dispositivos \textit{wearable} é o \ac{BLE}~\cite{RootsAnalysis2026}. 
-
-O \ac{BLE} é um protocolo baseado em \textit{Bluetooth} que permite conexão de curto alcance entre dispositivos utilizando ondas de rádio na banda de 2.4GHz. Contudo, ao contrário do \textit{Bluetooth} clássico, o \ac{BLE} permite um consumo menor de energia ao permanecer num estado de hibernação sempre que não esteja ativamente a transmitir dados, limitando a sua atividade a breves de conexão~\cite{Proctor2023}.
-Esta tecnologia é particularmente útil em dispositivos \textit{wearable} por drasticamente reduzir o consumo de energia, permitindo assim a criação de dispositivos mais compactos (como anéis) sem comprometer a sua funcionalidade.
-Contudo, apesar da sua elevada adoção, este protocolo não é explicitamente aberto, sendo que algumas marcas ou modelos utilizam \textit{firmware} proprietário que pode dificultar a sua integração no sistema~\cite{blexiaomi}.
-
-\subsection{Análise e Processamento de Dados}
+\subsection{Processamento em \textit{Stream}}
 
 Num cenário que envolva monitorizar de forma contínua o estado atual do utilizador, não basta apenas recolher e armazenar os dados de forma contínua, é também necessário estabelecer um \textit{pipeline} capaz de processar e analisar os dados de forma contínua e automática.
 
 Esta necessidade motivou o desenvolvimento de \textit{stream processing frameworks} como, por exemplo, o Apache Flink ou o Kafka Streams, ferramentas focadas na vertente computacional do fluxo, permitindo operações como filtragem, agregação, transformação ou análise dos dados em transporte~\cite{ibm_stream_processing}.
 A maioria pode ser integrada diretamente com o \textit{pipeline} de transporte de dados ao utilizar os tópicos de plataformas como o Kafka como origem ou fonte de dados~\cite{ibm_stream_processing}, contudo algumas destas ferramentas, como o Apache Flink, por exemplo, permitem inserir os dados diretamente na base de dados~\cite{flink_connectors}, conectando assim estes dois componentes.
 
-\subsection{Armazenamento de Dados}\label{sec:technologies_storage}
 
-Finalmente, é necessário também armazenar os dados obtidos para permitir a sua consulta futura, sendo por isso necessário escolher uma base de dados com base nas necessidades.
+\subsection{Base de Dados de Análise em Tempo Real}\label{sec:technologies_storage}
 
-Em termos de bases de dados, as base de dados relacionais (\ac{SQL}) são considerados a opção por defeito que pode ser utilizada em qualquer situação (incluindo a recolha de dados de sensores, sendo especialmente útil quando é necessário associar estes dados a outros registos como os dados do trabalhador), contudo existem opções não relacionais que, devido à sua arquitetura mais especializada que podem ser mais apropriadas para este cenário.
+%falar de OLAP e de TimeSeries
 
-Dentro das bases de dados não relacionais, a que mais se destaca são as \ac{TSDB} (como o InfluxDB ou o TimescaleDB), visto serem desenhadas especificamente para armazenar dados associados a um ponto específico no tempo, como os dados recolhidos pelos periféricos ou \textit{wearables}~\cite{ClickHouse2025}.
-Por serem feitas para indexarem os dados com base no tempo, este tipo de base de dados não só se tornam mais eficientes nas \textit{queries} de agregação temporal~\cite{ClickHouse2025} usadas frequentemente no processo analítico deste tipo de dados (como, por exemplo, obter médias horárias ou diárias), mas também o armazenamento dos próprios dados, comprimindo sequências de valores repetidos ou similares ao armazenar apenas os deltas~\cite{ClickHouse2025} (diferença entre cada registo e o registo anterior).
+% Finalmente, é necessário também armazenar os dados obtidos para permitir a sua consulta futura, sendo por isso necessário escolher uma base de dados com base nas necessidades.
 
-Finalmente, em casos particulares que envolvam pesquisas textuais frequentes (como, por exemplo, a análise de \textit{logs}), poderá ser relevante utilizar um motor de busca distribuído como o ElasticSearch, pois, como estas bases de dados dividem o texto em tokens, permitem não só pesquisar por texto literal, mas também, por exemplo, por proximidade~\cite{elastic_fulltext}.
+% Em termos de bases de dados, as base de dados relacionais (\ac{SQL}) são considerados a opção por defeito que pode ser utilizada em qualquer situação (incluindo a recolha de dados de sensores, sendo especialmente útil quando é necessário associar estes dados a outros registos como os dados do trabalhador), contudo existem opções não relacionais que, devido à sua arquitetura mais especializada que podem ser mais apropriadas para este cenário.
+
+% Dentro das bases de dados não relacionais, a que mais se destaca são as \ac{TSDB} (como o InfluxDB ou o TimescaleDB), visto serem desenhadas especificamente para armazenar dados associados a um ponto específico no tempo, como os dados recolhidos pelos periféricos ou \textit{wearables}~\cite{ClickHouse2025}.
+% Por serem feitas para indexarem os dados com base no tempo, este tipo de base de dados não só se tornam mais eficientes nas \textit{queries} de agregação temporal~\cite{ClickHouse2025} usadas frequentemente no processo analítico deste tipo de dados (como, por exemplo, obter médias horárias ou diárias), mas também o armazenamento dos próprios dados, comprimindo sequências de valores repetidos ou similares ao armazenar apenas os deltas~\cite{ClickHouse2025} (diferença entre cada registo e o registo anterior).
+
+% Finalmente, em casos particulares que envolvam pesquisas textuais frequentes (como, por exemplo, a análise de \textit{logs}), poderá ser relevante utilizar um motor de busca distribuído como o ElasticSearch, pois, como estas bases de dados dividem o texto em tokens, permitem não só pesquisar por texto literal, mas também, por exemplo, por proximidade~\cite{elastic_fulltext}.
 
 
-%para depois:
-%Mais recentemente, com os avanços nas tecnologias \textit{wearable} e de Inteligência Artificial, o foco das investigações passou para a monitorização passiva utilizando \textit{smartphones} e \textit{wearables} ou dispositivos embarcados como os periféricos do próprio computador~\cite{Kafkov2024}.
-%Contudo, como aponta Kallio \textit{et al.}~\cite{Kallio2025}, existe uma clara dicotomia na literatura: enquanto que as abordagens baseadas em \textit{smartphones} e \textit{wearables} possuem diversos estudos longitudinais, estudos envolvendo periféricos ou sensores ambientais ainda são maioritariamente realizados em ambiente laboratorial, existindo apenas um pequeno número de estudos que os avaliam em situações não controladas.
-%Adicionalmente, o mesmo estudo apresenta também outro desafio: a falta de um critério objetivo confiável para determinar o nível de stresse~\cite{Kallio2025}, necessitando assim de recorrer à perceção do próprio trabalhador para determinar o \textit{ground truth} (tendo, por isso, os mesmos problemas que os questionários)~\cite{Kallio2025}.
+
+% \subsection{Paradigmas de Recolha e Processamento de Dados}
+
+%Enquadrar no cenário concreto
+
+% Contudo, antes de analisar tecnologias específicas, é importante estabelecer qual o paradigma mais adequado para este tipo de sistemas, distinguindo-se tradicionalmente dois: o processamento em \textit{batch} e o processamento em \textit{streaming}~\cite{Akidau2018}.
+
+% Segundo Akidau \textit{et al.}~\cite{Akidau2018}, a distinção entre estes paradigmas assenta fundamentalmente na natureza dos dados: dados limitados (\textit{bounded}), em que o conjunto de dados é finito e com um tamanho conhecido à partida, e dados não limitados (\textit{unbounded}), em que o conjunto de dados cresce continuamente e o tamanho total nunca é conhecido.
+
+% O processamento em \textit{batch} foi historicamente concebido para dados limitados, sendo o processamento deste tipo de dados considerado direto e bem compreendido~\cite{Akidau2018}.
+% Embora um sistema de \textit{streaming} bem desenhado seja capaz de processar dados limitados, o esforço de otimização realizado pelos sistemas de \textit{batch} modernos, nomeadamente ao nível do agrupamento de dados (\textit{bundling}) e do transporte durante \textit{shuffle} torna-os capazes de processar maiores quantidades de dados mesmo em \textit{hardware} limitado~\cite{Akidau2018}.
+% Apesar de não terem sido concebidos para esse propósito, os sistemas de \textit{batch} podem ser adaptados para processarem dados não limitados, ao dividir o fluxo em janelas de tamanho fixo independentes, essencialmente tratando um fluxo contínuo de dados não limitados como se se tratasse de uma lista de conjuntos de dados limitados~\cite{Akidau2018}. Esta abordagem introduz, contudo, uma latência inerente entre a chegada dos dados e o momento em que são efetivamente processados, uma vez que é necessário aguardar o fecho de cada janela antes de os processar~\cite{Akidau2018}.
+
+% O processamento em \textit{streaming}, por outro lado, foi desenhado de raiz para conjuntos de dados não limitados, visto que processa cada evento de forma individual sem esperar pelo fim do lote~\cite{Akidau2018}, permitindo assim uma menor latência entre a criação e o processamento dos eventos.
+
+% Finalmente, existe ainda uma abordagem intermédia, o \textit{micro-batching} que, apesar de se basear no processamento em \textit{batch}, procura aproximar-se da baixa latência do \textit{streaming} ao utilizar lotes com janelas temporais bastante pequenas~\cite{Dendane2019}. Apesar deste sistema possuir maior latência que \textit{streaming}, é mais adequado para sistemas que exijam consistência do tipo \textit{exactly once}, visto que a sua melhor tolerância a falhas ajuda a garantir que todas as mensagens sejam recebidas uma e apenas uma vez~\cite{Dendane2019}.
+
+% Num contexto de monitorização contínua do estado de utilizadores durante o uso normal do computador, os dados produzidos pelos periféricos e pelos \textit{wearables} constituem, por definição, um fluxo contínuo de dados não limitados: não só pelos períodos prolongados de recolha mas também pelo facto de que algumas fontes de dados, como, por exemplo, o teclado, produzem dados de forma não periódica, não sendo por isso possível prever a quantidade de dados produzida por cada utilizador.
+% Adicionalmente, como estes sistemas precisam de ser capazes de lidar com o ruído e dados anormais naturalmente produzidos pelas fontes de dados, não é também necessário garantir uma consistência \textit{exactly once}.
+% Por estas razões, posso concluir que o paradigma de processamento em \textit{streaming} é o mais apropriado para os objetivos pretendidos, sendo por isso o restante da análise focada em tecnologias utilizadas no processamento em \textit{streaming}.
