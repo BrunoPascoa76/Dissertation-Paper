@@ -16,7 +16,7 @@
     Por isso, apesar de ser possível processar um fluxo contínuo utilizando \textit{batching} - ao agrupar os dados em lotes com janelas temporais fixas~\cite{Akidau2018} - esta abordagem introduz um \textit{delay} entre o evento e a sua visualização~\cite{ibm_stream_processing}.
     Em contrapartida, uma abordagem baseada em \textit{streaming} processa cada evento da fonte de dados de forma independente e imediata, reduzindo drasticamente o \textit{delay} entre a ocorrência do evento e a sua visualização e permitindo a análise destes dados em tempo real, surgindo assim como alternativa natural para cenários de monitorização contínua.
 
-    \section{Cenário Representativo}
+    \section{Cenário Representativo}\label{sec:scenario_introduction}
 
     De modo a orientar a escolha dos objetivos, bem como o desenvolvimento da prova de conceito e a sua demonstração, estabelece-se também um cenário representativo concreto: a monitorização de um aluno por parte de um tutor durante uma sessão individual remota enquanto este realiza exercícios no computador.
     Para esta prova de conceito, esta monitorização será realizada através dos padrões de digitação, orientação facial e frequência cardíaca, extraída via \textit{smartwatch}.

@@ -2,73 +2,93 @@
 \label{chap:arquitetura}
 
 \begin{introduction}
-Este capítulo detalha de que forma os objetivos influenciaram a arquitetura, apresenta a arquitetura lógica e descreve as tecnologias escolhidas para a concretizar.
+Este capítulo descreve o cenário representativo (monitorização de um aluno durante uma sessão de tutoria), apresenta uma arquitetura lógica baseada na \ac{UDI 2.0} e apresenta finalmente as ferramentas e protocolos escolhidos para implementar este cenário.
 \end{introduction}
+
+\section{Cenário de Referência}\label{sec:scenario_arquitecture}
+
+Como referido na Secção~\ref{sec:scenario_introduction}, o cenário de referência adotado para orientar o desenvolvimento do trabalho é a monitorização de um aluno durante uma sessão de tutoria individual, enquanto este realiza tarefas ou exercícios no computador (ou seja, durante a interação com o computador).
+
+Os atores principais neste cenário são o próprio aluno, que será monitorizado e o tutor, que tem interesse em visualizar as métricas que resultam dessa monitorização.
+Apesar do cenário referir que apenas um aluno será monitorizado por sessão, o trabalho tem em consideração que diferentes alunos poderão ser lecionados em cada sessão e cada aluno poderá ter mais que uma sessão com o mesmo tutor.
+
+Em termos de fontes de dados para monitorização, foram escolhidos o teclado (caracteres por minuto) e câmara (orientação facial e \ac{EAR}) com interfaces do computador e um \textit{smartwatch} (\ac{BPM}) como fonte de dados externa.
+Estas métricas serão disponibilizados através de um \textit{dashboard}, integrando dados em tempo real e históricos para ajudar o tutor a avaliar a qualidade do ensino não só da sessão atual, mas também ao longo de várias sessões.
+
+\section{Mapeamento do Cenário com base na \ac{UDI 2.0}}
+
+\subsection{Arquitetura Lógica}
+
+\subsection{Fluxo Conceptual}
 
 \section{Requisitos e o seu Impacto na Arquitetura}
 
-\subsection{Objetivos e Requisitos}
+% \section{Requisitos e o seu Impacto na Arquitetura}
 
-Como descrito na Secção~\ref{sec:objectives}, os objetivos principais para este trabalho são:
-\begin{itemize}
-    \item Demonstrar a exequibilidade do paradigma de \textit{streaming}
-    \item Integrar fontes de dados fundamentadas na literatura
-    \item Ilustrar a monitorização em tempo real
-    \item Projetar uma arquitetura modular
-\end{itemize}
+% \subsection{Objetivos e Requisitos}
 
-Tendo em conta estes objetivos para este trabalho, decidi estabelecer os seguintes requisitos para o sistema:
-\begin{itemize}
-    \item \textbf{Suporte para recolha de dados de múltiplos utilizadores em simultâneo:} de modo a cumprir com o cenário estabelecido, o sistema tem de ser projetado para receber dados de vários clientes em simultâneo
-    \item \textbf{Suporte para o uso de múltiplos periféricos e dispositivos \textit{wearable off-the-shelf}}: o sistema tem de ser capaz de ingerir dados de periféricos (teclado e câmara) e de dispositivos \textit{wearable off-the-shelf} (\textit{smartwatch wearOS}) para um mesmo utilizador.
-    \item \textbf{Suporte para ferramentas de visualização:} de modo a permitir a visualização dos dados (em tempo real ou históricos), o sistema tem de ser capaz de integrar \textit{software} de visualização
-    \item \textbf{Suporte à adição de sensores:} devido à diversidade de casos de uso dentro do cenário indicado, o sistema tem de ser capaz de permitir que novos \textit{wearables} ou periféricos sejam adicionados e que novas métricas sejam extraídas com base nas necessidades específicas.
-\end{itemize}
+% Como descrito na Secção~\ref{sec:objectives}, os objetivos principais para este trabalho são:
+% \begin{itemize}
+%     \item Demonstrar a exequibilidade do paradigma de \textit{streaming}
+%     \item Integrar fontes de dados fundamentadas na literatura
+%     \item Ilustrar a monitorização em tempo real
+%     \item Projetar uma arquitetura modular
+% \end{itemize}
 
-\subsection{Fundamentação e Racional da Arquitetura}
-\label{sec:racional_arquiteture}
+% Tendo em conta estes objetivos para este trabalho, decidi estabelecer os seguintes requisitos para o sistema:
+% \begin{itemize}
+%     \item \textbf{Suporte para recolha de dados de múltiplos utilizadores em simultâneo:} de modo a cumprir com o cenário estabelecido, o sistema tem de ser projetado para receber dados de vários clientes em simultâneo
+%     \item \textbf{Suporte para o uso de múltiplos periféricos e dispositivos \textit{wearable off-the-shelf}}: o sistema tem de ser capaz de ingerir dados de periféricos (teclado e câmara) e de dispositivos \textit{wearable off-the-shelf} (\textit{smartwatch wearOS}) para um mesmo utilizador.
+%     \item \textbf{Suporte para ferramentas de visualização:} de modo a permitir a visualização dos dados (em tempo real ou históricos), o sistema tem de ser capaz de integrar \textit{software} de visualização
+%     \item \textbf{Suporte à adição de sensores:} devido à diversidade de casos de uso dentro do cenário indicado, o sistema tem de ser capaz de permitir que novos \textit{wearables} ou periféricos sejam adicionados e que novas métricas sejam extraídas com base nas necessidades específicas.
+% \end{itemize}
 
-Com base nestes requisitos, e nos objetivos para este trabalho, posso deduzir uma visão geral da arquitetura.
+% \subsection{Fundamentação e Racional da Arquitetura}
+% \label{sec:racional_arquiteture}
 
-Em primeiro lugar, a necessidade de recolher dados de múltiplos utilizadores em simultâneo torna inconveniente o armazenamento destes dados de forma local, exigindo por isso um servidor capaz de armazenar estes dados num único local.
-Contudo, como é também necessário suportar várias fontes de dados para cada utilizador, sendo muitas delas incapazes de enviar os dados autonomamente para o servidor, torna-se também necessário um cliente que coordene estas fontes de dados.
-Estabelece-se assim uma arquitetura baseada em dois subsistemas: um subsistema local, executado no computador de cada utilizador e responsável pela coordenação dos sensores e pela recolha de dados e um subsistema remoto partilhado, executado num servidor e responsável pelo transporte, armazenamento e visualização destes dados.
+% Com base nestes requisitos, e nos objetivos para este trabalho, posso deduzir uma visão geral da arquitetura.
 
-Com base nesta divisão, a responsabilidade de interagir diretamente com os sensores recai unicamente no cliente, sendo o servidor responsável apenas por interagir com as mensagens enviadas pelo cliente. 
-Logo, como o sistema necessita de suportar a adição de novos sensores, torna-se vantajoso manter o servidor agnóstico à tipologia das fontes de dados ao utilizar um fluxo único de dados independentemente da sua origem porque assim o esforço de adição de novos sensores limita-se apenas ao cliente e ao \textit{software} de visualização, mantendo inalterado o \textit{pipeline} de transporte.
-Contudo, esta decisão tem como consequência o facto de, como o servidor desconhece a origem e natureza específica dos dados, o servidor perde a capacidade de estabelecer fluxos de processamento separados para cada fonte de dados, sendo por isso necessário realizar operações como o cálculo de métricas no próprio \textit{software} de visualização (ou, em certos casos, no próprio cliente).
+% Em primeiro lugar, a necessidade de recolher dados de múltiplos utilizadores em simultâneo torna inconveniente o armazenamento destes dados de forma local, exigindo por isso um servidor capaz de armazenar estes dados num único local.
+% Contudo, como é também necessário suportar várias fontes de dados para cada utilizador, sendo muitas delas incapazes de enviar os dados autonomamente para o servidor, torna-se também necessário um cliente que coordene estas fontes de dados.
+% Estabelece-se assim uma arquitetura baseada em dois subsistemas: um subsistema local, executado no computador de cada utilizador e responsável pela coordenação dos sensores e pela recolha de dados e um subsistema remoto partilhado, executado num servidor e responsável pelo transporte, armazenamento e visualização destes dados.
 
-Finalmente, como o objetivo deste trabalho não é apenas desenvolver uma solução funcional, mas sim demonstrar a viabilidade do \textit{streaming} neste cenário de monitorização contínua, decidi também evitar a resolução de problemas através do desenvolvimento de raiz em prol do uso de soluções de \textit{streaming} pré-existentes.
+% Com base nesta divisão, a responsabilidade de interagir diretamente com os sensores recai unicamente no cliente, sendo o servidor responsável apenas por interagir com as mensagens enviadas pelo cliente. 
+% Logo, como o sistema necessita de suportar a adição de novos sensores, torna-se vantajoso manter o servidor agnóstico à tipologia das fontes de dados ao utilizar um fluxo único de dados independentemente da sua origem porque assim o esforço de adição de novos sensores limita-se apenas ao cliente e ao \textit{software} de visualização, mantendo inalterado o \textit{pipeline} de transporte.
+% Contudo, esta decisão tem como consequência o facto de, como o servidor desconhece a origem e natureza específica dos dados, o servidor perde a capacidade de estabelecer fluxos de processamento separados para cada fonte de dados, sendo por isso necessário realizar operações como o cálculo de métricas no próprio \textit{software} de visualização (ou, em certos casos, no próprio cliente).
 
-\section{Arquitetura Lógica}
+% Finalmente, como o objetivo deste trabalho não é apenas desenvolver uma solução funcional, mas sim demonstrar a viabilidade do \textit{streaming} neste cenário de monitorização contínua, decidi também evitar a resolução de problemas através do desenvolvimento de raiz em prol do uso de soluções de \textit{streaming} pré-existentes.
 
-Apesar dos requisitos fundamentarem uma arquitetura em dois subsistemas, de modo a melhor visualizar o fluxo de dados, torna-se necessário decompor estes subsistemas numa arquitetura lógica baseada em componentes.
+% \section{Arquitetura Lógica}
 
-Ao nível do cliente, o componente central é uma aplicação responsável por extrair os dados dos sensores e enviá-los para o servidor.
-Contudo, prevendo a possibilidade de falhas temporárias na conexão ao servidor, torna-se também necessário criar um \textit{buffer} para evitar a perda de dados.
-Apesar de ser possível criar um \textit{buffer} interno à própria aplicação, decidi utilizar um \textit{message broker} local leve separado porque assim posso-o utilizar não só como \textit{buffer} mas também como intermediário na comunicação com dispositivos \textit{wearable} para os periféricos do computador, mas também como intermediário na comunicação e recolha de dados de dispositivos \textit{wearables}.
+% Apesar dos requisitos fundamentarem uma arquitetura em dois subsistemas, de modo a melhor visualizar o fluxo de dados, torna-se necessário decompor estes subsistemas numa arquitetura lógica baseada em componentes.
 
-Ao nível do servidor, o elemento central é uma \textit{pipeline} de transporte de dados.
-Contudo, apesar de ser teoricamente possível visualizar os dados diretamente da \textit{pipeline}, a criação de um base de dados como motor de persistência permite também enriquecer estes dados em tempo real com dados históricos, permitindo assim distinguir entre tendências regulares e eventos pontuais.
-Finalmente, antevendo a possibilidade de integração com sistemas externos de análise, decidi também adicionar uma interface que uniformize a consulta dos dados armazenados, com a intenção de facilitar o estabelecimento de regras de acesso aos dados.
+% Ao nível do cliente, o componente central é uma aplicação responsável por extrair os dados dos sensores e enviá-los para o servidor.
+% Contudo, prevendo a possibilidade de falhas temporárias na conexão ao servidor, torna-se também necessário criar um \textit{buffer} para evitar a perda de dados.
+% Apesar de ser possível criar um \textit{buffer} interno à própria aplicação, decidi utilizar um \textit{message broker} local leve separado porque assim posso-o utilizar não só como \textit{buffer} mas também como intermediário na comunicação com dispositivos \textit{wearable} para os periféricos do computador, mas também como intermediário na comunicação e recolha de dados de dispositivos \textit{wearables}.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\linewidth]{figs/logical_arquitecture.png}
-    \caption{Diagrama de componentes do sistema}
-    \label{fig:sys_arq_logic}
-\end{figure}
+% Ao nível do servidor, o elemento central é uma \textit{pipeline} de transporte de dados.
+% Contudo, apesar de ser teoricamente possível visualizar os dados diretamente da \textit{pipeline}, a criação de um base de dados como motor de persistência permite também enriquecer estes dados em tempo real com dados históricos, permitindo assim distinguir entre tendências regulares e eventos pontuais.
+% Finalmente, antevendo a possibilidade de integração com sistemas externos de análise, decidi também adicionar uma interface que uniformize a consulta dos dados armazenados, com a intenção de facilitar o estabelecimento de regras de acesso aos dados.
 
-\section{Fluxo Conceitual}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=\linewidth]{figs/logical_arquitecture.png}
+%     \caption{Diagrama de componentes do sistema}
+%     \label{fig:sys_arq_logic}
+% \end{figure}
 
-Com base nesta arquitetura de componentes, podemos já estabelecer um fluxo inicial para os dados baseada em 3 etapas:
-\begin{enumerate}
-    \item \textbf{Captura e Ingestão:} os dados gerados pelas fontes de dados são recolhidos pela aplicação e enviados para o \textit{broker local}
-    \item \textbf{Redirecionamento:} de forma assíncrona, os dados do \textit{broker} local são enviados para o \textit{pipeline} do servidor
-    \item \textbf{Transporte e Armazenamento:} estes dados são transportados ao longo do \textit{pipeline} e inseridos na base de dados
-\end{enumerate}
+% \section{Fluxo Conceitual}
 
-\section{Tecnologias Escolhidas}
+% Com base nesta arquitetura de componentes, podemos já estabelecer um fluxo inicial para os dados baseada em 3 etapas:
+% \begin{enumerate}
+%     \item \textbf{Captura e Ingestão:} os dados gerados pelas fontes de dados são recolhidos pela aplicação e enviados para o \textit{broker local}
+%     \item \textbf{Redirecionamento:} de forma assíncrona, os dados do \textit{broker} local são enviados para o \textit{pipeline} do servidor
+%     \item \textbf{Transporte e Armazenamento:} estes dados são transportados ao longo do \textit{pipeline} e inseridos na base de dados
+% \end{enumerate}
+
+\section{Escolhas na Implementação do Cenário}
+
+\subsection{Tecnologias Escolhidas}
 \label{sec:chosen_technologies}
 
 Após o estabelecimento dos blocos lógicos do sistema, torna-se necessário escolher as tecnologias e fontes de dados apropriados para este sistema.
@@ -88,7 +108,7 @@ Adicionalmente, uma vantagem secundária desta estrutura é que, apesar desta pr
 Finalmente, para armazenamento de dados, decidi optar por uma \ac{TSDB}, pois, como descrito em detalhe na Subsecção~\ref{sec:technologies_storage}, este tipo de base de dados foi desenhado especificamente para armazenar e aceder a dados indexados no tempo, como dados de sensores (sendo que a maioria dos casos não requer o tipo de análise textual que justificaria um motor de busca como ElasticSearch).
 De modo a permitir a consulta de dados por serviços externos, considerei também útil desenvolver uma API de acesso simples, sendo que decidi optar por uma interface baseada em REST (em vez de um mecanismo que permita o acesso direto de forma segura), pois não só facilita a implementação de mecanismos de acesso granulares (por comunicar utilizando o padrão HTTP), mas também porque serve como camada de abstração, reduzindo assim o esforço de transição para uma nova base de dados.
 
-\section{Fontes de Dados Escolhidas}
+\subsection{Fontes de Dados Escolhidas}
 
 Apesar das fontes de dados escolhidas terem como propósito principal permitir demonstrar o sistema em funcionamento utilizando dados reais (visto que um dos requisitos exige que o sistema seja capaz de suportar a adição de novos sensores), a escolha deliberada das fontes de dados continua a ser uma escolha importante, por terem ainda impacto na arquitetura (por exemplo, na escolha do protocolo de comunicação com o dispositivo \textit{wearable}).
 Como objetivo deste trabalho não é alcançar previsões analíticas de alta precisão, a seleção não recaiu sobre combinações utilizadas frequentemente na literatura, mas sim na escolha de fontes com características heterogéneas, de modo a maximizar o seu valor demonstrativo.
@@ -98,29 +118,29 @@ Esta escolha baseou-se maioritariamente na abertura deste sistema operativo para
 
 Em termos de periféricos, decidi escolher o teclado e a câmara devido ao seu diferente comportamento de emissão: por um lado, a câmara produz geralmente dados numéricos (\textit{landmarks}) com uma frequência fixa (produzindo geralmente até 60 amostras por segundo); por outro lado, o teclado produz geralmente dados categóricos (o tipo de tecla premida) com uma frequência variável (enviando dados apenas após a ocorrência de um novo evento).
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\linewidth]{figs/deployment_arquitecture.png}
-    \caption{Diagrama de \textit{deployment} do sistema}
-    \label{fig:sys_arq_technologies}
-\end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=\linewidth]{figs/deployment_arquitecture.png}
+%     \caption{Diagrama de \textit{deployment} do sistema}
+%     \label{fig:sys_arq_technologies}
+% \end{figure}
 
-\section{Fluxo de Dados}
+\subsection{Fluxo de Dados}
 \label{sec:flow_technologies}
 
-Para além da escolha de cada tecnologia influenciar a escolha das restantes, as tecnologias escolhidos tiveram também impacto no fluxo dos dados, sendo importante redesenhar o fluxo de dados com base nesta escolha (Figura~\ref{fig:end2end_technology}).
-De modo a facilitar a interpretação, decidi restringir a análise do fluxo de dados a um cenário de monitorização utilizando apenas uma \textit{webcam}:
+% Para além da escolha de cada tecnologia influenciar a escolha das restantes, as tecnologias escolhidos tiveram também impacto no fluxo dos dados, sendo importante redesenhar o fluxo de dados com base nesta escolha (Figura~\ref{fig:end2end_technology}).
+% De modo a facilitar a interpretação, decidi restringir a análise do fluxo de dados a um cenário de monitorização utilizando apenas uma \textit{webcam}:
 
-\begin{itemize}
-   \item \textbf{Recolha de dados:} Os dados são recolhidos pela aplicação, pré-processados (se necessário) e inseridos no \textit{broker} \ac{MQTT} local
-   \item \textbf{Redirecionamento:} Os dados são redirecionados de forma assíncrona do \textit{broker} \ac{MQTT} local para o \textit{broker} \ac{MQTT} remoto (utilizando o mecanismo de \textit{MQTT Bridging})
-   \item \textbf{Transporte:} Os dados são transportados do \textit{broker} \ac{MQTT} local para um tópico Kafka via conector Kafka Connect
-   \item \textbf{Armazenamento:} Os dados são consumidos do tópico Kafka e inseridos na base de dados através de um segundo conector Kafka Connect
-\end{itemize}
+% \begin{itemize}
+%    \item \textbf{Recolha de dados:} Os dados são recolhidos pela aplicação, pré-processados (se necessário) e inseridos no \textit{broker} \ac{MQTT} local
+%    \item \textbf{Redirecionamento:} Os dados são redirecionados de forma assíncrona do \textit{broker} \ac{MQTT} local para o \textit{broker} \ac{MQTT} remoto (utilizando o mecanismo de \textit{MQTT Bridging})
+%    \item \textbf{Transporte:} Os dados são transportados do \textit{broker} \ac{MQTT} local para um tópico Kafka via conector Kafka Connect
+%    \item \textbf{Armazenamento:} Os dados são consumidos do tópico Kafka e inseridos na base de dados através de um segundo conector Kafka Connect
+% \end{itemize}
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\linewidth]{figs/end2end_technology.png}
-    \caption{Fluxo de dados \textit{end-to-end}}
-    \label{fig:end2end_technology}
-\end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=\linewidth]{figs/end2end_technology.png}
+%     \caption{Fluxo de dados \textit{end-to-end}}
+%     \label{fig:end2end_technology}
+% \end{figure}
