@@ -201,8 +201,21 @@ Contudo, a relativa escassez de estudos realizados de forma contínua nesta áre
 
 
 
+\section{Arquitetura Geral de Recolha e Processamento de Dados}
 
-\section{Soluções Gerais de Recolha e Processamento de Dados}
+De modo a orientar a exploração das tecnologias existentes, bem como o desenho da arquitetura lógica, foi selecionada como arquitetura geral de referência a \ac{UDI 2.0}, proposta pela Andreessen Horowitz~\cite{UDI} (Figura~\ref{fig:udi_full}).
+Este modelo funciona como um mapa modular aplicável a múltiplos cenários distintos de recolha e processamento de dados (incluindo \textit{streaming}) ao agrupar e categorizar as tecnologias em blocos lógicos com base nas suas características e funcionalidades, apresentando exemplos de tecnologias que poderão ser utilizadas para concretizar cada bloco lógico.
+Deste modo, é possível construir uma arquitetura lógica apenas escolhendo os blocos lógicos necessários para o caso de uso específico.
+
+Como o foco deste trabalho é o \textit{streaming} e não a recolha de dados em geral, a análise será focada nos seguintes blocos lógicos: integração de sensores (como fonte de dados), \textit{event streaming}, processamento em \textit{stream} e bases de dados em tempo real. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figs/udi_full}
+    \caption{Unified Data Infrastructure (2.0)~\cite{UDI}}
+    \label{fig:udi_full}
+\end{figure}
+
 
 %apresentar o UDI 2.0 e dizer que componentes vais referir
 
@@ -210,20 +223,21 @@ Contudo, a relativa escassez de estudos realizados de forma contínua nesta áre
 
 \subsubsection{Protocolos de comunicação local com \textit{wearables} (\ac{BLE})}
 
-Finalmente, como algumas situações justificam o uso de \textit{wearables} externos, e considerando que nem todos permitem a execução de terceiros, torna-se relevante mencionar formas comuns de transmitir os dados de um dispositivo \textit{wearable} para um dispositivo intermediário.
-Apesar de existirem outros protocolos, o protocolo mais suportado em dispositivos \textit{wearable} é o \ac{BLE}~\cite{RootsAnalysis2026}. 
+No âmbito deste trabalho, é relevante explorar a integração não só de interfaces do computador, mas também de dispositivos \textit{wearable}.
+Apesar de alguns \textit{wearables} possuírem a capacidade de correr código de terceiros e acesso à internet (o que expande as opções para comunicação), alguns dispositivos como \textit{smartrings} ou alguns modelos de \textit{smartwatch} não permitem tomar esta abordagem.
+Por esta razão, e tendo em conta a sua popularidade~\cite{RootsAnalysis2026}, torna-se relevante mencionar o protocolo \ac{BLE} como método alternativo de comunicação.
 
 O \ac{BLE} é um protocolo baseado em \textit{Bluetooth} que permite conexão de curto alcance entre dispositivos utilizando ondas de rádio na banda de 2.4GHz. Contudo, ao contrário do \textit{Bluetooth} clássico, o \ac{BLE} permite um consumo menor de energia ao permanecer num estado de hibernação sempre que não esteja ativamente a transmitir dados, limitando a sua atividade a breves de conexão~\cite{Proctor2023}.
 Esta tecnologia é particularmente útil em dispositivos \textit{wearable} por drasticamente reduzir o consumo de energia, permitindo assim a criação de dispositivos mais compactos (como anéis) sem comprometer a sua funcionalidade.
 Contudo, apesar da sua elevada adoção, este protocolo não é explicitamente aberto, sendo que algumas marcas ou modelos utilizam \textit{firmware} proprietário que pode dificultar a sua integração no sistema~\cite{blexiaomi}.
 
-\subsection{\textit{Event Streaming}}
+\subsection{Ingestão de Dados (\textit{Event Streaming})}
 
-Em situações que requeiram a monitorização de vários utilizadores em simultâneo, não é prático armazenar e processar os dados de cada utilizador localmente, logo torna-se necessário criar uma arquitetura capaz de transmitir estes dados de forma contínua e fiável para um local onde os dados possam ser armazenados e acedidos de forma conjunta. Para este propósito existem diversas tecnologias dedicadas ao transporte destes dados em \textit{streaming}, sendo que podem ser geralmente agrupadas em quatro categorias:
-%diferenciar entre message brokers (messaging) e "streaming"
+Em situações que requeiram a monitorização de vários utilizadores em simultâneo, não é prático armazenar e processar os dados de cada utilizador localmente, logo torna-se necessário criar uma arquitetura capaz de transmitir estes dados de forma contínua e fiável para um local onde os dados possam ser armazenados e acedidos de forma conjunta.
 
-\subsubsection{\textit{Message Brokers}}
-
+Para este efeito, torna-se importante distinguir entre sistemas estritamente de \textit{messaging}, como \textit{message brokers} - que se focam na entrega pontual de mensagens - e sistemas de \textit{streaming} como o Kafka - que se focam no transporte de um fluxo contínuo (permitindo, por exemplo, aceder a uma mensagem já recebida).
+ 
+\subsubsection{Sistemas de \textit{Messaging}(\textit{Message Brokers})}
 
 \textit{Message Brokers} são sistemas de \textit{middleware} que gerem o encaminhamento de mensagens e facilitam a comunicação desacoplada entre serviços, mesmo quando estes utilizam tecnologias distintas~\cite{IBM_brokers}.
 
@@ -242,7 +256,8 @@ Adicionalmente, a persistência direta em disco não só permite absorver picos 
 
 Contudo, apesar de o Kafka permitir um \textit{throughput} bastante melhor que a competição na data da sua conceção~\cite{Kafka2011}, o uso de \textit{Message Brokers} ainda é preferível em cenários de recursos bastante limitados (como, por exemplo, em microprocessadores) ou em situações que requeiram regras de roteamento mais avançadas (como, por exemplo, roteamento baseado no conteúdo ou utilizando \textit{wildcards}).
 
-\subsubsection{Motores de Conectividade e Integração (Kafka Connect)}
+
+\subsection{Motores de Conectividade e Integração (Kafka Connect)}
 
 Além de ser necessária a ingestão de dados da fonte, é também frequentemente necessário transportar os dados entre dois componentes, como, por exemplo, entre \textit{brokers} \ac{MQTT} locais instalados em cada escritório e um \textit{cluster} Kafka central ou para automaticamente inserir os dados presentes num tópico Kafka na base de dados.
 Para este propósito, apesar de ser possível simplesmente criar um \textit{worker} personalizado para assegurar a transferência dos dados, existem serviços e ferramentas dedicadas a conectar serviços heterogéneos que permitem não só realizar esta tarefa com um esforço de integração muito menor, mas também oferecem as mesmas garantias de resiliência e robustez que as restantes ferramentas.
@@ -259,19 +274,18 @@ Esta necessidade motivou o desenvolvimento de \textit{stream processing framewor
 A maioria pode ser integrada diretamente com o \textit{pipeline} de transporte de dados ao utilizar os tópicos de plataformas como o Kafka como origem ou fonte de dados~\cite{ibm_stream_processing}, contudo algumas destas ferramentas, como o Apache Flink, por exemplo, permitem inserir os dados diretamente na base de dados~\cite{flink_connectors}, conectando assim estes dois componentes.
 
 
-\subsection{Base de Dados de Análise em Tempo Real}\label{sec:technologies_storage}
+\subsection{Base de Dados Analíticas em Tempo Real}\label{sec:technologies_storage}
 
-%falar de OLAP e de TimeSeries
+Em termos de bases analíticas em tempo real, estas podem geralmente dividir-se em duas categorias: bases de dados \ac{OLAP} e \ac{TSDB}.
 
-% Finalmente, é necessário também armazenar os dados obtidos para permitir a sua consulta futura, sendo por isso necessário escolher uma base de dados com base nas necessidades.
+\subsubsection{Bases de Dados \ac{OLAP}}
 
-% Em termos de bases de dados, as base de dados relacionais (\ac{SQL}) são considerados a opção por defeito que pode ser utilizada em qualquer situação (incluindo a recolha de dados de sensores, sendo especialmente útil quando é necessário associar estes dados a outros registos como os dados do trabalhador), contudo existem opções não relacionais que, devido à sua arquitetura mais especializada que podem ser mais apropriadas para este cenário.
+As bases de dados \ac{OLAP} (em particular bases de dados \ac{OLAP} em tempo real), como Clickhouse ou Apache Pinot, são bases de dados baseadas em colunas otimizadas para \textit{queries} analíticas envolvendo um elevado número de valores~\cite{Brown2026}.
 
-% Dentro das bases de dados não relacionais, a que mais se destaca são as \ac{TSDB} (como o InfluxDB ou o TimescaleDB), visto serem desenhadas especificamente para armazenar dados associados a um ponto específico no tempo, como os dados recolhidos pelos periféricos ou \textit{wearables}~\cite{ClickHouse2025}.
-% Por serem feitas para indexarem os dados com base no tempo, este tipo de base de dados não só se tornam mais eficientes nas \textit{queries} de agregação temporal~\cite{ClickHouse2025} usadas frequentemente no processo analítico deste tipo de dados (como, por exemplo, obter médias horárias ou diárias), mas também o armazenamento dos próprios dados, comprimindo sequências de valores repetidos ou similares ao armazenar apenas os deltas~\cite{ClickHouse2025} (diferença entre cada registo e o registo anterior).
+\subsubsection{\ac{TSDB}}
 
-% Finalmente, em casos particulares que envolvam pesquisas textuais frequentes (como, por exemplo, a análise de \textit{logs}), poderá ser relevante utilizar um motor de busca distribuído como o ElasticSearch, pois, como estas bases de dados dividem o texto em tokens, permitem não só pesquisar por texto literal, mas também, por exemplo, por proximidade~\cite{elastic_fulltext}.
-
+Por outro lado, as \ac{TSDB} (como o InfluxDB ou o TimescaleDB) foram desenhadas especificamente para armazenar dados associados a um ponto específico no tempo, como os dados recolhidos pelos periféricos ou \textit{wearables}~\cite{ClickHouse2025}.
+Por serem feitas para indexarem os dados com base no tempo, este tipo de base de dados não só se tornam mais eficientes nas \textit{queries} de agregação temporal~\cite{ClickHouse2025} usadas frequentemente no processo analítico deste tipo de dados (como, por exemplo, obter médias horárias ou diárias), mas também o armazenamento dos próprios dados, comprimindo sequências de valores repetidos ou similares ao armazenar apenas os deltas~\cite{ClickHouse2025} (diferença entre cada registo e o registo anterior).
 
 
 % \subsection{Paradigmas de Recolha e Processamento de Dados}
