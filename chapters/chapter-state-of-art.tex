@@ -120,7 +120,16 @@ A captura e transmissão de imagem ou vídeo em bruto levanta, contudo, dois pro
 \section{Principais Fontes de Dados para Monitorização Identificadas}
 \label{sec:soa_data_sources}
 
-Esta secção identifica as principais fontes de dados utilizadas na literatura para a monitorização do estado de um indivíduo, bem como as limitações de cada método num cenário de uso normal do computador.
+Esta secção apresenta uma revisão geral das fontes de dados utilizadas na literatura para a monitorização do estado de um indivíduo (ou, no caso dos sensores ambientais, vários indivíduos), bem como as limitações de cada método num cenário real envolvendo o uso normal do computador.
+
+Esta exploração foi principalmente orientada ao cenário empresarial previamente descrito (devido ao maior volume encontrado de estudos em comparação com os restantes cenários).
+Contudo, e tendo em conta a evolução futura da tecnologia, a exploração não se limitou a fontes de dados com uso comprovado neste cenário, mas também a fontes de dados potencialmente úteis na monitorização contínua durante o uso do computador, mesmo que ainda não exista uma versão viável para uso em cenários reais.
+
+Por esta razão, os critérios principais de seleção não se baseiam no custo, viabilidade ou comodidade (sendo, contudo, referidos como limitações existentes), mas sim na utilidade das métricas extraídas.
+Adicionalmente, foram excluídas quaisquer fontes de dados que impeçam de forma continuada a normal utilização do computador (sendo, contudo, permitido interrupções pontuais como nos questionários).
+Por exemplo, o telemóvel foi excluído por exigir que o utilizador segure e interaja com o dispositivo para a recolha de dados, impedindo assim a utilização normal do computador.
+
+
 
 \subsection{Questionários}
 
@@ -141,9 +150,9 @@ O \ac{ECG} é um método de medição que utiliza elétrodos posicionados no pei
 O \ac{PPG} é uma técnica ótica que utiliza mudanças na absorção de luz pelo corpo para medir alterações no volume sanguíneo, permitindo assim monitorizar a frequência cardíaca.
 Finalmente, apesar de ser menos prático e necessitar de equipamento mais especializado, é possível também medir a pressão sanguínea de forma contínua utilizando um dispositivo num dos dedos do utilizador.
 
-\subsubsection{Atividade Endotérmica}
+\subsubsection{Atividade Electrodérmica}
 
-Atividade endotérmica é a medição das variações das propriedades elétricas da pele provocadas pela produção de suor, visto que a produção de suor pode ser considerado um indicador de atividade cognitiva ou emocional.
+Atividade electrodérmica é a medição das variações das propriedades elétricas da pele provocadas pela produção de suor, visto que a produção de suor pode ser considerado um indicador de atividade cognitiva ou emocional.
 
 Como este método é estudado à mais de 100 anos, existem diversos tipos de aparelhos a nível laboratorial, sendo que a maioria destes utiliza elétrodos ligados a um amplificador. O tamanho deste amplificador, em conjunção com a necessidade de manter uma posição estática para não afetar as medições limitou a sua aplicabilidade fora de cenários laboratoriais, contudo, com as novidades nas tecnologias \textit{wearable}, estes aparelhos tornaram-se progressivamente mais portáteis e, por isso, mais práticos para uso em situações reais.
 
@@ -287,14 +296,23 @@ As bases de dados \ac{OLAP} (em particular bases de dados \ac{OLAP} em tempo rea
 Por outro lado, as \ac{TSDB} (como o InfluxDB ou o TimescaleDB) foram desenhadas especificamente para armazenar dados associados a um ponto específico no tempo, como os dados recolhidos pelos periféricos ou \textit{wearables}~\cite{ClickHouse2025}.
 Por serem feitas para indexarem os dados com base no tempo, este tipo de base de dados não só se tornam mais eficientes nas \textit{queries} de agregação temporal~\cite{ClickHouse2025} usadas frequentemente no processo analítico deste tipo de dados (como, por exemplo, obter médias horárias ou diárias), mas também o armazenamento dos próprios dados, comprimindo sequências de valores repetidos ou similares ao armazenar apenas os deltas~\cite{ClickHouse2025} (diferença entre cada registo e o registo anterior).
 
+\subsection{Modelos de Recolha e Processamento de Dados}
 
-% \subsection{Paradigmas de Recolha e Processamento de Dados}
+Para além de explorar as ferramentas e métodos, é também relevante comparar o \textit{streaming} como modelo às suas alternativas: \textit{batch} e \textit{micro-batch}.
 
-%Enquadrar no cenário concreto
+\subsubsection{\textit{Batch}}
 
-% Contudo, antes de analisar tecnologias específicas, é importante estabelecer qual o paradigma mais adequado para este tipo de sistemas, distinguindo-se tradicionalmente dois: o processamento em \textit{batch} e o processamento em \textit{streaming}~\cite{Akidau2018}.
+A ingestão em \textit{batch} é um modelo de ingestão eventual em que os dados são acumulados em lotes (\textit{batches}) de grande dimensão e são depois processados e armazenados de forma unitária através de \textit{batch jobs} pontuais~\cite{Dendane2019} (por exemplo, no final de cada semana).
 
-% Segundo Akidau \textit{et al.}~\cite{Akidau2018}, a distinção entre estes paradigmas assenta fundamentalmente na natureza dos dados: dados limitados (\textit{bounded}), em que o conjunto de dados é finito e com um tamanho conhecido à partida, e dados não limitados (\textit{unbounded}), em que o conjunto de dados cresce continuamente e o tamanho total nunca é conhecido.
+Apesar da elevada quantidade de dados a processar em cada \textit{batch job}, os esforços de otimização tomados pelos sistemas de \textit{batch} modernos, torna-os capazes de processar elevados volumes de dados mesmo em \textit{hardware} limitado~\cite{Akidau2018}.
+Adicionalmente, como o esforço de computação é maioritariamente concentrado em momentos pontuais ajustáveis, o momento da ingestão pode ser agendado para tirar partido de períodos de menor utilização dos recursos, reduzindo assim o seu impacto.
+
+A principal limitação deste modelo de ingestão reside nos dados serem disponibilizados apenas após a execução de \textit{batch job}, impedindo a análise em tempo real.
+Apesar desta limitação não constituir um problema em cenários como, por exemplo, estudos laboratoriais de curta duração - em que os dados são apenas analisados após a recolha - esta limitação torna uma abordagem em \textit{batch} desadequada para o cenário de tutoria individual descrito, uma vez que o tutor necessita monitorizar o estado do aluno durante a própria aula.
+
+\subsubsection
+
+
 
 % O processamento em \textit{batch} foi historicamente concebido para dados limitados, sendo o processamento deste tipo de dados considerado direto e bem compreendido~\cite{Akidau2018}.
 % Embora um sistema de \textit{streaming} bem desenhado seja capaz de processar dados limitados, o esforço de otimização realizado pelos sistemas de \textit{batch} modernos, nomeadamente ao nível do agrupamento de dados (\textit{bundling}) e do transporte durante \textit{shuffle} torna-os capazes de processar maiores quantidades de dados mesmo em \textit{hardware} limitado~\cite{Akidau2018}.
