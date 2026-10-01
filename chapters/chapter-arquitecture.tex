@@ -17,13 +17,24 @@ Estas métricas serão disponibilizados através de um \textit{dashboard}, integ
 
 \section{Mapeamento do Cenário com base na \ac{UDI 2.0}}
 
-\subsection{Arquitetura Lógica}
+De modo a orientar a criação de uma arquitetura lógica, decidi utilizar como base a \ac{UDI 2.0}, mapeando este cenário nos blocos lógicos e fluxos desta arquitetura genérica.
 
-\subsection{Fluxo Conceptual}
+Em primeiro lugar, as fontes de dados principais são as descritas anteriormente: o teclado, que produz um evento sempre que uma tecla é premida (sendo enviado o tipo de tecla premida), a câmara que envia métricas referentes à orientação facial e à abertura dos olhos e um \textit{smartwatch}, que fornece dados referentes à frequência cardíaca (\ac{BPM}).
+
+A seguir, como existe uma separação física entre aluno e tutor, é necessário ingerir e transportar estes dados. Apesar das sessões de tutoria terem geralmente uma duração fixa (constituindo cada sessão um conjunto de dados temporalmente limitado), estes dados são analizados durante a própria sessão, o que justifica a necessidade de os ingerir de forma contínua.
+No contexto da \ac{UDI 2.0}, a ingestão contínua é mapeada no bloco lógico \textit{Event Streaming}.
+
+Em termos de persistência, apesar de algumas ferramentas de ingestão contínua (particularmente, as baseadas em \textit{logs}), manterem um registo do histórico de mensagens, não é considerado viável utilizar estas ferramentas como fontes de dados para visualização, uma vez que estas ferramentas geralmente não dispõem de mecanismos eficientes de filtragem com base no conteúdo (por exemplo, para visualizar o \ac{BPM} de um determinado aluno ao longo da sessão).
+Por esta razão, torna-se necessário utilizar uma fonte de persistência separada que seja otimizada para análise em tempo real, ou seja, uma \textit{Real-time Analytics Database}.
+
+Em termos de processamento e transformação, não foram selecionados blocos lógicos para estas camadas, uma vez que não está planeado o desenvolvimento de um modelo de inteligência artificial (que justificaria a transformação) nem se consideram necessário processamento adicional antes da inserção (o que justificaria \textit{Stream Processing}).
+
+Finalmente, em termos de visualização, como neste cenário o único requisito para a interface do tutor é permitir observar as métricas de um aluno e a sua evolução, sendo a comunicação entre ambos realizada através das ferramentas habituais, foi considerado suficiente o uso de um \textit{Dashboard} para a visualização dos dados.
+
+Em suma, podemos estabelecer o seguinte fluxo: os dados são recolhidos e pré-processados na fonte, transportados através de uma ferramenta de \textit{Event Streaming}, inseridos numa \textit{Real-time Analysis Database} e finalmente visualizados pelo tutor através de um \textit{Dashboard}.
+
 
 \section{Requisitos e o seu Impacto na Arquitetura}
-
-% \section{Requisitos e o seu Impacto na Arquitetura}
 
 % \subsection{Objetivos e Requisitos}
 
@@ -70,12 +81,7 @@ Estas métricas serão disponibilizados através de um \textit{dashboard}, integ
 % Contudo, apesar de ser teoricamente possível visualizar os dados diretamente da \textit{pipeline}, a criação de um base de dados como motor de persistência permite também enriquecer estes dados em tempo real com dados históricos, permitindo assim distinguir entre tendências regulares e eventos pontuais.
 % Finalmente, antevendo a possibilidade de integração com sistemas externos de análise, decidi também adicionar uma interface que uniformize a consulta dos dados armazenados, com a intenção de facilitar o estabelecimento de regras de acesso aos dados.
 
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=\linewidth]{figs/logical_arquitecture.png}
-%     \caption{Diagrama de componentes do sistema}
-%     \label{fig:sys_arq_logic}
-% \end{figure}
+
 
 % \section{Fluxo Conceitual}
 
