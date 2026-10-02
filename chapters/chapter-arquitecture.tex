@@ -34,63 +34,21 @@ Finalmente, em termos de visualização, como neste cenário o único requisito 
 Em suma, podemos estabelecer o seguinte fluxo: os dados são recolhidos e pré-processados na fonte, transportados através de uma ferramenta de \textit{Event Streaming}, inseridos numa \textit{Real-time Analysis Database} e finalmente visualizados pelo tutor através de um \textit{Dashboard}.
 
 
-\section{Requisitos e o seu Impacto na Arquitetura}
+\section{Requisitos}
 
-% \subsection{Objetivos e Requisitos}
+Com base no cenário de tutoria descrito e na arquitetura lógica apresentada acima, foram estabelecidos os seguintes requisitos para a solução desenvolvida:
+\begin{itemize}
+    \item \textbf{Identificação de cada aluno:} o sistema tem de identificar de forma única o aluno (ou computador) do qual originaram os dados, de modo a permitir distinguir entre diferentes alunos ou agrupar os dados de várias sessões.
+    \item \textbf{Suporte para teclado, câmara e \textit{smartwatch}:} o sistema tem de suportar, no mínimo, a recolha de dados do teclado, câmara e de um \textit{smartwatch}.
+    \item \textbf{Suporte para análise em tempo real:} o sistema tem de permitir ao tutor observar mudanças nas métricas recolhidas em tempo real.
+    \item \textbf{Armazenamento e análise de dados históricos:} o sistema tem de reter os dados após o término da sessão de modo a permitir a consulta de sessões passadas.
+\end{itemize} 
 
-% Como descrito na Secção~\ref{sec:objectives}, os objetivos principais para este trabalho são:
-% \begin{itemize}
-%     \item Demonstrar a exequibilidade do paradigma de \textit{streaming}
-%     \item Integrar fontes de dados fundamentadas na literatura
-%     \item Ilustrar a monitorização em tempo real
-%     \item Projetar uma arquitetura modular
-% \end{itemize}
-
-% Tendo em conta estes objetivos para este trabalho, decidi estabelecer os seguintes requisitos para o sistema:
-% \begin{itemize}
-%     \item \textbf{Suporte para recolha de dados de múltiplos utilizadores em simultâneo:} de modo a cumprir com o cenário estabelecido, o sistema tem de ser projetado para receber dados de vários clientes em simultâneo
-%     \item \textbf{Suporte para o uso de múltiplos periféricos e dispositivos \textit{wearable off-the-shelf}}: o sistema tem de ser capaz de ingerir dados de periféricos (teclado e câmara) e de dispositivos \textit{wearable off-the-shelf} (\textit{smartwatch wearOS}) para um mesmo utilizador.
-%     \item \textbf{Suporte para ferramentas de visualização:} de modo a permitir a visualização dos dados (em tempo real ou históricos), o sistema tem de ser capaz de integrar \textit{software} de visualização
-%     \item \textbf{Suporte à adição de sensores:} devido à diversidade de casos de uso dentro do cenário indicado, o sistema tem de ser capaz de permitir que novos \textit{wearables} ou periféricos sejam adicionados e que novas métricas sejam extraídas com base nas necessidades específicas.
-% \end{itemize}
-
-% \subsection{Fundamentação e Racional da Arquitetura}
-% \label{sec:racional_arquiteture}
-
-% Com base nestes requisitos, e nos objetivos para este trabalho, posso deduzir uma visão geral da arquitetura.
-
-% Em primeiro lugar, a necessidade de recolher dados de múltiplos utilizadores em simultâneo torna inconveniente o armazenamento destes dados de forma local, exigindo por isso um servidor capaz de armazenar estes dados num único local.
-% Contudo, como é também necessário suportar várias fontes de dados para cada utilizador, sendo muitas delas incapazes de enviar os dados autonomamente para o servidor, torna-se também necessário um cliente que coordene estas fontes de dados.
-% Estabelece-se assim uma arquitetura baseada em dois subsistemas: um subsistema local, executado no computador de cada utilizador e responsável pela coordenação dos sensores e pela recolha de dados e um subsistema remoto partilhado, executado num servidor e responsável pelo transporte, armazenamento e visualização destes dados.
-
-% Com base nesta divisão, a responsabilidade de interagir diretamente com os sensores recai unicamente no cliente, sendo o servidor responsável apenas por interagir com as mensagens enviadas pelo cliente. 
-% Logo, como o sistema necessita de suportar a adição de novos sensores, torna-se vantajoso manter o servidor agnóstico à tipologia das fontes de dados ao utilizar um fluxo único de dados independentemente da sua origem porque assim o esforço de adição de novos sensores limita-se apenas ao cliente e ao \textit{software} de visualização, mantendo inalterado o \textit{pipeline} de transporte.
-% Contudo, esta decisão tem como consequência o facto de, como o servidor desconhece a origem e natureza específica dos dados, o servidor perde a capacidade de estabelecer fluxos de processamento separados para cada fonte de dados, sendo por isso necessário realizar operações como o cálculo de métricas no próprio \textit{software} de visualização (ou, em certos casos, no próprio cliente).
-
-% Finalmente, como o objetivo deste trabalho não é apenas desenvolver uma solução funcional, mas sim demonstrar a viabilidade do \textit{streaming} neste cenário de monitorização contínua, decidi também evitar a resolução de problemas através do desenvolvimento de raiz em prol do uso de soluções de \textit{streaming} pré-existentes.
-
-% \section{Arquitetura Lógica}
-
-% Apesar dos requisitos fundamentarem uma arquitetura em dois subsistemas, de modo a melhor visualizar o fluxo de dados, torna-se necessário decompor estes subsistemas numa arquitetura lógica baseada em componentes.
-
-% Ao nível do cliente, o componente central é uma aplicação responsável por extrair os dados dos sensores e enviá-los para o servidor.
-% Contudo, prevendo a possibilidade de falhas temporárias na conexão ao servidor, torna-se também necessário criar um \textit{buffer} para evitar a perda de dados.
-% Apesar de ser possível criar um \textit{buffer} interno à própria aplicação, decidi utilizar um \textit{message broker} local leve separado porque assim posso-o utilizar não só como \textit{buffer} mas também como intermediário na comunicação com dispositivos \textit{wearable} para os periféricos do computador, mas também como intermediário na comunicação e recolha de dados de dispositivos \textit{wearables}.
-
-% Ao nível do servidor, o elemento central é uma \textit{pipeline} de transporte de dados.
-% Contudo, apesar de ser teoricamente possível visualizar os dados diretamente da \textit{pipeline}, a criação de um base de dados como motor de persistência permite também enriquecer estes dados em tempo real com dados históricos, permitindo assim distinguir entre tendências regulares e eventos pontuais.
-% Finalmente, antevendo a possibilidade de integração com sistemas externos de análise, decidi também adicionar uma interface que uniformize a consulta dos dados armazenados, com a intenção de facilitar o estabelecimento de regras de acesso aos dados.
-
-
-
-% \section{Fluxo Conceitual}
-
-% Com base nesta arquitetura de componentes, podemos já estabelecer um fluxo inicial para os dados baseada em 3 etapas:
-% \begin{enumerate}
-%     \item \textbf{Captura e Ingestão:} os dados gerados pelas fontes de dados são recolhidos pela aplicação e enviados para o \textit{broker local}
-%     \item \textbf{Redirecionamento:} de forma assíncrona, os dados do \textit{broker} local são enviados para o \textit{pipeline} do servidor
-%     \item \textbf{Transporte e Armazenamento:} estes dados são transportados ao longo do \textit{pipeline} e inseridos na base de dados
-% \end{enumerate}
+Adicionalmente, e de forma a permitir expandir a abrangência deste trabalho a outros cenários, foram também estabelecidos os seguintes objetivos secundários:
+\begin{itemize}
+    \item \textbf{Suporte para múltiplos utilizadores em simultâneo:} o sistema deve suportar a recolha de dados de múltiplos indivíduos em simultâneo.
+    \item \textbf{Suporte para a adição de novos sensores:} o sistema deve facilitar a adição de suporte para outras interfaces do computador ou \textit{wearables off-the-shelf} para além dos mencionados acima.
+\end{itemize}
 
 \section{Escolhas na Implementação do Cenário}
 
@@ -99,30 +57,27 @@ Em suma, podemos estabelecer o seguinte fluxo: os dados são recolhidos e pré-p
 
 Após o estabelecimento dos blocos lógicos do sistema, torna-se necessário escolher as tecnologias e fontes de dados apropriados para este sistema.
 
-Em primeiro lugar, como elemento central da \textit{pipeline} de recolha de dados, decidi escolher o Apache Kafka, não só pela sua escalabilidade e resiliência a falhas~\cite{Kafka2011}, mas também pelo facto que, através do Kafka Connect, é possível comunicar com um elevado número de outros sistemas~\cite{kafka_connect_docs}.
+Em primeiro lugar, para a concretização do \textit{Event Streaming}, foi escolhido o Apache Kafka, não só pela sua escalabilidade e resiliência a falhas~\cite{Kafka2011}, mas também pelo facto que, através do Kafka Connect, é possível comunicar com um elevado número de outros sistemas~\cite{kafka_connect_docs}.
 
-Em segundo lugar, para o \textit{broker} local, por não necessitar de funcionalidades avançadas, decidi utilizar um \textit{broker} que utilize o protocolo \ac{MQTT}.
-Esta escolha baseou-se na leveza do protocolo, permitindo ser executado sem impacto no trabalho mesmo em computadores com recursos limitados~\cite{amqp_mqtt_definitions}, como \textit{Chromebooks} (que são por vezes utilizados em cenários em que a computação real é feita através de acesso remoto a um computador da empresa).
+A seguir, como a maioria das fontes de dados não consegue comunicar diretamente com o Kafka, torna-se necessário o uso de uma aplicação que corra no computador do aluno para coordenar a recolha destes dados, permitindo assim também o pré-processamento de dados na própria fonte.
+De modo a evitar a perda de dados após uma interrupção temporária de conexão, foi também explorado um mecanismo de redirecionamento assíncrono utilizando \ac{MQTT} \textit{Briding}, um método que permite o redirecionamento assíncrono e automático entre dois \textit{message brokers} \ac{MQTT} - um local e um remoto - sem infringir nas garantias de entrega.
+Para além de explorar este mecanismo de redirecionamento contínuo, o \ac{MQTT} foi também escolhido por ser um protocolo suficientemente leve~\cite{amqp_mqtt_definitions} para não impactar visivelmente a \textit{performance} do computador do aluno.
 
-Para conectar estes dois serviços, apesar de ter inicialmente considerado criar um \textit{worker} local utilizando código de raiz, como um dos objetivos é demonstrar a exequibilidade do paradigma de \textit{streaming}, decidi optar por utilizar soluções de \textit{streaming} já existentes.
-Por esta razão decidi utilizar o Kafka Connect como método de ligação entre serviços, já que o próprio integra-se diretamente no \textit{cluster} Kafka.
+Em termos de \textit{Real-Time Analytics Database}, foi escolhido a utilização de uma \ac{TSDB} (sendo a implementação específica de \ac{TSDB} comparativamente menos relevante).
+Esta escolha baseia-se principalmente em duas razões: como a análise esperada baseia-se em séries temporais, o principal critério de pesquisa será o tempo (seguido do utilizador e finalmente do sensor e métrica), o que favorece a escolha de uma \ac{TSDB}, que são especificamente otimizadas para \textit{queries} temporais.
+Adicionalmente, apesar de uma base de dados \ac{OLAP} ser possivelmente uma escolha mais adequada para um volume elevado de registos (milhões ou biliões)~\cite{Brown2026}, a análise prevista para este cenário foca-se maioritariamente na análise por aluno, logo, o volume de dados previsto não justifica a adoção de uma base de dados \ac{OLAP}.
 
-Contudo, apesar de ser teoricamente possível conectar o \textit{broker} local diretamente ao Kafka via Kafka Connect, esta abordagem não só traria possíveis problemas de escalabilidade, mas também esta ligação poderia ser bloqueada por uma \textit{firewall} (especialmente no caso de trabalhadores remotos, em que a empresa não consegue manipular a \textit{firewall} para permitir o acesso).
-Por esta razão, decidi optar por implementar um \textit{broker} \ac{MQTT} remoto (sendo que escolhi especificamente um segundo \textit{broker} \ac{MQTT}, pois o mecanismo de \ac{MQTT} \textit{Bridging} permite o redirecionamento automático entre \textit{brokers} \ac{MQTT} sem quebrar as garantias de entrega).
-Adicionalmente, uma vantagem secundária desta estrutura é que, apesar desta prova de conceito focar-se numa relação 1:1 entre o \textit{broker} remoto e o Kafka, esta arquitetura suporta naturalmente uma relação N:1, permitindo, por exemplo, a empresas com vários escritórios agrupar utilizadores pela sua localização fixa, ao instalar um \textit{broker} \ac{MQTT} em cada escritório utilizando o mesmo endereço IP local.
-
-Finalmente, para armazenamento de dados, decidi optar por uma \ac{TSDB}, pois, como descrito em detalhe na Subsecção~\ref{sec:technologies_storage}, este tipo de base de dados foi desenhado especificamente para armazenar e aceder a dados indexados no tempo, como dados de sensores (sendo que a maioria dos casos não requer o tipo de análise textual que justificaria um motor de busca como ElasticSearch).
-De modo a permitir a consulta de dados por serviços externos, considerei também útil desenvolver uma API de acesso simples, sendo que decidi optar por uma interface baseada em REST (em vez de um mecanismo que permita o acesso direto de forma segura), pois não só facilita a implementação de mecanismos de acesso granulares (por comunicar utilizando o padrão HTTP), mas também porque serve como camada de abstração, reduzindo assim o esforço de transição para uma nova base de dados.
+Finalmente, a comunicação entre estes três componentes - \textit{broker} remoto, Kafka e \ac{TSDB} - será assegurada através de dois conectores de Kafka Connect: um conector \textit{source} para consumir os dados do \textit{broker} local e um conector \textit{sink} para inserir estes dados na \ac{TSDB}.
+A escolha do Kafka Connect permite não só explorar tecnologias já existentes e as suas vantagens e limitações - ao contrário de um \textit{worker} criado de raiz - mas também porque o uso de conectores introduz uma camada de abstração que separa a configuração do fluxo de dados da lógica de conversão específica a cada ferramenta, facilitando assim a substituição de componentes.
 
 \subsection{Fontes de Dados Escolhidas}
 
-Apesar das fontes de dados escolhidas terem como propósito principal permitir demonstrar o sistema em funcionamento utilizando dados reais (visto que um dos requisitos exige que o sistema seja capaz de suportar a adição de novos sensores), a escolha deliberada das fontes de dados continua a ser uma escolha importante, por terem ainda impacto na arquitetura (por exemplo, na escolha do protocolo de comunicação com o dispositivo \textit{wearable}).
-Como objetivo deste trabalho não é alcançar previsões analíticas de alta precisão, a seleção não recaiu sobre combinações utilizadas frequentemente na literatura, mas sim na escolha de fontes com características heterogéneas, de modo a maximizar o seu valor demonstrativo.
-
-Como fonte de dados externa (\textit{wearable}), decidi escolher um \textit{smartwatch} WearOS.
-Esta escolha baseou-se maioritariamente na abertura deste sistema operativo para a integração de \textit{software} externo e pelo seu suporte de comunicação utilizando o protocolo \ac{MQTT}, permitindo assim utilizar o \textit{broker} local não só como fonte de comunicação, mas também como intermediário na comunicação entre o computador e o \textit{smartwatch}.
-
-Em termos de periféricos, decidi escolher o teclado e a câmara devido ao seu diferente comportamento de emissão: por um lado, a câmara produz geralmente dados numéricos (\textit{landmarks}) com uma frequência fixa (produzindo geralmente até 60 amostras por segundo); por outro lado, o teclado produz geralmente dados categóricos (o tipo de tecla premida) com uma frequência variável (enviando dados apenas após a ocorrência de um novo evento).
+Como o propósito principal deste trabalho não é o desenvolvimento de uma solução comercial viável, mas sim na demonstração da viabilidade de uma abordagem baseada em \textit{streaming} num cenário de monitorização contínua durante o uso do computador, a escolha das fontes de dados (teclado, câmara e \textit{smartwatch}) não se baseou necessariamente na sua taxa de precisão ou na sua popularidade na literatura científica, mas sim na sua utilidade demonstrativa:
+\begin{itemize}
+    \item O \textit{smartwatch} produz dados de natureza fisiológica (\ac{BPM}) e demonstra a integração de fontes de dados externas.
+    \item A câmara produz dados audiovisuais e favorece o processamento das imagens na fonte (não só por questões de privacidade, mas também porque se considera que o transporte e armazenamento a longo prazo de até 60 imagens por segundo é extremamente ineficiente para este caso de uso).
+    \item Finalmente, o teclado produz dados referentes à dinâmica de interação e é uma das únicas fontes de dados consideradas que produz dados com base em eventos e não através de amostragem, sendo a frequência de envio variável e dependente da velocidade de digitação do próprio indivíduo.
+\end{itemize}
 
 % \begin{figure}[h]
 %     \centering
@@ -134,15 +89,20 @@ Em termos de periféricos, decidi escolher o teclado e a câmara devido ao seu d
 \subsection{Fluxo de Dados}
 \label{sec:flow_technologies}
 
-% Para além da escolha de cada tecnologia influenciar a escolha das restantes, as tecnologias escolhidos tiveram também impacto no fluxo dos dados, sendo importante redesenhar o fluxo de dados com base nesta escolha (Figura~\ref{fig:end2end_technology}).
-% De modo a facilitar a interpretação, decidi restringir a análise do fluxo de dados a um cenário de monitorização utilizando apenas uma \textit{webcam}:
+De modo a permitir visualizar o funcionamento do sistema e a sua utilidade no cenário, é apresentado nesta secção o fluxo de dados, com base numa situação representativa em que o aluno apresenta dificuldades numa das questões, restringindo-me ao \ac{BPM} por uma questão de simplicidade (uma vez que o fluxo dos dados após inserção no \textit{broker} local é idêntico para todos os sensores).
 
-% \begin{itemize}
-%    \item \textbf{Recolha de dados:} Os dados são recolhidos pela aplicação, pré-processados (se necessário) e inseridos no \textit{broker} \ac{MQTT} local
-%    \item \textbf{Redirecionamento:} Os dados são redirecionados de forma assíncrona do \textit{broker} \ac{MQTT} local para o \textit{broker} \ac{MQTT} remoto (utilizando o mecanismo de \textit{MQTT Bridging})
-%    \item \textbf{Transporte:} Os dados são transportados do \textit{broker} \ac{MQTT} local para um tópico Kafka via conector Kafka Connect
-%    \item \textbf{Armazenamento:} Os dados são consumidos do tópico Kafka e inseridos na base de dados através de um segundo conector Kafka Connect
-% \end{itemize}
+\begin{enumerate}
+    \item O aluno e o tutor iniciam a sessão de tutoria.
+    \item O aluno começa a responder às questões apresentadas, mas não consegue responder à última pergunta.
+    \item O stresse causado pela dificuldade em responder leva a um aumento da frequência cardíaca (\ac{BPM}).
+    \item O novo valor de \ac{BPM} é extraído do \textit{smartwatch} e inserido no \textit{broker} local.
+    \item A mensagem é redirecionada para o \textit{broker} remoto através de \ac{MQTT} \textit{bridging}.
+    \item A mensagem é inserida num tópico Kafka via Kafka Connect.
+    \item O novo valor é inserido na \ac{TSDB} via Kafka Connect.
+    \item O \textit{dashboard} é atualizado com os novos dados e reflete o aumento do \ac{BPM}.
+    \item O tutor observa o \textit{dashboard} e apercebe-se do aumento do valor de \ac{BPM}.
+    \item O tutor chega à conclusão que o aluno deve estar a ter dificuldade com alguma pergunta e oferece ajuda.
+\end{enumerate}
 
 % \begin{figure}[h]
 %     \centering
