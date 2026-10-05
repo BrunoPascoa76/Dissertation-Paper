@@ -60,7 +60,7 @@ Após o estabelecimento dos blocos lógicos do sistema, torna-se necessário esc
 Em primeiro lugar, para a concretização do \textit{Event Streaming}, foi escolhido o Apache Kafka, não só pela sua escalabilidade e resiliência a falhas~\cite{Kafka2011}, mas também pelo facto que, através do Kafka Connect, é possível comunicar com um elevado número de outros sistemas~\cite{kafka_connect_docs}.
 
 A seguir, como a maioria das fontes de dados não consegue comunicar diretamente com o Kafka, torna-se necessário o uso de uma aplicação que corra no computador do aluno para coordenar a recolha destes dados, permitindo assim também o pré-processamento de dados na própria fonte.
-De modo a evitar a perda de dados após uma interrupção temporária de conexão, foi também explorado um mecanismo de redirecionamento assíncrono utilizando \ac{MQTT} \textit{Briding}, um método que permite o redirecionamento assíncrono e automático entre dois \textit{message brokers} \ac{MQTT} - um local e um remoto - sem infringir nas garantias de entrega.
+De modo a evitar a perda de dados após uma interrupção temporária de conexão, foi também explorado um mecanismo de redirecionamento assíncrono utilizando \ac{MQTT} \textit{Bridge}, um método que permite o redirecionamento assíncrono e automático entre dois \textit{message brokers} \ac{MQTT} - um local e um remoto - sem infringir nas garantias de entrega.
 Para além de explorar este mecanismo de redirecionamento contínuo, o \ac{MQTT} foi também escolhido por ser um protocolo suficientemente leve~\cite{amqp_mqtt_definitions} para não impactar visivelmente a \textit{performance} do computador do aluno.
 
 Em termos de \textit{Real-Time Analytics Database}, foi escolhido a utilização de uma \ac{TSDB} (sendo a implementação específica de \ac{TSDB} comparativamente menos relevante).
@@ -79,34 +79,34 @@ Como o propósito principal deste trabalho não é o desenvolvimento de uma solu
     \item Finalmente, o teclado produz dados referentes à dinâmica de interação e é uma das únicas fontes de dados consideradas que produz dados com base em eventos e não através de amostragem, sendo a frequência de envio variável e dependente da velocidade de digitação do próprio indivíduo.
 \end{itemize}
 
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=\linewidth]{figs/deployment_arquitecture.png}
-%     \caption{Diagrama de \textit{deployment} do sistema}
-%     \label{fig:sys_arq_technologies}
-% \end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figs/component_diagram_technology.png}
+    \caption{Diagrama de componentes do sistema}
+    \label{fig:sys_arq_technologies}
+\end{figure}
 
 \subsection{Fluxo de Dados}
 \label{sec:flow_technologies}
 
-De modo a permitir visualizar o funcionamento do sistema e a sua utilidade no cenário, é apresentado nesta secção o fluxo de dados, com base numa situação representativa em que o aluno apresenta dificuldades numa das questões, restringindo-me ao \ac{BPM} por uma questão de simplicidade (uma vez que o fluxo dos dados após inserção no \textit{broker} local é idêntico para todos os sensores).
+    De modo a permitir visualizar o funcionamento do sistema e a sua utilidade no cenário, é apresentado nesta secção o fluxo de dados, com base numa situação representativa em que o aluno apresenta dificuldades numa das questões, restringindo-me ao \ac{BPM} por uma questão de simplicidade (uma vez que o fluxo dos dados após inserção no \textit{broker} local é idêntico para todos os sensores).
 
-\begin{enumerate}
-    \item O aluno e o tutor iniciam a sessão de tutoria.
-    \item O aluno começa a responder às questões apresentadas, mas não consegue responder à última pergunta.
-    \item O stresse causado pela dificuldade em responder leva a um aumento da frequência cardíaca (\ac{BPM}).
-    \item O novo valor de \ac{BPM} é extraído do \textit{smartwatch} e inserido no \textit{broker} local.
-    \item A mensagem é redirecionada para o \textit{broker} remoto através de \ac{MQTT} \textit{bridging}.
-    \item A mensagem é inserida num tópico Kafka via Kafka Connect.
-    \item O novo valor é inserido na \ac{TSDB} via Kafka Connect.
-    \item O \textit{dashboard} é atualizado com os novos dados e reflete o aumento do \ac{BPM}.
-    \item O tutor observa o \textit{dashboard} e apercebe-se do aumento do valor de \ac{BPM}.
-    \item O tutor chega à conclusão que o aluno deve estar a ter dificuldade com alguma pergunta e oferece ajuda.
-\end{enumerate}
+    \begin{enumerate}
+        \item O aluno e o tutor iniciam a sessão de tutoria.
+        \item O aluno começa a responder às questões apresentadas, mas não consegue responder à última pergunta.
+        \item O stresse causado pela dificuldade em responder leva a um aumento da frequência cardíaca (\ac{BPM}).
+        \item O novo valor de \ac{BPM} é extraído do \textit{smartwatch} e inserido no \textit{broker} local.
+        \item A mensagem é redirecionada para o \textit{broker} remoto através de \ac{MQTT} \textit{bridging}.
+        \item A mensagem é inserida num tópico Kafka via Kafka Connect.
+        \item O novo valor é inserido na \ac{TSDB} via Kafka Connect.
+        \item O \textit{dashboard} é atualizado com os novos dados e reflete o aumento do \ac{BPM}.
+        \item O tutor observa o \textit{dashboard} e apercebe-se do aumento do valor de \ac{BPM}.
+        \item O tutor chega à conclusão que o aluno deve estar a ter dificuldade com alguma pergunta e oferece ajuda.
+    \end{enumerate}
 
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=\linewidth]{figs/end2end_technology.png}
-%     \caption{Fluxo de dados \textit{end-to-end}}
-%     \label{fig:end2end_technology}
-% \end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figs/end2end_difficulties.png}
+    \caption{Diagrama de sequência (cenário de dificuldade com tarefa)}
+    \label{fig:end2end_technology}
+\end{figure}
