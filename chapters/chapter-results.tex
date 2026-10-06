@@ -5,64 +5,88 @@
 Este capítulo apresenta o estado final da solução, as decisões tomadas durante o desenvolvimento e discute os pontos fortes e fracos do sistema escolhido.
 \end{introduction}
 
-\section{Estado Final da Solução e Decisões de Implementação}
+\section{Implementação}
 
 Apesar da arquitetura nos permitir ter uma visão geral e antecipar possíveis decisões (como a escolha das tecnologias), o desenvolvimento continua a requerer a tomada de decisões, quer pela escolha de implementações específicas de certas tecnologias, quer pela ocorrência de problemas inesperados.
-Por esta razão, apresento a seguir o estado final da solução (Figura~\ref{fig:sys_arq_deployment}) e as escolhas tomadas durante o desenvolvimento.
+Por esta razão, apresento a seguir o estado final da solução (Figura~\ref{fig:sys_arq_results}) e as escolhas tomadas durante o desenvolvimento.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\linewidth]{figs/deployment_arquitecture.png}
-    \caption{Diagrama de \textit{deployment} do sistema}
-    \label{fig:sys_arq_deployment}
+    \includegraphics[width=\linewidth]{figs/component_diagram_results.png}
+    \caption{Diagrama de componentes do sistema (após implementação)}
+    \label{fig:sys_arq_results}
 \end{figure}
 
-\subsection{Servidor}
+\subsection{Ingestão e Transporte de Dados}
 \label{sec:final_state_server}
 
-Apesar da escolha mais importante ser no tipo de tecnologia (como \ac{MQTT} ou \ac{TSDB}), o desenvolvimento de uma solução real requer que escolhamos as ferramentas específicas que implementem estas tecnologias.
+Devido ao impacto que cada componente relacionado à ingestão e transporte tem nos restantes, as escolhas referentes à implementação foram realizadas antes da implementação, estando descritas em detalhe na Secção~\ref{sec:chosen_technologies}.
+Por isso, as escolhas tomadas durante a própria implementação foram comparativamente triviais, sendo apenas necessário escolher implementações específicas para o protocolo \ac{MQTT} e para a \ac{TSDB}.
 
-Para os \textit{brokers} local e remoto, escolhi optar pelo Mosquitto.
-Apesar de existirem outras implementações de \ac{MQTT} como o ActiveMQ que possuem melhor \textit{performance} em escala (por utilizarem todos os recursos disponíveis), o Mosquitto continua a ter uma melhor \textit{performance} em cenários com recursos limitados~\cite{Mishra2021}.
-Esta qualidade pode ser útil para o \textit{broker} remoto em cenários N:1 (como o descrito na Secção~\ref{sec:chosen_technologies}), mas torna-se particularmente útil para o \textit{broker} local quando este é executado em computadores com recursos mais limitados (como, por exemplo, \textit{Chromebooks}), onde a execução em paralelo com \textit{software} de videochamada (como o Zoom) poderá limitar severamente os recursos disponíveis.
-Outra vantagem inerente ao Mosquitto que levou a esta decisão, foi o mecanismo de redirecionamento \textit{\ac{MQTT} Bridge} que permite enviar as mensagens do \textit{broker} local para o \textit{broker} remoto de forma automática sem comprometer as garantias de entrega.
+\subsubsection{\ac{MQTT}}
 
-Em termos de armazenamento de dados, decidi optar pelo InfluxDB por ser uma base de dados criada de raiz para lidar com séries temporais, ao contrário de bases de dados como o TimescaleDB, que foi criada como extensão ao PostgreSQL~\cite{influxdata2026}.
-Esta diferença permite ao InfluxDB oferecer maior velocidade de ingestão, o que é uma qualidade útil neste caso de uso, que consiste maioritariamente de escritas constantes de pequeno tamanho~\cite{OctaByte2025}.
-Adicionalmente, após a versão 3, o InfluxDB oferece agora a possibilidade de realizar \textit{queries} utilizando \ac{SQL} \textit{standard}~\cite{influxdata2026}, removendo assim a barreira de aprendizagem para programadores, uma das vantagens atribuídas ao TimescaleDB
+Para os \textit{brokers} local e remoto, foi escolhido o Mosquitto como implementação específica do protocolo \ac{MQTT}.
+Apesar de outras implementações de \ac{MQTT} - como o ActiveMQ, por exemplo - possuírem melhor \textit{performance} em escala - por utilizarem todos os recursos disponíveis - o Mosquitto continua a ter uma melhor \textit{performance} em cenários com recursos limitados~\cite{Mishra2021}.
+Esta qualidade é especialmente neste cenário de tutoria, uma vez que o sistema (ou, no mínimo, a componente local) será executada num computador pessoal em paralelo com as ferramentas de tutoria e de videochamada habituais, o que incentiva a minimização do consumo de recursos computacionais.
 
-Finalmente, durante a integração do Kafka Connect no servidor, foi registado um erro pontual na conversão entre os formatos \textit{Bytes} e \ac{JSON} (necessário para a inserção na base de dados): se um sensor produzir um valor do tipo \textit{Float} com parte decimal nula (por exemplo, \texttt{1.0}), este valor é convertido para \textit{Integer} após a conversão para formato \ac{JSON}, o que causa um erro de inserção na base de dados (que apenas aceita um \textit{Float} para aquele campo).
-Apesar de reconhecer a existência de soluções conceptualmente mais robustas, como, por exemplo, a inclusão explícita do \textit{schema} na própria mensagem, a raridade deste erro dificultou a sua deteção precoce. Por esta razão, os constrangimentos temporais tornaram necessária a adoção de uma solução mais pragmática: a adição de um valor decimal infinitesimal (inferior à margem de erro do próprio sensor) em todos os valores do tipo \textit{Float}, evitando assim que sejam convertidos para \textit{Integers}.
+\subsubsection{\ac{TSDB}}
+
+Em termos de armazenamento de dados, existem duas principais opções para \ac{TSDB}: InfluxDB e TimescaleDB~\cite{influxdata2026,OctaByte2025}.
+
+O TimescaleDB foi criado como uma extensão de PostgreSQL para o otimizar para dados temporais ao utilizar tabelas distribuídas particionadas por tempo~\cite{influxdata2026}.
+A principal vantagem do TimescaleDB é que continua a ser uma base de dados relacional, sendo a melhor escolha para casos de uso híbridos que envolvam a união entre dados relacionais e temporais ou para sistemas que já utilizam PostgreSQL~\cite{OctaByte2025,influxdata2026}.
+
+Por outro lado, o InfluxDB foi criado de raiz para armazenar dados temporais, o que lhe permite oferecer uma melhor \textit{performance} em termos de ingestão de dados e otimização do espaço de armazenamento~\cite{OctaByte2025}.
+Adicionalmente, após a versão 3, o InfluxDB oferece agora a possibilidade de realizar \textit{queries} utilizando \ac{SQL} \textit{standard}~\cite{influxdata2026}, removendo assim a barreira de aprendizagem para programadores, uma das vantagens atribuídas ao TimescaleDB.
+
+Apesar do TimescaleDB ser uma escolha possivelmente mais apropriada para cenários com dados híbridos (como, por exemplo, empresariais), o sistema proposto armazena apenas os dados de monitorização, o que levou à escolha do InfluxDB como implementação específica de \ac{TSDB}.
+
+\subsubsection{Problemas Encontrados}
+
+O único problema relevante encontrado durante a implementação do mecanismo de ingestão e transporte foi um erro pontual registado no Kafka Connect: durante a conversão entre tipo de dados antes da inserção no InfluxDB, é necessário converter entre os formatos \textit{Bytes} e \ac{JSON}; contudo, se uma fonte de dados produzir um valor do tipo \textit{Float} com parte decimal nula (por exemplo, \texttt{1.0}), este valor é convertido para \textit{Integer} após a conversão para formato \ac{JSON}, o que causa um erro de inserção na base de dados (que apenas aceita um \textit{Float} para aquele campo).
+Apesar de reconhecer a existência de soluções conceptualmente mais robustas, como, por exemplo, a inclusão explícita do \textit{schema} na própria mensagem, a raridade deste erro dificultou a sua deteção precoce.
+Por esta razão, os constrangimentos temporais tornaram necessária a adoção de uma solução mais pragmática: a adição de um valor decimal infinitesimal (inferior à margem de erro do próprio sensor) em todos os valores do tipo \textit{Float}, evitando assim que sejam convertidos para \textit{Integers}.
 
 \subsection{Aplicação}
 
-Para além de servir como ponto principal de interação para os utilizadores monitorizados, a aplicação é também, geralmente, o único componente (para além da visualização) que necessita ser modificado para suportar uma nova fonte de dados, já que é o único componente que processa os dados de cada sensor de forma diferente.
+Para a aplicação, existem duas vertentes principais: a interação do aluno e a coordenação das fontes de dados.
 
-Por estas razões, o foco principal das decisões de implementação da aplicação não foi necessariamente otimizar \textit{performance}, mas sim facilitar a utilização e modificação da aplicação, mesmo para indivíduos sem experiência em programação.
+\subsubsection{Interação do Aluno com a Aplicação}
 
-Em termos de modificação, para além de escolher o Python como linguagem de programação por ser uma linguagem fácil de aprender e compreender para principiantes~\cite{John2025}, decidi mitigar ainda mais o esforço de modificação ao isolar a lógica de interação com cada sensor em classes separadas carregadas dinamicamente durante a inicialização da aplicação.
-Desta forma, para recolher dados de um novo sensor, é apenas necessário estender uma classe base (que possui dois métodos: uma para iniciar a recolha e uma para terminar a recolha) e adicionar a nova classe a uma pasta específica.
+Do ponto de vista da interação do aluno com a aplicação, a proposta inicial foi a implementação de uma aplicação sem interface que automaticamente iniciava a monitorização ao ser executada.
+Contudo, durante a implementação foi considerado relevante permitir ao aluno escolher que sensores irá utilizar, o que não só permite evitar enviar dados desnecessários (como de digitação em sessões que não envolvam escrita), mas confere ao aluno a autonomia de recusar a recolha de determinados dados, permitindo-lhe salvaguardar as suas preferências de privacidade.
+Para além da escolha das fontes de dados, a interface gráfica possui também um botão para manualmente começar ou interromper a sessão e um código de emparelhamento necessário para recolher dados de \textit{smartwatches}.
 
-Em termos de interação, como considero importante cada utilizador monitorizado ser capaz de começar e terminar a monitorização de forma autónoma, e tendo em conta que não é exequível pressupor que todos os utilizadores tenham experiência com terminais, decidi optar por uma interface gráfica, de modo a facilitar a interação e para permitir a possível adição futura de mecanismos de alarme em caso de falha de sensores (sendo a escolha do PyQT6 como implementação específica comparativamente trivial)
+\subsubsection{Coordenação de Fontes de Dados}
 
-Finalmente, em termos de ambiente de execução, apesar de ter inicialmente considerado a utilização do Docker para isolamento do sistema do seu ambiente, a necessidade de acesso a baixo nível aos periféricos para recolha de dados tornou a contentorização da aplicação impraticável.
-Contudo, decidi optar por uma abordagem intermédia, utilizando contentores Docker apenas para o \textit{broker} local e atribuindo a responsabilidade de inicializar e interromper a execução do \textit{broker} à aplicação, removendo assim a necessidade de executar o \textit{broker} separadamente.
+Como a aplicação é, geralmente o único componente para além do \textit{dashboard} que possui obrigatoriamente processamento específico para cada fonte de dados, o foco principal na estratégia de desenvolvimento da coordenação de fontes de dados é minimizar o esforço de modificação para adicionar uma nova fonte de dados.
 
-\subsection{Recolha de Dados}
+A principal decisão tomada para alcançar este objetivo foi isolar a lógica de recolha e processamento únicas a cada fonte de dados numa única classe por fonte (implementando todos uma interface comum), o que geralmente limita o esforço de recolher dados de uma nova fonte a adicionar ou modificar um único ficheiro.
+Para facilitar ainda mais a compreensão da aplicação para indivíduos com menor experiência de programação, decidi utilizar o Python como linguagem de programação, por ser reconhecido como uma das linguagens de programação mais fáceis de aprender e compreender~\cite{John2025}.
 
-Apesar da escolha de fontes de dados ter apenas como propósito demonstrar o sistema em funcionamento, a escolha destas fontes de dados continua a ter um impacto no sistema, quer seja devido a restrições associadas a certos modelos de \textit{wearable} ou devido à natureza possivelmente sensível de alguns dos dados recolhidos.
+\subsubsection{Problemas Encontrados}
+
+O único problema encontrado durante a implementação da aplicação foi a utilização do Docker.
+Apesar de ter sido prevista a utilização do Docker em ambos os componentes executados no computador do aluno para reduzir possíveis erros específicos ao ambiente de execução, algumas fontes de dados exigem acesso direto aos dispositivos, o que impede a utilização do Docker para a aplicação.
+Contudo, foi utilizada uma abordagem híbrida: embora a aplicação seja executada nativamente para garantir o acesso direto, esta encarrega-se de iniciar e encerrar automaticamente o \textit{container} Docker do \textit{broker} local.
+
+
+
+
+\subsection{Fontes de Dados}
+
+Como referido anteriormente, foram escolhidos o teclado, câmara e \textit{smartwatch} para a recolha de dados, com base no seu valor demonstrativo para este trabalho.
 
 \subsubsection{\textit{Smartwatch}}
 
-Em primeiro lugar, de forma a demonstrar a integração com fontes de dados externas, foi-me disponibilizado pelo orientador o \textit{smartwatch} \textit{Xiaomi Watch 2}.
+Para a realização deste trabalho, foi disponibilizado um \textit{smartwatch} do modelo \textit{Xiaomi Watch 2}.
+Apesar da versatilidade oferecida pelo sistema operativo \textit{WearOS}, que permite não só executar aplicações de terceiros mas também expõe uma interface para acesso a dados biométricos, um dos principais constrangimentos deste dispositivo é a inexistência de um protocolo de \ac{BLE} nativo~\cite{blexiaomi}.
 
-Embora a intenção durante a conceção inicial do projeto tenha sido a extração do \ac{HRV} (por ser a métrica utilizadas nos artigos revistos~\cite{facial_hrv_study}) via \ac{BLE} (por ser uma interface exposta de forma nativa pelo próprio \textit{wearable}), a falta de documentação e experiências empíricas levaram à conclusão de que ambas as funcionalidades seriam inviáveis, pelo menos para este modelo, sendo que por isso optei por extrair o \ac{BPM} e comunicar com a aplicação via \ac{MQTT}.
-Apesar da mudança de métricas ter sido uma escolha comparativamente trivial, a decisão de comunicar via \ac{MQTT} teve um maior impacto na arquitetura, pois não só exigiu a criação de uma aplicação executada no próprio \textit{smartwatch} mas também foi um dos fatores que solidificou a adição do \textit{broker} local à arquitetura.
+Este protocolo foi a alternativa considerada inicialmente durante a conceção do trabalho, uma vez que não só é exposto sem a necessidade de criar uma aplicação para o \textit{wearable}, mas permite extrair dados de \textit{wearables} sem ecrã, como \textit{smartrings}.
+Contudo, apesar da maioria dos \textit{wearables} implementarem \ac{BLE}, várias marcas optam por utilizar um protocolo proprietário que dificulta o seu uso por parte de terceiros.
 
-Esta aplicação comunica principalmente através do \textit{broker} local, não só enviando os dados diretamente para este \textit{broker} mas também subscrevendo a um tópico de onde recebe instruções para iniciar ou terminar a recolha (sendo que a instrução de início de recolha contém também o \ac{UUID} necessário para a identificação do utilizador).
-
-Finalmente, como o endereço IP do \textit{broker} local é diferente para cada utilizador, torna-se também necessário implementar um mecanismo de descoberta. 
-Como este processo é geralmente realizado apenas uma vez, não considerei necessário implementar um mecanismo de descoberta automática, optando pela geração e introdução de um código de emparelhamento de 12 dígitos (que codifica o endereço IP e porta do \textit{broker}), codificado utilizando o padrão Crockford Base64 (uma variante do Base64 que remove caracteres visualmente similares para evitar erros de digitação).
+Por esta razão, e tendo em conta a escolha do protocolo \ac{MQTT} para o \textit{broker} local, foi decidida a criação de uma aplicação para WearOS que envia os dados diretamente para o \textit{broker} local.
+Para permitir a descoberta do \textit{broker}, e tendo em conta que esta descoberta é geralmente realizada apenas uma vez por aluno, decidi codificar o endereço num código de emparelhamento de 12 dígitos (utilizando Crockford Base 64 para evitar erros de inserção), que é inserido manualmente pelo aluno durante a primeira inicialização.
 
 \begin{figure}[H]
      \centering
@@ -109,44 +133,37 @@ Como este processo é geralmente realizado apenas uma vez, não considerei neces
 
 A câmara foi escolhida como periférico por duas razões: por ser uma fonte de dados periódica, ou seja, que produz dados a um ritmo constante (ao contrário do teclado), mas também por produzir dados que necessitam ser processados antes de serem inseridos na base de dados.
 
-Para a recolha destes dados, decidi utilizar a biblioteca ``Mediapipe'', não só por se integrar diretamente no Python, mas também porque permitir a extração em tempo real de \textit{landmarks} faciais através de um modelo local (suportando um total de 478 pontos faciais), realizando assim de forma automática o primeiro passo no processamento: a transformação de uma imagem num conjunto de coordenadas.
+Para a recolha destes dados, foi utilizada a biblioteca ``Mediapipe'', não só por se integrar diretamente no Python, mas também porque permitir a extração em tempo real de \textit{landmarks} faciais através de um modelo local (suportando um total de 478 pontos faciais), realizando assim de forma automática o primeiro passo no processamento: a transformação de uma imagem num conjunto de coordenadas.
 
-Contudo, apesar de ser tecnicamente possível armazenar diretamente estes \textit{landmarks} na base de dados (ao atribuir um campo a cada ponto), os \textit{landmarks} faciais continuam a ser um dado sensível (por permitirem a reconstrução da face), exigindo por isso cuidados especiais para garantir a privacidade do utilizador.
-Por esta razão, e tendo em conta que os dados dos sensores têm um propósito meramente demonstrativo, decidi adotar uma política de "privatização na fonte", calculando as métricas (orientação facial e \ac{EAR}) diretamente na aplicação e enviando apenas estes dados, mitigando assim problemas como privacidade.
+Contudo, apesar de ser tecnicamente possível armazenar diretamente estes \textit{landmarks} na base de dados (ao atribuir um campo a cada ponto), os \textit{landmarks} faciais continuam a ser um dado sensível (por permitirem a reconstrução da face), exigindo por isso cuidados especiais para garantir a privacidade do aluno.
+Por esta razão, e tendo em conta que os dados dos sensores têm um propósito meramente demonstrativo, foi adotada uma política de ``privatização na fonte'', calculando as métricas (orientação facial e \ac{EAR}) diretamente na aplicação e enviando apenas estes dados, mitigando assim problemas com privacidade.
 
 \subsubsection{Teclado}
 
-Finalmente, como ambas as fontes de dados anteriores possuem uma natureza periódica, ou seja, produzem amostras a uma frequência constante, decidi também recolher dados do teclado pela sua natureza aperiódica, já que é apenas produzindo um valor quando o utilizador pressiona uma tecla, sendo por isso a frequência de amostragem não só irregular, mas também uma das métricas para análise.
+Finalmente, como ambas as fontes de dados anteriores possuem uma natureza periódica, ou seja, produzem amostras a uma frequência constante, decidi também recolher dados do teclado pela sua natureza aperiódica, já que é apenas produzindo um valor quando o aluno pressiona uma tecla, sendo por isso a frequência de amostragem não só irregular, mas também uma das métricas para análise.
 
 Em termos de privacidade, apesar do teclado não permitir identificar diretamente o indivíduo, ao contrário da câmara, os dados de digitação puros continuam a ser dados altamente sensíveis, pois não só permitem monitorizar conversas privadas, mas também extrair credenciais como palavras-passe.
-Felizmente, como o objetivo geral é monitorizar a dinâmica de digitação em si e não o conteúdo do texto, é possível anonimizar os dados ao atribuir uma categoria a cada tecla (alfanumérico, caractere especial, \textit{whitespace} ou \textit{delete/backspace}). Considerei esta abordagem como a mais apropriada, pois evita a reconstrução do conteúdo digitado sem afetar o cálculo de métricas como velocidade de digitação ou taxa de correção.
+Felizmente, como o objetivo geral é monitorizar a dinâmica de digitação em si e não o conteúdo do texto, é possível anonimizar os dados ao atribuir uma categoria a cada tecla (alfanumérico, caractere especial, \textit{whitespace} ou \textit{delete/backspace}). 
+Esta abordagem foi considerada suficiente, pois evita a reconstrução do conteúdo digitado sem afetar o cálculo de métricas como velocidade de digitação.
 
 \subsection{Visualização}
 
-Para permitir ilustrar o sistema em funcionamento, decidi implementar um \textit{dashboard} Grafana (Figura~\ref{fig:grafana}). Este \textit{dashboard} utiliza o InfluxDB como fonte primária de dados e permite, para um dado utilizador (identificado via \ac{UUID}), não só visualizar em tempo real os últimos valores registados pelas três fontes de dados, mas possui também um gráfico para cada que demonstra a evolução histórica de cada métrica associada (sendo a métrica associada ao teclado calculada dinamicamente pelo próprio Grafana).
-A escolha do Grafana como \textit{software} de visualização deve-se não só à sua facilidade de uso e compatibilidade com InfluxDB, mas também por ser compatível com ferramentas de observabilidade como o Prometheus ou Jaeger, permitindo assim a deteção mais fácil de falhas na aplicação (esta última funcionalidade, apesar de planeada, não foi implementada devido a constrangimentos temporais).
+Finalmente, para o \textit{dashboard} utilizado pelo tutor foi escolhido o Grafana, pela sua facilidade de uso e compatibilidade com o InfluxDB.
+O \textit{dashboard} utiliza o InfluxDB como fontes de dados primária e permite não só visualizar métricas já calculadas, como o \ac{BPM}, mas também permite realizar calcular dinamicamente novas métricas, como o \ac{CPM}.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\linewidth]{figs/grafana}
-    \caption{\textit{Dashboard} do Grafana}
-    \label{fig:grafana}
-\end{figure}
+%TODO: mudar isto e depois descrever
 
-Adicionalmente, como mencionado anteriormente, decidi também criar um interface REST para controlar o acesso de serviços externos.
-Apesar da escolha da implementação específica do protocolo REST (FastAPI) ter sido uma escolha relativamente trivial, a escolha do mecanismo de construção de \textit{queries} exigiu alguma deliberação, já que considero importante garantir flexibilidade na seleção de critérios de agregação mas também é necessário restringir ações de modificação dos dados e prevenir a ocorrência de \textit{query injection} (ou seja, a manipulação de queries para a realização de ações não permitidas).
-Por esta razão, decidi adotar uma abordagem intermédia, realizando a construção de \textit{queries} através da especificação de parâmetros pré-selecionados.
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=\linewidth]{figs/grafana}
+%     \caption{\textit{Dashboard} do Grafana}
+%     \label{fig:grafana}
+% \end{figure}
 
-Para demonstrar esta interface em funcionamento, decidi adicionar uma \textit{dashboard} ilustrativo à aplicação do cliente (Figura~\ref{fig:desktop_visualization}) que utiliza esta interface como fonte de dados, permitindo não só verificar o funcionamento correto desta interface, mas também permitindo detetar erros de transmissão de dados durante o desenvolvimento.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\linewidth]{figs/desktop/desktop_grafico_bpm}
-    \caption{\textit{Painel de Visualização}}
-    \label{fig:desktop_visualization}
-\end{figure}
 
 \section{Demonstração Prática do Fluxo \textit{End-to-End}}
+
+%dividir isto em dois: um tracing end-2-end que demonstra 
 
 Embora as decisões de implementação tenham tido um impacto local em cada componente, o fluxo de dados mantém-se inalterado em relação ao fluxo estabelecido na Secção~\ref{sec:flow_technologies}.
 Contudo, apesar de não ser necessário redesenhar o fluxo de dados, continua a ser relevante demonstrar o sistema em prática para fundamentar o seu correto funcionamento.
@@ -189,62 +206,62 @@ Para este propósito, recorri a ferramentas de observabilidade e inspeção, com
 \footnotetext{O MQTT5 Explorer apenas apresenta a última mensagem recebida por tópico, não o histórico completo de mensagens.}
 
 
-\section{Estimativa de Carga e Capacidade do Sistema}
+% \section{Estimativa de Carga e Capacidade do Sistema}
 
-Dado o caráter demonstrativo do protótipo e o foco do trabalho na validação concetual da arquitetura, a avaliação de desempenho centrou-se no dimensionamento preliminar da carga e da capacidade de ingestão. Esta análise permite inferir a viabilidade operacional do sistema através da caracterização da pegada de transmissão (\textit{network footprint}) e da estimativa do débito de dados previsível.
+% Dado o caráter demonstrativo do protótipo e o foco do trabalho na validação concetual da arquitetura, a avaliação de desempenho centrou-se no dimensionamento preliminar da carga e da capacidade de ingestão. Esta análise permite inferir a viabilidade operacional do sistema através da caracterização da pegada de transmissão (\textit{network footprint}) e da estimativa do débito de dados previsível.
 
-\subsection{Tamanho das Mensagens}
+% \subsection{Tamanho das Mensagens}
 
-A estrutura da mensagem, serializada em formato \ac{JSON} (como visto na Listagem~\ref{code:example_message}), foi desenhada para ser concisa, apresentando um payload médio de 133B para o \ac{JSON} em si (valor obtido através da serialização de uma das mensagens) e cerca de 173B se incluirmos os \textit{headers} de TCP/IP.
+% A estrutura da mensagem, serializada em formato \ac{JSON} (como visto na Listagem~\ref{code:example_message}), foi desenhada para ser concisa, apresentando um payload médio de 133B para o \ac{JSON} em si (valor obtido através da serialização de uma das mensagens) e cerca de 173B se incluirmos os \textit{headers} de TCP/IP.
 
-Considerando este volume de dados inexpressivo, o fator determinante para a escalabilidade da infraestrutura é exclusivamente o número de mensagens simultâneas que o broker consegue processar por segundo, e não o tamanho individual de cada pacote. Uma vez que a estrutura é simples e não exige processamento complexo ao nível da camada de transporte, o sistema é capaz de suportar um débito elevado de eventos, sendo a capacidade de ingestão limitada primariamente pela cadência de publicação (\textit{throughput}) e não pela ocupação da largura de banda.
+% Considerando este volume de dados inexpressivo, o fator determinante para a escalabilidade da infraestrutura é exclusivamente o número de mensagens simultâneas que o broker consegue processar por segundo, e não o tamanho individual de cada pacote. Uma vez que a estrutura é simples e não exige processamento complexo ao nível da camada de transporte, o sistema é capaz de suportar um débito elevado de eventos, sendo a capacidade de ingestão limitada primariamente pela cadência de publicação (\textit{throughput}) e não pela ocupação da largura de banda.
 
-\begin{figure}[h!]
-\centering
-\begin{minipage}{\textwidth}
-\begin{lstlisting}[language=json, caption={Exemplo da estrutura de uma mensagem ingerida}, label={code:example_message}]
-{
-  "uuid": "550e8400-e29b-41d4-a716-446655440000",
-  "message_id": 12345,
-  "sensor": "heart_rate_sensor",
-  "timestamp": 1747926855.123,
-  "value": 72.5
-}
-\end{lstlisting}
-\end{minipage}
-\end{figure}
+% \begin{figure}[h!]
+% \centering
+% \begin{minipage}{\textwidth}
+% \begin{lstlisting}[language=json, caption={Exemplo da estrutura de uma mensagem ingerida}, label={code:example_message}]
+% {
+%   "uuid": "550e8400-e29b-41d4-a716-446655440000",
+%   "message_id": 12345,
+%   "sensor": "heart_rate_sensor",
+%   "timestamp": 1747926855.123,
+%   "value": 72.5
+% }
+% \end{lstlisting}
+% \end{minipage}
+% \end{figure}
 
-\subsection{Volume de Mensagens Esperado}
+% \subsection{Volume de Mensagens Esperado}
 
-O volume de mensagens pode variar com base no número e tipo de sensores, contudo, com base no exemplo atual com 3 sensores, temos o seguinte volume de mensagens:
+% O volume de mensagens pode variar com base no número e tipo de sensores, contudo, com base no exemplo atual com 3 sensores, temos o seguinte volume de mensagens:
     
-\begin{table}[h]
-\centering
-\begin{threeparttable}
-\caption{Estimativa da frequência de ingestão por dispositivo.}
-\label{tab:sensor_throughput}
-\begin{tabular}{llc}
-\toprule
-\textbf{Sensor} & \textbf{Descrição} & \textbf{Frequência (msg/s)} \\ 
-\midrule
-Teclado\tnote{1} & Eventos de digitação & $5$ \\
-WearOS (\ac{BPM})\tnote{2} & Monitorização cardíaca & $1$ \\
-Webcam\tnote{3} & Processamento de vídeo/metadados & $10$ \\ 
-\midrule
-\textbf{Total} & & \textbf{$16$ msg/s} \\ 
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-    \small
-    \item[1] Baseado numa taxa de digitação de 60 palavras por minuto (aproximadamente 5 caracteres por segundo).
-    \item[2] Frequência nominal de atualização. O sistema opera de forma reativa, pelo que a taxa real de mensagens é dinâmica e proporcional à variação dos valores de \ac{BPM} reportados pelo sensor, não excedendo o limite de $1$ Hz.
-    \item[3] A taxa de 10 mensagens por segundo não constitui um limite de hardware, sendo uma configuração definida para satisfazer os requisitos de amostragem necessários para a presente análise.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
+% \begin{table}[h]
+% \centering
+% \begin{threeparttable}
+% \caption{Estimativa da frequência de ingestão por dispositivo.}
+% \label{tab:sensor_throughput}
+% \begin{tabular}{llc}
+% \toprule
+% \textbf{Sensor} & \textbf{Descrição} & \textbf{Frequência (msg/s)} \\ 
+% \midrule
+% Teclado\tnote{1} & Eventos de digitação & $5$ \\
+% WearOS (\ac{BPM})\tnote{2} & Monitorização cardíaca & $1$ \\
+% Webcam\tnote{3} & Processamento de vídeo/metadados & $10$ \\ 
+% \midrule
+% \textbf{Total} & & \textbf{$16$ msg/s} \\ 
+% \bottomrule
+% \end{tabular}
+% \begin{tablenotes}
+%     \small
+%     \item[1] Baseado numa taxa de digitação de 60 palavras por minuto (aproximadamente 5 caracteres por segundo).
+%     \item[2] Frequência nominal de atualização. O sistema opera de forma reativa, pelo que a taxa real de mensagens é dinâmica e proporcional à variação dos valores de \ac{BPM} reportados pelo sensor, não excedendo o limite de $1$ Hz.
+%     \item[3] A taxa de 10 mensagens por segundo não constitui um limite de hardware, sendo uma configuração definida para satisfazer os requisitos de amostragem necessários para a presente análise.
+% \end{tablenotes}
+% \end{threeparttable}
+% \end{table}
 
-Devido à reduzida carga operacional, o sistema apresenta baixos requisitos computacionais, sendo capaz de operar estavelmente em praticamente qualquer servidor moderno ou computador pessoal, sem necessidade de hardware especializado.
-Em termos de número de utilizadores simultâneos, apesar de alguns estudos envolverem centenas de voluntários, a necessidade de monitorizar os voluntários tende a limitar este número para um máximo de cerca de 50 utilizadores em simultâneo. Com base neste valor, podemos estimar que a carga máxima esperada para o servidor não irá superar as 800 mensagens por segundo (o que equivale a cerca de 138.4KB/s). 
+% Devido à reduzida carga operacional, o sistema apresenta baixos requisitos computacionais, sendo capaz de operar estavelmente em praticamente qualquer servidor moderno ou computador pessoal, sem necessidade de hardware especializado.
+% Em termos de número de utilizadores simultâneos, apesar de alguns estudos envolverem centenas de voluntários, a necessidade de monitorizar os voluntários tende a limitar este número para um máximo de cerca de 50 utilizadores em simultâneo. Com base neste valor, podemos estimar que a carga máxima esperada para o servidor não irá superar as 800 mensagens por segundo (o que equivale a cerca de 138.4KB/s). 
 
 \section{Discussão}
 
