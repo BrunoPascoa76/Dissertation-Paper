@@ -148,26 +148,30 @@ Esta abordagem foi considerada suficiente, pois evita a reconstrução do conte�
 
 \subsection{Visualização}
 
-Finalmente, para o \textit{dashboard} utilizado pelo tutor foi escolhido o Grafana, pela sua facilidade de uso e compatibilidade com o InfluxDB.
+Finalmente, para o \textit{dashboard} utilizado pelo tutor foi escolhido o Grafana (Figura~\ref{fig:grafana}), pela sua facilidade de uso e compatibilidade com o InfluxDB.
 O \textit{dashboard} utiliza o InfluxDB como fontes de dados primária e permite não só visualizar métricas já calculadas, como o \ac{BPM}, mas também permite realizar calcular dinamicamente novas métricas, como o \ac{CPM}.
 
-%TODO: mudar isto e depois descrever
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figs/grafana}
+    \caption{\textit{Dashboard} do Grafana}
+    \label{fig:grafana}
+\end{figure}
 
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=\linewidth]{figs/grafana}
-%     \caption{\textit{Dashboard} do Grafana}
-%     \label{fig:grafana}
-% \end{figure}
+Em termos de métricas observáveis, foram escolhidas as seguintes:
+\begin{itemize}
+    \item Uma métrica binária que indica se o aluno está a olhar para o ecrã, estimada com base no \textit{pitch} e no \textit{yaw}
+    \item A percentagem de tempo médio que o aluno passa com os olhos fechados (incluindo a pestanejar), com base no \ac{EAR}
+    \item O número de caracteres por minuto
+    \item O número de vezes que as teclas \textit{delete} ou \textit{backspace} foram premidas por minuto, ou seja, o número de caracteres apagados
+    \item O \ac{BPM}
+\end{itemize}
 
+Estas métricas, com exceção do \ac{BPM}, foram calculadas de forma dinâmica pelo Grafana durante a sua visualização, com base nos dados armazenados no InfluxDB. 
 
-\section{Demonstração Prática do Fluxo \textit{End-to-End}}
+\section{Demonstração do Funcionamento do Sistema}
 
-%dividir isto em dois: um tracing end-2-end que demonstra 
-
-Embora as decisões de implementação tenham tido um impacto local em cada componente, o fluxo de dados mantém-se inalterado em relação ao fluxo estabelecido na Secção~\ref{sec:flow_technologies}.
-Contudo, apesar de não ser necessário redesenhar o fluxo de dados, continua a ser relevante demonstrar o sistema em prática para fundamentar o seu correto funcionamento.
-Para este propósito, recorri a ferramentas de observabilidade e inspeção, como o Kafdrop ou o MQTT5 Explorer para rastrear e visualizar uma mensagem ao longo do seu trajeto no sistema (Figura~\ref{fig:end2end_example}).
+De modo a demonstrar que o sistema funciona de forma correta (e utilizando a arquitetura proposta), foi feito o \textit{tracing} de uma mensagem ao longo dos vários componentes, utilizando ferramentas de observabilidade como MQTT5Explorer ou Kafdrop quando necessário.
 
 \begin{figure}[H]
      \centering
@@ -205,6 +209,16 @@ Para este propósito, recorri a ferramentas de observabilidade e inspeção, com
 
 \footnotetext{O MQTT5 Explorer apenas apresenta a última mensagem recebida por tópico, não o histórico completo de mensagens.}
 
+\section{Cenários Implementados}
+
+Como o referido anteriormente, como o cenário de monitorização contínua utilizando periféricos de uso comum é demasiado vago, foi estabelecido um cenário de monitorização utilizando teclado, câmara e \textit{smartwatch} durante uma sessão de tutoria individual como cenário de referência para o desenvolvimento desta prova de conceito (apesar de, em teoria, o sistema continua a ser adequado a outros cenários dentro do cenário geral).
+
+Neste cenário de referência, a principal utilidade deste sistema é fornecer informação adicional ao tutor para este melhor avaliar o estado do aluno.
+Por isso, para demonstrar a adequação do sistema ao cenário, serão simuladas duas situações nas quais o estado do aluno se altera de forma repentina (nomeadamente ao se distrair com um telemóvel e o apresentar dificuldades com uma pergunta) e será depois descrito como a observação das métricas registadas permite ao tutor identificar estas mudanças de estado.
+
+\subsection{Distração}
+
+\subsection{Dificuldade com Uma Questão}
 
 % \section{Estimativa de Carga e Capacidade do Sistema}
 
