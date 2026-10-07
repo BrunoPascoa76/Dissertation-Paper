@@ -123,7 +123,7 @@ Para permitir a descoberta do \textit{broker}, e tendo em conta que esta descobe
          \includegraphics[width=\linewidth]{figs/wearos/wearos_sending}
          \caption{Envio de dados~\footnotemark}
          \label{fig:wearos_sending}
-     \end{subfigure}     
+     \end{subfigure}
      \caption{Interface da aplicação para WearOS}
 \end{figure}
 
@@ -171,7 +171,7 @@ Estas métricas, com exceção do \ac{BPM}, foram calculadas de forma dinâmica 
 
 \section{Demonstração do Funcionamento do Sistema}
 
-De modo a demonstrar que o sistema funciona de forma correta (e utilizando a arquitetura proposta), foi feito o \textit{tracing} de uma mensagem ao longo dos vários componentes, utilizando ferramentas de observabilidade como MQTT5Explorer ou Kafdrop quando necessário.
+De modo a demonstrar que o sistema funciona de forma correta (e utilizando a arquitetura proposta), foi feito o \textit{tracing} de uma mensagem ao longo dos vários componentes, utilizando ferramentas de observabilidade como o MQTT5 Explorer ou o Kafdrop quando necessário.
 
 \begin{figure}[H]
      \centering
@@ -209,16 +209,50 @@ De modo a demonstrar que o sistema funciona de forma correta (e utilizando a arq
 
 \footnotetext{O MQTT5 Explorer apenas apresenta a última mensagem recebida por tópico, não o histórico completo de mensagens.}
 
-\section{Cenários Implementados}
+\section{Ilustração do Cenário de Referência}
 
-Como o referido anteriormente, como o cenário de monitorização contínua utilizando periféricos de uso comum é demasiado vago, foi estabelecido um cenário de monitorização utilizando teclado, câmara e \textit{smartwatch} durante uma sessão de tutoria individual como cenário de referência para o desenvolvimento desta prova de conceito (apesar de, em teoria, o sistema continua a ser adequado a outros cenários dentro do cenário geral).
+Como o referido anteriormente, como o cenário de monitorização contínua utilizando periféricos de uso comum é demasiado vago, foi estabelecido um cenário de monitorização utilizando teclado, câmara e \textit{smartwatch} durante uma sessão de tutoria individual como referência para o desenvolvimento desta prova de conceito (apesar de, em teoria, o sistema continua a ser adequado a outros casos de uso dentro do cenário geral).
 
-Neste cenário de referência, a principal utilidade deste sistema é fornecer informação adicional ao tutor para este melhor avaliar o estado do aluno.
-Por isso, para demonstrar a adequação do sistema ao cenário, serão simuladas duas situações nas quais o estado do aluno se altera de forma repentina (nomeadamente ao se distrair com um telemóvel e o apresentar dificuldades com uma pergunta) e será depois descrito como a observação das métricas registadas permite ao tutor identificar estas mudanças de estado.
+Neste cenário de referência, a principal utilidade deste sistema consiste em fornecer informação adicional ao tutor - complementando a observação direta - facilitando a avaliação do estado atual do aluno.
+Para ilustrar esta utilidade, foi simulado um excerto de uma sessão de tutoria no qual o aluno se encontra inicialmente focado na tarefa atual (servindo de linha de base ou controlo), passando a manifestar um comportamento de distração com o telemóvel a partir de determinado momento.
 
-\subsection{Distração}
+Esta simulação teve uma duração total de 3 minutos e foi dividida nas seguintes fases:
 
-\subsection{Dificuldade com Uma Questão}
+\begin{table}[h]
+    \centering
+    \begin{tabularx}{\linewidth}{l X X X}
+        \toprule
+        \textbf{\#} & \textbf{Estado} & \textbf{Duração} & \textbf{Descrição} \\
+        \midrule
+        1 & Normal (controlo) & 1min & O aluno encontra-se concentrado na tarefa \\
+        2 & Distração & 1min30s & O aluno começa a distrair-se com o telemóvel (YouTube Shorts) \\
+        3 & Retoma ao normal & 30s & O tutor alerta o aluno, que retoma o foco na tarefa \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Fases da simulação da distração}
+    \label{tab:distraction_phases}
+\end{table}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figs/experiments/distraction}
+    \caption{Resultados da simulação de distração do aluno\protect\footnotemark}
+    \label{fig:distraction_results}
+\end{figure}
+
+\footnotetext{As linhas verticais azuis têm propósito meramente demonstrativo, demarcando as transições entre fases.}
+
+Como podemos ver na Figura~\ref{fig:distraction_results}, os principais indicadores que ajudam o tutor a deduzir que o aluno está desatento são a direção do olhar e a velocidade de digitação.
+
+Durante o primeiro minuto, em que o aluno está focado apenas na tarefa, podemos ver que este está a olhar de forma contínua para o ecrã e o ritmo de digitação se mantém aproximadamente constante.
+
+Assim que o aluno liga o telemóvel e começa a prestar atenção a este, podemos ver que o estilo de digitação torna-se visivelmente mais errático, mostrando que o aluno está a fazer mais interrupções durante a escrita.
+A velocidade de digitação por si não permite deduzir diretamente distração - pois pode também ser provocada, por exemplo, por cansaço - contudo, o tutor pode também observar que o aluno desvia o olhar frequentemente para fora do ecrã, o que sugere que o aluno está a alternar a sua atenção entre a tarefa e um segundo estímulo, que, por observação direta, pode deduzir ser um telemóvel.
+
+Finalmente, a aproximadamente 30s do final da simulação, foi simulado um aviso do tutor ao aluno, que o leva a desligar o telemóvel (olhando para este durante cerca de 1s para o fazer) e retoma o foco na tarefa.
+
+Apesar de se tratar de uma simulação e não um teste em ambiente real, conseguimos comprovar que esta prova de conceito permite ao tutor observar a mudança no estado de um aluno em tempo real.
+
 
 % \section{Estimativa de Carga e Capacidade do Sistema}
 
@@ -279,31 +313,22 @@ Por isso, para demonstrar a adequação do sistema ao cenário, serão simuladas
 
 \section{Discussão}
 
-Como o objetivo principal deste trabalho era servir como prova de conceito que fundamente a viabilidade do paradigma \textit{streaming} para cenários de monitorização contínua de múltiplos utilizadores durante o uso normal do computador, é necessário não só demonstrar a operabilidade prática, mas também avaliar em que medida esta prova de conceito fundamenta a viabilidade do paradigma de \textit{streaming} e das tecnologias existentes no cenário descrito.
-
 \subsection{Agnosticismo no Servidor}
 \label{sec:discussion_agnostic}
 
-A decisão de manter o servidor agnóstico ao número de fontes de dados e as suas características, sendo conhecidos apenas pela aplicação e pelo \textit{software} de visualização, permitiu que a adição de um novo sensor se limitasse à aplicação, na qual é necessário apenas criar uma nova classe e inserir o respetivo ficheiro na pasta correspondente, e ao \textit{software} de visualização.
+A decisão de manter o servidor agnóstico ao número de fontes de dados e as suas características, sendo conhecidos apenas pela aplicação e pelo \textit{dashboard}, permitiu que a adição de um novo sensor se limitasse a estes dois componentes, sendo que na aplicação é necessário apenas criar uma nova classe e inserir o respetivo ficheiro na pasta correspondente.
 Esta propriedade pode ser comprovada através da análise dos próprios componentes, onde as únicas referências às três fontes de dados (teclado, câmara e \textit{smartwatch}) em código se encontram nestes componentes (e na aplicação para WearOS), apesar de cada fonte de dados possuir características e métricas diferentes.
 
-Contudo, esta escolha tem um custo direto: como o servidor desconhece a natureza dos dados que transporta, não é possível estabelecer fluxos de processamento distintos para cada fonte de dados sem violar este princípio de agnosticidade, sendo por isso necessário realizar o processamento na aplicação ou de forma dinâmica durante a visualização.
+Contudo, esta escolha tem um custo direto: como os restantes componentes desconhecem a natureza dos dados que transportam, não é possível estabelecer fluxos de processamento distintos para cada fonte de dados sem violar este princípio de agnosticidade, sendo por isso necessário realizar o processamento na aplicação ou de forma dinâmica durante a visualização.
 O erro de conversão apresentado na Secção~\ref{sec:final_state_server} é, de certa forma, uma consequência indireta desta limitação, pois, como o Kafka Connect desconhece que dados estão a ser transportados, necessita inferir os seus tipos com base nas mensagens, cuja ambiguidade leva a erros pontuais na inserção.
 
 \subsection{Reutilização de Ferramentas Estabelecidas}
 
-Como o objetivo principal do trabalho não é demonstrar a minha capacidade de implementar um sistema de monitorização contínua de raiz, mas sim demonstrar a viabilidade do \textit{streaming} como paradigma, o que exige demonstrar que as tecnologias e protocolos de \textit{streaming} já existentes são capazes de realizar esta monitorização contínua.
+Como o objetivo principal do trabalho não é demonstrar a minha capacidade de implementar um sistema de monitorização contínua de raiz, mas sim demonstrar a viabilidade de uma abordagem baseada em \textit{streaming}, torna-se necessário demonstrar que as ferramentas de \textit{streaming} já existentes são capazes de realizar esta monitorização contínua e não apenas a capacidade do autor de criar um sistema de monitorização funcional.
 
-Esta decisão de priorizar soluções já existentes para a resolução de problemas traduziu-se, por exemplo, na ausência de \textit{workers} de transporte construídos de raiz: optando por resolver os problemas de encaminhamento entre o \textit{broker} local e o servidor através do mecanismo \ac{MQTT} Bridge e a interação com o Kafka através do Kafka Connect.
+Esta decisão de priorizar soluções já existentes para a resolução de problemas traduziu-se, por exemplo, na ausência de \textit{workers} de transporte construídos de raiz: optando-se por resolver os problemas de encaminhamento entre o \textit{broker} local e o servidor através do mecanismo \ac{MQTT} Bridge e a interação com o Kafka através do Kafka Connect.
 
 O custo principal desta decisão foi a necessidade de implementar componentes adicionais, como o \textit{broker} remoto, que não seria necessário se um \textit{worker} consumisse os dados do \textit{broker} local e os enviasse diretamente para o Kafka, bem como a exposição às restrições associadas ao funcionamento das próprias ferramentas (por exemplo, o conector \textit{source} \ac{MQTT}, apesar de ser capaz de consumir de múltiplos tópicos \ac{MQTT} através do uso de \textit{wildcards}, apenas consegue inserir num único tópico Kafka).
-
-\subsection{Privatização na Fonte}
-
-A decisão de calcular as métricas referentes aos dados faciais e à atribuição de categorias às teclas premidas, evitando assim a transmissão de dados sensíveis de alto risco como \textit{landmarks} faciais ou texto digitado, bem como a opção da identificação de cada utilizador somente através de um \ac{UUID} aleatório gerado durante a primeira recolha, responde diretamente a uma das barreiras à adoção deste tipo de monitorização identificadas na literatura (Secção~\ref{sec:soa_data_sources}).
-Esta abordagem tira partido da limitação de processamento referida na Secção~\ref{sec:discussion_agnostic}, que incentiva o processamento na fonte, para eliminar o maior risco de segurança neste tipo de sistemas (a recolha de dados sensíveis e o risco do acesso indevido ao mesmo) e, no caso da câmara, reduzir drasticamente o volume de dados transmitidos (reduzindo de 478 pares de valores, no caso do Mediapipe, para apenas 3 métricas).
-
-Contudo, esta escolha tem dois impactos principais: a delegação do processamento para o cliente não só aumenta o consumo de recursos, mesmo que não de forma drástica, mas também implica que os dados estão disponíveis apenas como métricas finais, ou seja, se for necessário ajustar ou alterar as métricas a monitorizar, todos os dados históricos terão de ser descartados por ainda utilizarem as métricas antigas.
 
 \subsection{Heterogeneidade das Fontes de Dados}
 
@@ -311,12 +336,15 @@ A escolha de fontes de dados com comportamentos diferentes permitiu demonstrar a
 
 Contudo, apesar de demonstrar a integração com \textit{smartwatches} WearOS através de \ac{MQTT}, esta não garante compatibilidade do sistema com todos os dispositivos \textit{wearable off-the-shelf}, como, por exemplo, \textit{smartrings} que comunicam geralmente via \ac{BLE} ou \textit{smartwatches} com outros sistemas operativos, onde a execução de aplicações de terceiros é mais complexa ou até mesmo impossível.
 
+\subsection{Ilustração do Cenário de Referência}
+
+Em termos de validação no cenário, apesar da simulação apresentada permitir ilustrar o impacto de mudanças de estado repentinas, seria benéfico realizar testes envolvendo sessões mais prolongadas (com duração superior a uma hora), de modo a comprovar a observabilidade de mudanças de estado graduais, como o cansaço ou a fadiga cognitiva.
+
 \subsection{Limitações Gerais}
 
 Para além das limitações acima descritas, este trabalho apresenta um conjunto de limitações que decorrem diretamente do seu caráter de prova de conceito e dos constrangimentos temporais associados:
 \begin{itemize}
-    \item O sistema foi avaliado por um único utilizador (o próprio autor) num cenário unipessoal, sendo por isso a \textit{performance} em escala baseada numa estimativa de carga e com base nas características individuais das próprias ferramentas e não em testes de carga empíricos
-    \item Não foi medida de forma automática a latência entre a produção dos dados e o seu armazenamento e visualização. Consequentemente, não foi verificado o possível impacto da distância física entre cliente e servidor no tempo de propagação das mensagens
-    \item A avaliação da extensibilidade do sistema foi baseada no isolamento estrutural da alteração, reduzindo ao máximo a quantidade de código e componentes a serem revistos, e não a testes reais envolvendo utilizadores com diferentes níveis de experiência em programação
-    \item Embora a privatização dos dados ter reduzido drasticamente os riscos de segurança inerentes ao sistema, reconheço que deveria ter implementado melhores mecanismos de segurança e controlo de acesso, nomeadamente ao nível da autenticação e de controlo de acesso ao \textit{broker} remoto. Estas questões foram ponderadas durante o desenho do sistema, mas a sua implementação efetiva acabou por ser deliberadamente omitida face aos constrangimentos temporais da prova de conceção, constituindo uma lacuna relevante para a robustez da solução fora de um ambiente controlado
+    \item O sistema foi avaliado para um cenário com apenas um utilizador a ser monitorizado em simultâneo. Apesar da arquitetura e estrutura de dados ser naturalmente compatível com múltiplos utilizadores, considera-se relevante a realização de testes que envolvam a monitorização de vários utilizadores em simultâneo, de modo a avaliar a escalabilidade do sistema.
+    \item Não foi medida de forma automática a latência entre a produção dos dados e o seu armazenamento e visualização. Consequentemente, não foi verificado o possível impacto da distância física entre aluno e tutor no tempo de propagação das mensagens.
+    \item A avaliação da extensibilidade do sistema foi baseada no isolamento estrutural da alteração, reduzindo ao máximo a quantidade de código e componentes a serem revistos, e não a testes reais envolvendo utilizadores com diferentes níveis de experiência em programação.
 \end{itemize}

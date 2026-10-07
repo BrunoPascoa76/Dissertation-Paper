@@ -21,7 +21,7 @@ De modo a orientar a criação de uma arquitetura lógica, decidi utilizar como 
 
 Em primeiro lugar, as fontes de dados principais são as descritas anteriormente: o teclado, que produz um evento sempre que uma tecla é premida (sendo enviado o tipo de tecla premida), a câmara que envia métricas referentes à orientação facial e à abertura dos olhos e um \textit{smartwatch}, que fornece dados referentes à frequência cardíaca (\ac{BPM}).
 
-A seguir, como existe uma separação física entre aluno e tutor, é necessário ingerir e transportar estes dados. Apesar das sessões de tutoria terem geralmente uma duração fixa (constituindo cada sessão um conjunto de dados temporalmente limitado), estes dados são analizados durante a própria sessão, o que justifica a necessidade de os ingerir de forma contínua.
+A seguir, como existe uma separação física entre aluno e tutor, é necessário ingerir e transportar estes dados. Apesar das sessões de tutoria terem geralmente uma duração fixa (constituindo cada sessão um conjunto de dados temporalmente limitado), estes dados são analisados durante a própria sessão, o que justifica a necessidade de os ingerir de forma contínua.
 No contexto da \ac{UDI 2.0}, a ingestão contínua é mapeada no bloco lógico \textit{Event Streaming}.
 
 Em termos de persistência, apesar de algumas ferramentas de ingestão contínua (particularmente, as baseadas em \textit{logs}), manterem um registo do histórico de mensagens, não é considerado viável utilizar estas ferramentas como fontes de dados para visualização, uma vez que estas ferramentas geralmente não dispõem de mecanismos eficientes de filtragem com base no conteúdo (por exemplo, para visualizar o \ac{BPM} de um determinado aluno ao longo da sessão).
