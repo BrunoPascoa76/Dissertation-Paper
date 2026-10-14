@@ -31,23 +31,16 @@ Neste cenário, a monitorização da atenção através de métricas como a dire
 \subsection{Monitorização de Desempenho durante Tutoria Remota}
 
 No contexto educativo, um cenário adjacente ao das aulas remotas é o das sessões de tutoria individuais realizadas remotamente.
-Este cenário de monitorização distingue-se dos restantes por ser um caso particular em que apenas um indivíduo é monitorizado em cada sessão, contudo, apesar do tutor se poder focar melhor por se tratar de um único aluno, a monitorização contínua continua a ser útil por fornecer não só informação adicional no momento, mas também um contexto histórico para melhor avaliar a qualidade das aulas.
+Este cenário de monitorização distingue-se dos restantes por ser um caso particular em que apenas um indivíduo é monitorizado em cada sessão, contudo, apesar do tutor se poder focar apenas num único aluno, a monitorização contínua continua a ser útil por fornecer não só informação adicional no momento~\cite{Yang2023}, mas também um contexto histórico para melhor avaliar a qualidade das aulas~\cite{Schwendimann2017}.
 
 Neste cenário, a monitorização não substitui a necessidade de monitorizar diretamente o aluno, mas sim complementa esta observação com dados fisiológicos como o \ac{BPM} ou ao detetar variações subtis de comportamento (como na dinâmica de digitação) e expressão facial que podem facilitar a inferência do estado do aluno por parte do tutor.
 Adicionalmente, como estas sessões podem durar vários meses ou até anos, a monitorização permite também oferecer um contexto histórico ao olhar para a evolução ao longo de várias aulas.
 Esta perspetiva pode ser útil, por exemplo, para avaliar a qualidade das aulas com base no nível de interesse ou até mesmo para ajustar o plano de aulas para cada aluno com base nos níveis de fadiga ou na perda de interesse.
 
-No âmbito do cenário representativo para este trabalho, decidi focar-me em particular na componente prática das sessões de tutoria individual: nas quais um aluno tem de realizar um exercício ou tarefa utilizando o computador enquanto o tutor observa.
-Embora o âmbito deste trabalho não exclua a monitorização enquanto os utilizadores estão apenas em frente ao computador (como, por exemplo, no cenário descrito na Secção~\ref{sec:scenario_school}), a monitorização enquanto o utilizador interage diretamente com o computador oferece uma maior riqueza de dados (por permitir avaliar a dinâmica de interação).
+Em particular, o foco do cenário escolhido foi a componente prática das sessões de tutoria individual: nas quais um aluno tem de realizar um exercício ou tarefa utilizando o computador enquanto o tutor observa.
+Embora o âmbito deste trabalho não exclua a monitorização enquanto os utilizadores estão apenas em frente ao computador, a monitorização enquanto o utilizador interage diretamente com o computador oferece uma maior riqueza de dados (por permitir avaliar a dinâmica de interação).
 
-Para concretizar esta monitorização, foram consideradas as seguintes fontes de dados: câmara e microfone, como fontes de dados audiovisuais, rato e teclado como fontes de dados de interação e finalmente os dispositivos \textit{wearable} como \textit{smartwatches} ou \textit{smartrings} como fonte de dados fisiológicos.
-Destes sensores, e tendo em conta que o objetivo deste trabalho é demonstrar a viabilidade de uma abordagem baseada em \textit{streaming} e não a criação de uma solução comercial viável, decidi selecionar a câmara (como foco na análise da face), teclado e \textit{smartwatch}.
-A escolha destes sensores em particular deve-se não só a fornecerem dados de diferentes categorias, mas também por apresentarem desafios técnicos distintos:
-\begin{itemize}
-    \item O teclado produz dados categóricos e com base em eventos (ou seja, de forma aperiódica);
-    \item O \textit{smartwatch}, por ser um dispositivo externo ao computador, exige o estabelecimento de um mecanismo de comunicação entre o computador e o \textit{smartwatch};
-    \item A câmara requer o processamento de imagem para a extração das métricas (ao contrário dos restantes, que fornecem os dados diretamente).
-\end{itemize}
+
 
 \section{Soluções Existentes de Monitorização e Integração de Dados}
 
@@ -172,7 +165,7 @@ A medição da atividade cerebral é normalmente realizada através de eletroenc
 
 Finalmente, outra fonte de dados frequentemente utilizada é a atividade ocular. A atividade ocular é normalmente medida através de câmaras e normalmente foca-se na direção do olhar, a velocidade e frequência do movimento ocular e a frequência e duração do piscar de olhos. Adicionalmente, existem também estudos que analisam a dilatação da pupila como indicador, contudo este estudo ainda se encontra limitado a ambientes laboratoriais controlados, visto que a dilatação pupilar não só depende do indivíduo e da distância do objeto em foco, mas também das condições luminosas, sendo que por isso a sua aplicabilidade em situações reais ainda é limitada.
 
-\subsubsection{Desvantagens Principais dos Sensores Convencionais}
+\subsection{Desvantagens Principais dos Sensores Convencionais}
 
 Este tipo de sensores fisiológicos, apesar de precisos, possuem alguns problemas em termos de escalabilidade e aplicabilidade em situações reais. 
 Apesar de a maioria destes dispositivos terem versões suficientemente portáteis para o uso quotidiano, o desconforto durante o uso (em particular de sensores na face ou peito) e o facto que os utilizadores necessitam de manter os dispositivos carregados leva a um elevado abandono destes dispositivos~\cite{Kallio2025}.
@@ -212,7 +205,7 @@ Contudo, a relativa escassez de estudos realizados de forma contínua nesta áre
 
 \section{Arquitetura Geral de Recolha e Processamento de Dados}~\label{sec:udi_soa}
 
-De modo a orientar a exploração das tecnologias existentes, bem como o desenho da arquitetura lógica, foi selecionada como arquitetura geral de referência a \ac{UDI 2.0}, proposta pela Andreessen Horowitz~\cite{UDI} (Figura~\ref{fig:udi_full}).
+Como arquitetura geral de referência, foi selecionada a \acl{UDI 2.0} (\ac{UDI 2.0}), proposta pela Andreessen Horowitz~\cite{UDI} (Figura~\ref{fig:udi_parcial}).
 Este modelo funciona como um mapa modular aplicável a múltiplos cenários distintos de recolha e processamento de dados (incluindo \textit{streaming}) ao agrupar e categorizar as tecnologias em blocos lógicos com base nas suas características e funcionalidades, apresentando exemplos de tecnologias que poderão ser utilizadas para concretizar cada bloco lógico.
 Deste modo, é possível construir uma arquitetura lógica apenas escolhendo os blocos lógicos necessários para o caso de uso específico.
 
@@ -220,9 +213,9 @@ Como o foco deste trabalho é o \textit{streaming} e não a recolha de dados em 
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\linewidth]{figs/udi_full}
-    \caption{Unified Data Infrastructure (2.0)~\cite{UDI}}
-    \label{fig:udi_full}
+    \includegraphics[width=\linewidth]{figs/udi_relevant}
+    \caption{Componentes Relevantes da \ac{UDI 2.0}~\cite{UDI}}
+    \label{fig:udi_parcial}
 \end{figure}
 
 
