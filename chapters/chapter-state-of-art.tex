@@ -235,15 +235,15 @@ Contudo, apesar da sua elevada adoção, este protocolo não é explicitamente a
 
 Em situações que requeiram a monitorização de vários utilizadores em simultâneo, não é prático armazenar e processar os dados de cada utilizador localmente, logo torna-se necessário criar uma arquitetura capaz de transmitir estes dados de forma contínua e fiável para um local onde os dados possam ser armazenados e acedidos de forma conjunta.
 
-Para este efeito, torna-se importante distinguir entre sistemas estritamente de \textit{messaging}, como \textit{message brokers} - que se focam na entrega pontual de mensagens - e sistemas de \textit{streaming} como o Kafka - que se focam no transporte de um fluxo contínuo (permitindo, por exemplo, aceder a uma mensagem já recebida).
+Para este efeito, torna-se importante distinguir entre sistemas estritamente de \textit{messaging}, como \textit{message brokers} - que se focam na entrega pontual de mensagens - e sistemas de \textit{streaming} como o Kafka~\cite{Kafka_main} - que se focam no transporte de um fluxo contínuo (permitindo, por exemplo, aceder a uma mensagem já recebida).
  
-\subsubsection{Sistemas de \textit{Messaging} (\textit{Message Brokers})}
+\subsubsection{\textit{Message Brokers}}
 
-\textit{Message Brokers} são sistemas de \textit{middleware} que gerem o encaminhamento de mensagens e facilitam a comunicação desacoplada entre serviços, mesmo quando estes utilizam tecnologias distintas~\cite{IBM_brokers}.
+\textit{Message Brokers} são componentes que gerem o encaminhamento de mensagens e facilitam a comunicação desacoplada entre serviços, mesmo quando estes utilizam tecnologias distintas~\cite{IBM_brokers}.
 
 Em geral, \textit{message brokers} utilizam dois padrões de mensagens básicos: ponto-a-ponto (\textit{point-to-point messaging}), em que cada mensagem é entregue a apenas um subscritor utilizando uma fila física, e publicação/subscrição (\textit{publish/subscribe} ou \textit{pub/sub}), em que cada mensagem publicada num dado tópico é propagada de forma assíncrona a múltiplos subscritores interessados~\cite{IBM_brokers}.
 
-Em termos de protocolos suportados por estes \textit{brokers}, os mais relevantes são o \ac{AMQP}, focado no melhor roteamento e persistência de mensagens~\cite{amqp_mqtt_definitions}, o \ac{STOMP}, um protocolo simples baseado em texto~\cite{STOMP} e o \ac{MQTT}, que pode ser executado mesmo em \textit{hardware} mais limitado~\cite{amqp_mqtt_definitions}.
+Em termos de protocolos específicos, os mais relevantes são o \ac{AMQP}, focado no melhor roteamento e persistência de mensagens~\cite{amqp_mqtt_definitions}, o \ac{STOMP}, um protocolo simples baseado em texto~\cite{STOMP} e o \ac{MQTT}, que pode ser executado mesmo em \textit{hardware} mais limitado~\cite{amqp_mqtt_definitions}.
 
 \subsubsection{Plataformas de \textit{streaming} de \textit{logs} distribuídas}
 
@@ -259,18 +259,20 @@ Contudo, apesar de o Kafka permitir um \textit{throughput} bastante melhor que a
 
 \subsection{Motores de Conectividade e Integração (Kafka Connect)}
 
-Além de ser necessária a ingestão de dados da fonte, é também frequentemente necessário transportar os dados entre dois componentes, como, por exemplo, entre \textit{brokers} \ac{MQTT} locais instalados em cada escritório e um \textit{cluster} Kafka central ou para automaticamente inserir os dados presentes num tópico Kafka na base de dados.
+Além de ser necessária a ingestão de dados da fonte, é também frequentemente necessário transportar os dados entre dois componentes.
 Para este propósito, apesar de ser possível simplesmente criar um \textit{worker} personalizado para assegurar a transferência dos dados, existem serviços e ferramentas dedicadas a conectar serviços heterogéneos que permitem não só realizar esta tarefa com um esforço de integração muito menor, mas também oferecem as mesmas garantias de resiliência e robustez que as restantes ferramentas.
 
-Por exemplo, em arquiteturas que utilizem o Apache Kafka como motor base de ingestão, a opção oficialmente recomendada seria o Kafka Connect, uma ferramenta que padroniza a transferência de dados entre o Apache Kafka e outros sistemas. Este serviço funciona à base de conectores de dois tipos: conectores \textit{source} que definem a ingestão de dados de outras fontes para um tópico Kafka (como, por exemplo, dados armazenados em ficheiro ou num \textit{Message Broker}) e conectores \textit{sink} que definem a exportação das mensagens de um tópico Kafka para um sistema externo (como, por exemplo, uma base de dados)~\cite{kafka_connect_docs}.
+Em arquiteturas que utilizem o Apache Kafka como motor base de ingestão, a opção oficialmente recomendada seria o Kafka Connect~\cite{kafka_connect_docs}, uma ferramenta que padroniza a transferência de dados entre o Apache Kafka e outros sistemas. Este serviço funciona à base de conectores de dois tipos: conectores \textit{source} que definem a ingestão de dados de outras fontes para um tópico Kafka (como, por exemplo, dados armazenados em ficheiro ou num \textit{Message Broker}) e conectores \textit{sink} que definem a exportação das mensagens de um tópico Kafka para um sistema externo (como, por exemplo, uma base de dados)~\cite{kafka_connect_docs}.
 Adicionalmente, para além da transferência de dados, é também possível realizar conversões de tipo (por exemplo, transformar uma mensagem codificada em \textit{bytes} para formato \ac{JSON} ou vice-versa)~\cite{kafka_connect_docs} ou transformações simples a mensagens individuais (como, por exemplo, eliminar campos desnecessários ou filtrar mensagens com base em condições simples).~\cite{kafka_connect_docs_smt}
 
+Podemos encontrar um exemplo prático do uso do Kafka Connect para ingestão e análise contínua de dados num estudo realizado por Mileti\'{c} \textit{et. al.}~\cite{Mileti2023}, que propuseram um sistema de monitorização contínua da qualidade do ar numa \textit{smart city}.
+Neste estudo, o Kafka Connect foi utilizado para transportar os dados entre os vários \textit{brokers} Mosquitto~\cite{Mosquitto_main} espalhados pela cidade e um \textit{cluster} Kafka central e subsequentemente para inserir estes dados numa base de dados.
 
 \subsection{Processamento em \textit{Stream}}
 
 Num cenário que envolva monitorizar de forma contínua o estado atual do utilizador, não basta apenas recolher e armazenar os dados de forma contínua, é também necessário estabelecer um \textit{pipeline} capaz de processar e analisar os dados de forma contínua e automática.
 
-Esta necessidade motivou o desenvolvimento de \textit{stream processing frameworks} como, por exemplo, o Apache Flink ou o Kafka Streams, ferramentas focadas na vertente computacional do fluxo, permitindo operações como filtragem, agregação, transformação ou análise dos dados em transporte~\cite{ibm_stream_processing}.
+Esta necessidade motivou o desenvolvimento de \textit{stream processing frameworks} como, por exemplo, o Apache Flink~\cite{Flink_main} ou o Kafka Streams~\cite{Kafka_Streams_main}, ferramentas focadas na vertente computacional do fluxo, permitindo operações como filtragem, agregação, transformação ou análise dos dados em transporte~\cite{ibm_stream_processing}.
 A maioria pode ser integrada diretamente com o \textit{pipeline} de transporte de dados ao utilizar os tópicos de plataformas como o Kafka como origem ou fonte de dados~\cite{ibm_stream_processing}, contudo algumas destas ferramentas, como o Apache Flink, por exemplo, permitem inserir os dados diretamente na base de dados~\cite{flink_connectors}, conectando assim estes dois componentes.
 
 
@@ -280,11 +282,11 @@ Em termos de bases analíticas em tempo real, estas podem geralmente dividir-se 
 
 \subsubsection{Bases de Dados \ac{OLAP}}
 
-As bases de dados \ac{OLAP} (em particular bases de dados \ac{OLAP} em tempo real), como Clickhouse ou Apache Pinot, são bases de dados baseadas em colunas otimizadas para \textit{queries} analíticas envolvendo um elevado número de valores~\cite{Brown2026}.
+As bases de dados \ac{OLAP} (em particular bases de dados \ac{OLAP} em tempo real), como Clickhouse~\cite{ClickHouse_main} ou Apache Pinot~\cite{Pinot_main}, são bases de dados baseadas em colunas otimizadas para \textit{queries} analíticas envolvendo um elevado número de valores~\cite{Brown2026}.
 
 \subsubsection{\ac{TSDB}}
 
-Por outro lado, as \ac{TSDB} (como o InfluxDB ou o TimescaleDB) foram desenhadas especificamente para armazenar dados associados a um ponto específico no tempo, como os dados recolhidos pelos periféricos ou \textit{wearables}~\cite{ClickHouse2025}.
+Por outro lado, as \ac{TSDB} (como o InfluxDB~\cite{Influx_main} ou o TimescaleDB~\cite{Timescale_main}) foram desenhadas especificamente para armazenar dados associados a um ponto específico no tempo, como os dados recolhidos pelos periféricos ou \textit{wearables}~\cite{ClickHouse2025}.
 Por serem feitas para indexarem os dados com base no tempo, este tipo de base de dados não só se tornam mais eficientes nas \textit{queries} de agregação temporal~\cite{ClickHouse2025} usadas frequentemente no processo analítico deste tipo de dados (como, por exemplo, obter médias horárias ou diárias), mas também o armazenamento dos próprios dados, comprimindo sequências de valores repetidos ou similares ao armazenar apenas os deltas~\cite{ClickHouse2025} (diferença entre cada registo e o registo anterior).
 
 \subsection{Modelos de Recolha e Processamento de Dados}
