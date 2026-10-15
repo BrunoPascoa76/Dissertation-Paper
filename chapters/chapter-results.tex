@@ -365,40 +365,31 @@ Apesar de se tratar de uma simulação e não um teste em ambiente real, consegu
 
 \section{Discussão}
 
-%TODO: deixa claro que podemos concluir que os objetivos secundários foram cumpridos mesmo apenas com analítico
-
-\subsection{Agnosticismo no Servidor}
-\label{sec:discussion_agnostic}
-
-A decisão de manter o servidor agnóstico ao número de fontes de dados e as suas características, sendo conhecidos apenas pela aplicação e pelo \textit{dashboard}, permitiu que a adição de um novo sensor se limitasse a estes dois componentes, sendo que na aplicação é necessário apenas criar uma nova classe e inserir o respetivo ficheiro na pasta correspondente.
-Esta propriedade pode ser comprovada através da análise dos próprios componentes, onde as únicas referências às três fontes de dados (teclado, câmara e \textit{smartwatch}) em código se encontram nestes componentes (e na aplicação para WearOS), apesar de cada fonte de dados possuir características e métricas diferentes.
-
-Contudo, esta escolha tem um custo direto: como os restantes componentes desconhecem a natureza dos dados que transportam, não é possível estabelecer fluxos de processamento distintos para cada fonte de dados sem violar este princípio de agnosticidade, sendo por isso necessário realizar o processamento na aplicação ou de forma dinâmica durante a visualização.
-O erro de conversão apresentado na Secção~\ref{sec:final_state_server} é, de certa forma, uma consequência indireta desta limitação, pois, como o Kafka Connect desconhece que dados estão a ser transportados, necessita inferir os seus tipos com base nas mensagens, cuja ambiguidade leva a erros pontuais na inserção.
-
-\subsection{Reutilização de Ferramentas Estabelecidas}
-
-Como o objetivo principal do trabalho não é demonstrar a minha capacidade de implementar um sistema de monitorização contínua de raiz, mas sim demonstrar a viabilidade de uma abordagem baseada em \textit{streaming}, torna-se necessário demonstrar que as ferramentas de \textit{streaming} já existentes são capazes de realizar esta monitorização contínua e não apenas a capacidade do autor de criar um sistema de monitorização funcional.
-
-Esta decisão de priorizar soluções já existentes para a resolução de problemas traduziu-se, por exemplo, na ausência de \textit{workers} de transporte construídos de raiz: optando-se por resolver os problemas de encaminhamento entre o \textit{broker} local e o servidor através do mecanismo \ac{MQTT} Bridge e a interação com o Kafka através do Kafka Connect.
-
-O custo principal desta decisão foi a necessidade de implementar componentes adicionais, como o \textit{broker} remoto, que não seria necessário se um \textit{worker} consumisse os dados do \textit{broker} local e os enviasse diretamente para o Kafka, bem como a exposição às restrições associadas ao funcionamento das próprias ferramentas (por exemplo, o conector \textit{source} \ac{MQTT}, apesar de ser capaz de consumir de múltiplos tópicos \ac{MQTT} através do uso de \textit{wildcards}, apenas consegue inserir num único tópico Kafka).
-
-\subsection{Heterogeneidade das Fontes de Dados}
-
-A escolha de fontes de dados com comportamentos diferentes permitiu demonstrar a capacidade do sistema para lidar com fontes de dados periódicas e aperiódicas, bem como internas e externas.
-
-Contudo, apesar de demonstrar a integração com \textit{smartwatches} WearOS através de \ac{MQTT}, esta não garante compatibilidade do sistema com todos os dispositivos \textit{wearable off-the-shelf}, como, por exemplo, \textit{smartrings} que comunicam geralmente via \ac{BLE} ou \textit{smartwatches} com outros sistemas operativos, onde a execução de aplicações de terceiros é mais complexa ou até mesmo impossível.
-
 \subsection{Ilustração do Cenário de Referência}
 
-Em termos de validação no cenário, apesar da simulação apresentada permitir ilustrar o impacto de mudanças de estado repentinas, seria benéfico realizar testes envolvendo sessões mais prolongadas (com duração superior a uma hora), de modo a comprovar a observabilidade de mudanças de estado graduais, como o cansaço ou a fadiga cognitiva.
+Em termos de adequação ao cenário de tutoria individual, o sistema conseguiu mostrar de forma adequada como a mudança de estado do aluno (distração) se traduz em alterações percetíveis nas métricas presentes no \textit{dashboard}, que por sua vez permitem ao tutor se aperceber desta mudança de estado.
+Como este trabalho se trata de uma prova de conceito e não um produto comercial, não se considerou necessário verificar que estas alterações permanecem percetíveis mesmo em mudanças de estado graduais (como o cansaço).
 
-\subsection{Limitações Gerais}
+\subsection{Cumprimento dos Objetivos Secundários}
 
-Para além das limitações acima descritas, este trabalho apresenta um conjunto de limitações que decorrem diretamente do seu caráter de prova de conceito e dos constrangimentos temporais associados:
-\begin{itemize}
-    \item O sistema foi avaliado para um cenário com apenas um utilizador a ser monitorizado em simultâneo. Apesar da arquitetura e estrutura de dados ser naturalmente compatível com múltiplos utilizadores, considera-se relevante a realização de testes que envolvam a monitorização de vários utilizadores em simultâneo, de modo a avaliar a escalabilidade do sistema.
-    \item Não foi medida de forma automática a latência entre a produção dos dados e o seu armazenamento e visualização. Consequentemente, não foi verificado o possível impacto da distância física entre aluno e tutor no tempo de propagação das mensagens.
-    \item A avaliação da extensibilidade do sistema foi baseada no isolamento estrutural da alteração, reduzindo ao máximo a quantidade de código e componentes a serem revistos, e não a testes reais envolvendo utilizadores com diferentes níveis de experiência em programação.
-\end{itemize}
+Para além demonstrar a viabilidade de uma abordagem baseada em \textit{streaming} para o cenário de tutoria individual apresentado, foi a possibilidade de estender esta prova de conceito a cenários de monitorização adjacentes.
+Para este propósito, foram estabelecidos previamente dois objetivos secundários: suportar a monitorização de múltiplos utilizadores em simultâneo e facilitar a adição de suporte a novos sensores.
+
+\subsubsection{Monitorização de Múltiplos Utilizadores em Simultâneo}
+
+Apesar do cenário de referência se limitar à monitorização individual (1:1), a arquitetura tem de ser capaz de lidar com múltiplas fontes de dados independentes a gerar eventos em simultâneo.
+
+Por esta razão, para monitorizar vários utilizadores em simultâneo é necessário apenas identificar o utilizador monitorizado nas mensagens enviadas (como podemos verificar através da presença de um \ac{UUID} na Listagem~\ref{code:functional_message}) e permitir ao tutor filtrar por aluno no \textit{dashboard} (neste caso, através do campo \ac{UUID} no canto superior esquerdo da Figura~\ref{fig:grafana}).
+
+Contudo, apesar de ser possível verificar que o sistema suporta a monitorização de vários utilizadores, reconhece-se a ausência de testes de escalabilidade que permitam garantir o seu correto funcionamento mesmo em cenários com um elevado número de utilizadores (como, por exemplo, grandes empresas).
+
+\subsubsection{Adição de Novos Sensores}
+
+Em termos de processamento de dados de fontes heterogéneas, existem duas abordagens principais: realizar a maioria do processamento (filtragem, agregação, \ldots) durante o transporte (utilizando, por exemplo, o Apache Flink) ou a concentração do processamento nas extremidades do sistema (ou seja, antes do seu envio e durante a sua visualização no \textit{dashboard}).
+Apesar da primeira opção permitir realizar operações mais complexas, uma vez que não está limitada pelo \textit{hardware} do cliente, o sistema torna-se mais rígido e difícil de estender, uma vez que o código a alterar encontra-se disseminado pelo sistema inteiro.
+
+Por outro lado, a abordagem escolhida para este trabalho, na qual o processamento é realizado apenas na fonte e no \textit{dashboard} facilita a adição de novos sensores, uma vez que o esforço de alteração se limita a criar uma nova classe na aplicação \textit{desktop} e a adicionar um novo gráfico no Grafana, sendo que os restantes componentes permanecem inalterados.
+
+\subsection{Adequação do \textit{Streaming}}
+
+Finalmente, podemos afirmar que este sistema cumpre com o objetivo principal de servir como exemplo da viabilidade do \textit{streaming} para a monitorização contínua durante a utilização normal do computador, uma vez que demonstra que o \textit{streaming} é capaz não só de recolher dados de forma contínua de fontes heterogéneas - cada uma delas produzindo dados com diferentes frequências - mas também permite processar os dados e visualizar as métricas resultantes com uma latência reduzida, suportando assim a tomada de decisões em tempo real.
