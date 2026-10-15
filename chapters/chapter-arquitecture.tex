@@ -7,17 +7,17 @@ Este capítulo descreve o cenário representativo (monitorização de um aluno d
 
 \section{Cenário de Referência}\label{sec:scenario_arquitecture}
 
-Como referido na Secção~\ref{sec:scenario_introduction}, o cenário de referência adotado para orientar o desenvolvimento do trabalho é a monitorização de um aluno durante uma sessão de tutoria individual, enquanto este realiza tarefas ou exercícios no computador (ou seja, durante a interação com o computador).
+O cenário de referência é a monitorização de um aluno durante uma sessão de tutoria individual, enquanto este realiza tarefas ou exercícios no computador (ou seja, durante a interação com o computador).
 
 Os atores principais neste cenário são o próprio aluno, que será monitorizado e o tutor, que tem interesse em visualizar as métricas que resultam dessa monitorização.
 Apesar do cenário referir que apenas um aluno será monitorizado por sessão, o trabalho tem em consideração que diferentes alunos poderão ser lecionados em cada sessão e cada aluno poderá ter mais que uma sessão com o mesmo tutor.
 
-Em termos de fontes de dados para monitorização, foram escolhidos o teclado (caracteres por minuto) e câmara (orientação facial e \ac{EAR}) com interfaces do computador e um \textit{smartwatch} (\ac{BPM}) como fonte de dados externa.
+Em termos de fontes de dados para monitorização, foram escolhidos o teclado (caracteres por minuto e \textit{deletes} por minuto) e câmara (orientação facial e \ac{EAR}) com interfaces do computador e um \textit{smartwatch} (\ac{BPM}) como fonte de dados externa.
 Estas métricas serão disponibilizados através de um \textit{dashboard}, integrando dados em tempo real e históricos para ajudar o tutor a avaliar a qualidade do ensino não só da sessão atual, mas também ao longo de várias sessões.
 
 \section{Mapeamento do Cenário com base na \ac{UDI 2.0}}
 
-De modo a orientar a criação de uma arquitetura lógica, decidi utilizar como base a \ac{UDI 2.0}, mapeando este cenário nos blocos lógicos e fluxos desta arquitetura genérica.
+De modo a orientar a criação de uma arquitetura lógica, decidi utilizar como base a \ac{UDI 2.0}, mapeando este cenário nos blocos lógicos e fluxos desta arquitetura genérica (Figura~\ref{fig:sys_arq_concept}).
 
 Em primeiro lugar, as fontes de dados principais são as descritas anteriormente: o teclado, que produz um evento sempre que uma tecla é premida (sendo enviado o tipo de tecla premida), a câmara que envia métricas referentes à orientação facial e à abertura dos olhos e um \textit{smartwatch}, que fornece dados referentes à frequência cardíaca (\ac{BPM}).
 
@@ -27,11 +27,18 @@ No contexto da \ac{UDI 2.0}, a ingestão contínua é mapeada no bloco lógico \
 Em termos de persistência, apesar de algumas ferramentas de ingestão contínua (particularmente, as baseadas em \textit{logs}), manterem um registo do histórico de mensagens, não é considerado viável utilizar estas ferramentas como fontes de dados para visualização, uma vez que estas ferramentas geralmente não dispõem de mecanismos eficientes de filtragem com base no conteúdo (por exemplo, para visualizar o \ac{BPM} de um determinado aluno ao longo da sessão).
 Por esta razão, torna-se necessário utilizar uma fonte de persistência separada que seja otimizada para análise em tempo real, ou seja, uma \textit{Real-time Analytics Database}.
 
-Em termos de processamento e transformação, não foram selecionados blocos lógicos para estas camadas, uma vez que não está planeado o desenvolvimento de um modelo de inteligência artificial (que justificaria a transformação) nem se consideram necessário processamento adicional antes da inserção (o que justificaria \textit{Stream Processing}).
+Em termos de processamento e transformação, não foram selecionados blocos lógicos para estas camadas, uma vez que não está planeado o desenvolvimento de um modelo de inteligência artificial (que justificaria a transformação) nem se considera necessário processamento adicional antes da inserção (o que justificaria \textit{Stream Processing}).
 
 Finalmente, em termos de visualização, como neste cenário o único requisito para a interface do tutor é permitir observar as métricas de um aluno e a sua evolução, sendo a comunicação entre ambos realizada através das ferramentas habituais, foi considerado suficiente o uso de um \textit{Dashboard} para a visualização dos dados.
 
 Em suma, podemos estabelecer o seguinte fluxo: os dados são recolhidos e pré-processados na fonte, transportados através de uma ferramenta de \textit{Event Streaming}, inseridos numa \textit{Real-time Analysis Database} e finalmente visualizados pelo tutor através de um \textit{Dashboard}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figs/diagram_concept}
+    \caption{Arquitetura enquadrada na \ac{UDI 2.0}. Adaptado de~\cite{UDI}}
+    \label{fig:sys_arq_concept}
+\end{figure}
 
 
 \section{Requisitos}
@@ -60,15 +67,25 @@ Após o estabelecimento dos blocos lógicos do sistema, torna-se necessário esc
 Em primeiro lugar, para a concretização do \textit{Event Streaming}, foi escolhido o Apache Kafka, não só pela sua escalabilidade e resiliência a falhas~\cite{Kafka2011}, mas também pelo facto que, através do Kafka Connect, é possível comunicar com um elevado número de outros sistemas~\cite{kafka_connect_docs}.
 
 A seguir, como a maioria das fontes de dados não consegue comunicar diretamente com o Kafka, torna-se necessário o uso de uma aplicação que corra no computador do aluno para coordenar a recolha destes dados, permitindo assim também o pré-processamento de dados na própria fonte.
-De modo a evitar a perda de dados após uma interrupção temporária de conexão, foi também explorado um mecanismo de redirecionamento assíncrono utilizando \ac{MQTT} \textit{Bridge}, um método que permite o redirecionamento assíncrono e automático entre dois \textit{message brokers} \ac{MQTT} - um local e um remoto - sem infringir nas garantias de entrega.
+De modo a evitar a perda de dados após uma interrupção temporária de conexão, foi também explorado um mecanismo de redirecionamento assíncrono utilizando \ac{MQTT} \textit{Bridge}~\cite{Cope2024}, um \textit{feature} dos \textit{brokers} \ac{MQTT} que permite o redirecionamento assíncrono e automático entre dois \textit{message brokers} \ac{MQTT} - um local e um remoto - sem infringir nas garantias de entrega.
 Para além de explorar este mecanismo de redirecionamento contínuo, o \ac{MQTT} foi também escolhido por ser um protocolo suficientemente leve~\cite{amqp_mqtt_definitions} para não impactar visivelmente a \textit{performance} do computador do aluno.
 
 Em termos de \textit{Real-Time Analytics Database}, foi escolhido a utilização de uma \ac{TSDB} (sendo a implementação específica de \ac{TSDB} comparativamente menos relevante).
-Esta escolha baseia-se principalmente em duas razões: como a análise esperada baseia-se em séries temporais, o principal critério de pesquisa será o tempo (seguido do utilizador e finalmente do sensor e métrica), o que favorece a escolha de uma \ac{TSDB}, que são especificamente otimizadas para \textit{queries} temporais.
-Adicionalmente, apesar de uma base de dados \ac{OLAP} ser possivelmente uma escolha mais adequada para um volume elevado de registos (milhões ou biliões)~\cite{Brown2026}, a análise prevista para este cenário foca-se maioritariamente na análise por aluno, logo, o volume de dados previsto não justifica a adoção de uma base de dados \ac{OLAP}.
+Esta escolha baseou-se principalmente no facto de que a análise esperada baseia-se em séries temporais, logo, o principal critério de pesquisa e ordenação será o tempo (seguido do utilizador e finalmente do sensor e métrica).
+Por esta razão, torna-se natural escolher uma \ac{TSDB}, uma vez que estas são otimizadas especificamente para este tipo de \textit{queries}.
 
 Finalmente, a comunicação entre estes três componentes - \textit{broker} remoto, Kafka e \ac{TSDB} - será assegurada através de dois conectores de Kafka Connect: um conector \textit{source} para consumir os dados do \textit{broker} local e um conector \textit{sink} para inserir estes dados na \ac{TSDB}.
 A escolha do Kafka Connect permite não só explorar tecnologias já existentes e as suas vantagens e limitações - ao contrário de um \textit{worker} criado de raiz - mas também porque o uso de conectores introduz uma camada de abstração que separa a configuração do fluxo de dados da lógica de conversão específica a cada ferramenta, facilitando assim a substituição de componentes.
+
+A arquitetura resultante desta integração pode ser observada na Figura~\ref{fig:sys_arq_technologies}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figs/component_diagram_technology.png}
+    \caption{Diagrama de componentes do sistema}
+    \label{fig:sys_arq_technologies}
+\end{figure}
+
 
 \subsection{Fontes de Dados Escolhidas}
 
@@ -79,12 +96,56 @@ Como o propósito principal deste trabalho não é o desenvolvimento de uma solu
     \item Finalmente, o teclado produz dados referentes à dinâmica de interação e é uma das únicas fontes de dados consideradas que produz dados com base em eventos e não através de amostragem, sendo a frequência de envio variável e dependente da velocidade de digitação do próprio indivíduo.
 \end{itemize}
 
-\begin{figure}[h]
+As especificações técnicas dos dispositivos e os respetivos parâmetros de aquisição utilizados na implementação do protótipo encontram-se sintetizados na Tabela~\ref{tab:fontes_dados_specs}.
+
+\begin{table}[h]
     \centering
-    \includegraphics[width=\linewidth]{figs/component_diagram_technology.png}
-    \caption{Diagrama de componentes do sistema}
-    \label{fig:sys_arq_technologies}
+    \begin{threeparttable}
+        \caption{Especificações técnicas das fontes de dados.}
+        \label{tab:fontes_dados_specs}
+        \begin{tabularx}{\linewidth}{l X X X}
+            \toprule
+            \textbf{Dispositivo} & \textbf{Modelo/Origem} & \textbf{Tipo / Dados Capturados} & \textbf{Frequência / Resolução} \\ \hline
+            \midrule
+                Teclado & Tecware Phantom 87-key & Tipo de teclas premido & Variável\tnote{1} \\
+                Câmara & Logitech C720 & Imagens (\textit{frames}) & 720p a 30 FPS \\
+                Smartwatch & Xiaomi Watch 2 & \ac{BPM} & 1Hz\tnote{2} (estimado empiricamente) \\
+            \bottomrule
+        \end{tabularx}
+        \begin{tablenotes}
+            \small
+            \item[1] É enviado um evento por tecla premida, por isso a frequência depende da velocidade de digitação do aluno. A frequência máxima é de 1000Hz~\cite{keyboard_photo}.
+            \item[2] Devido a limitações com o \textit{StateFlow} em Kotlin, é apenas enviado um novo registo quando o valor de \ac{BPM} se altera.
+        \end{tablenotes}
+    \end{threeparttable}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.30\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/hardware/keyboard}
+        \caption{Teclado Tecware Phantom~\cite{keyboard_photo}}
+        \label{fig:hw_teclado}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.30\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/hardware/camera}
+        \caption{Câmara Logitech C720~\cite{camera_photo}}
+        \label{fig:hw_camara}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.30\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/hardware/smartwatch}
+        \caption{Xiaomi Watch 2~\cite{smartwatch_photo}}
+        \label{fig:hw_watch}
+    \end{subfigure}
+    \caption{Dispositivos de hardware utilizados como fontes de dados no sistema}
+    \label{fig:fontes_hardware}
 \end{figure}
+
 
 \subsection{Fluxo de Dados}
 \label{sec:flow_technologies}
@@ -106,7 +167,7 @@ Como o propósito principal deste trabalho não é o desenvolvimento de uma solu
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\linewidth]{figs/end2end_difficulties.png}
+    \includegraphics[width=\linewidth]{figs/end_2_end_difficulties.png}
     \caption{Diagrama de sequência (cenário de dificuldade com tarefa)}
     \label{fig:end2end_technology}
 \end{figure}
