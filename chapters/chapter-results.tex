@@ -171,7 +171,29 @@ Estas métricas, com exceção do \ac{BPM}, foram calculadas de forma dinâmica 
 
 \section{Demonstração do Funcionamento do Sistema}
 
-De modo a demonstrar que o sistema funciona de forma correta (e utilizando a arquitetura proposta), foi feito o \textit{tracing} de uma mensagem ao longo dos vários componentes, utilizando ferramentas de observabilidade como o MQTT5 Explorer ou o Kafdrop quando necessário.
+De modo a demonstrar o correto funcionamento do sistema, demonstrando que o sistema foi de facto implementando utilizando os componentes propostos, foi realizado um teste funcional baseado no \textit{tracing} de uma mensagem pelos vários componentes do sistema até à sua inserção na base de dados.
+
+Para este teste, foi inserida no \textit{broker} local uma mensagem com um formato idêntico ao tipicamente emitido pela câmara (Listagem~\ref{code:functional_message}).
+A seguir, foi validado em cada ponto (\textit{broker} local, \textit{broker} remoto, Kafka e InfluxDB), que os valores da última medição registada correspondem exatamente aos valores da mensagem injetada.
+
+Contudo, como o Mosquitto e o Kafka não possuem funcionalidades nativas para consulta direta das mensagens recebidas, foi necessário o uso de ferramentas externas, nomeadamente o MQTT5 Explorer e o Kafdrop, para observar estas mensagens.
+Estas ferramentas não interferiram diretamente no fluxo de dados, sendo que foram utilizadas exclusivamente por fornecerem uma interface gráfica para a consulta destes dados.
+
+\begin{figure}[h!]
+\centering
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[language=json, caption={Mensagem de teste inserida}, label={code:functional_message}]
+{
+  "uuid": "Ocbaf439-c9c1-457e-affb-99458c96df2d",
+  "measurement": "sensors/face",
+  "ear_f": 0.33238460942017134,
+  "yaw_f": 0.07888333631515503,
+  "pitch_f": 0.3536324365234375,
+  "timestamp": 1780233835301
+}
+\end{lstlisting}
+\end{minipage}
+\end{figure}
 
 \begin{figure}[H]
      \centering
@@ -207,26 +229,56 @@ De modo a demonstrar que o sistema funciona de forma correta (e utilizando a arq
      \label{fig:end2end_example} 
 \end{figure}
 
+A Figura~\ref{fig:end2end_example} permite visualizar a última medição recebida nos 4 componentes:
+
+\begin{enumerate}
+    \item \textbf{\textit{Broker} Local (Figura~\ref{fig:example_1}):} 
+    \begin{itemize}
+        \item \textbf{Origem da mensagem:} Mensagem injetada manualmente.
+        \item \textbf{Método de verificação:} Ao conectar o MQTT5 Explorer ao \textit{broker} local e selecionar o tópico \texttt{sensors/face}, a última mensagem (a verde) na secção "Payload" tem de corresponder à mensagem enviada.
+    \end{itemize}
+    
+    \item \textbf{\textit{Broker} Remoto (Figura~\ref{fig:example_2}):} 
+    \begin{itemize}
+        \item \textbf{Origem da mensagem:} Redirecionada do \textit{broker} local via \ac{MQTT} Bridge.
+        \item \textbf{Método de verificação:} Ao conectar o MQTT5 Explorer ao \textit{broker} remoto e selecionar o tópico \texttt{sensors/face}, a última mensagem (a verde) na secção "Payload" tem de corresponder à mensagem enviada.
+    \end{itemize}
+    
+    \item \textbf{Apache Kafka (Figura~\ref{fig:example_3}):} 
+    \begin{itemize}
+        \item \textbf{Origem da mensagem:} Ingerida do \textit{broker} remoto via conector \textit{source} do Kafka Connect.
+        \item \textbf{Método de verificação:} Ao conectar o Kafdrop ao Kafka (via Docker Compose) e selecionar o tópico \texttt{mqtt}\footnotemark, o \ac{JSON} presente no campo \texttt{value} tem de corresponder à mensagem enviada.
+    \end{itemize}
+    
+    \item \textbf{Armazenamento no InfluxDB (Figura~\ref{fig:example_4}):} 
+    \begin{itemize}
+        \item \textbf{Origem da mensagem:} Inserida do Kafka via conector \textit{sink} do Kafka Connect.
+        \item \textbf{Método de verificação:} Utilizando a interface de linha de comandos do InfluxDB (\texttt{influx}), o resultado de uma \textit{query} pelo último valor da tabela (\textit{measurement}) \texttt{sensors/face} tem de corresponder à mensagem enviada\footnotemark.
+    \end{itemize}
+\end{enumerate}
+
 \footnotetext{O MQTT5 Explorer apenas apresenta a última mensagem recebida por tópico, não o histórico completo de mensagens.}
+\footnotetext{O nome do tópico Kafka onde os dados são inseridos pelo conector \textit{source} não é configurável.}
+\footnotetext{O foco desta verificação é garantir que os valores em cada campo são idênticos, sendo a ordenação dos campos irrelevante.}
 
 \section{Ilustração do Cenário de Referência}
 
 Como o referido anteriormente, como o cenário de monitorização contínua utilizando periféricos de uso comum é demasiado vago, foi estabelecido um cenário de monitorização utilizando teclado, câmara e \textit{smartwatch} durante uma sessão de tutoria individual como referência para o desenvolvimento desta prova de conceito (apesar de, em teoria, o sistema continua a ser adequado a outros casos de uso dentro do cenário geral).
 
-Neste cenário de referência, a principal utilidade deste sistema consiste em fornecer informação adicional ao tutor - complementando a observação direta - facilitando a avaliação do estado atual do aluno.
-Para ilustrar esta utilidade, foi simulado um excerto de uma sessão de tutoria no qual o aluno se encontra inicialmente focado na tarefa atual (servindo de linha de base ou controlo), passando a manifestar um comportamento de distração com o telemóvel a partir de determinado momento.
-
-Esta simulação teve uma duração total de 3 minutos e foi dividida nas seguintes fases:
+Neste cenário de referência, o sistema visa fornecer informação adicional ao tutor - complementando a observação direta - facilitando a avaliação do estado atual do aluno.
+Para ilustrar esta utilidade, foi simulado um cenário de 3 fases (Tabela~\ref{tab:distraction_phases}) com uma duração total de 3 minutos para simular um momento de distração com o telemóvel (sendo utilizado o YouTube Shorts para simular esta distração).
+Após a recolha, foram analizadas as métricas presentes no Dashboard (Figura~\ref{fig:distraction_results}), de modo a avaliar se a variação nas métricas permite ao tutor inferir visualmente que existiu uma mudança no estado do aluno.
 
 \begin{table}[h]
     \centering
-    \begin{tabularx}{\linewidth}{l X X X}
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabularx}{\linewidth}{l X p{2cm} l l X}
         \toprule
-        \textbf{\#} & \textbf{Estado} & \textbf{Duração} & \textbf{Descrição} \\
+        \textbf{\#} & \textbf{Estado} & \textbf{Duração \newline Aproximada} & \textbf{Início} & \textbf{Fim} & \textbf{Descrição} \\
         \midrule
-        1 & Normal (controlo) & 1min & O aluno encontra-se concentrado na tarefa \\
-        2 & Distração & 1min30s & O aluno começa a distrair-se com o telemóvel (YouTube Shorts) \\
-        3 & Retoma ao normal & 30s & O tutor alerta o aluno, que retoma o foco na tarefa \\
+        1 & Normal (controlo) & 1min & \texttt{14:52:00} & \texttt{14:52:55} & O aluno encontra-se concentrado na tarefa. \\
+        2 & Distração & 1min30s & \texttt{14:52:55} & \texttt{14:54:25} & O aluno começa a distrair-se com o telemóvel (YouTube Shorts). \\
+        3 & Retoma ao normal & 30s & \texttt{14:54:25} & \texttt{14:55:00} & O tutor alerta o aluno, que retoma o foco na tarefa. \\
         \bottomrule
     \end{tabularx}
     \caption{Fases da simulação da distração}
@@ -242,14 +294,14 @@ Esta simulação teve uma duração total de 3 minutos e foi dividida nas seguin
 
 \footnotetext{As linhas verticais azuis têm propósito meramente demonstrativo, demarcando as transições entre fases.}
 
-Como podemos ver na Figura~\ref{fig:distraction_results}, os principais indicadores que ajudam o tutor a deduzir que o aluno está desatento são a direção do olhar e a velocidade de digitação.
+Como podemos ver na Figura~\ref{fig:distraction_results}, os principais indicadores que ajudam o tutor a deduzir que o aluno está desatento são a direção do olhar (``A olhar para o ecrã?'') e a velocidade de digitação (``Teclado (CPM)'').
 
-Durante o primeiro minuto, em que o aluno está focado apenas na tarefa, podemos ver que este está a olhar de forma contínua para o ecrã e o ritmo de digitação se mantém aproximadamente constante.
+Durante o primeiro minuto (\texttt{14:52:00} até \texttt{14:52:55}), em que o aluno está focado apenas na tarefa, podemos ver que este está a olhar de forma contínua para o ecrã (representado no gráfico ``A olhar para o ecrã?'' por um intervalo de cor verde) e o ritmo de digitação (``Teclado (CPM)'') se mantém relativamente estável.
 
-Assim que o aluno liga o telemóvel e começa a prestar atenção a este, podemos ver que o estilo de digitação torna-se visivelmente mais errático, mostrando que o aluno está a fazer mais interrupções durante a escrita.
-A velocidade de digitação por si não permite deduzir diretamente distração - pois pode também ser provocada, por exemplo, por cansaço - contudo, o tutor pode também observar que o aluno desvia o olhar frequentemente para fora do ecrã, o que sugere que o aluno está a alternar a sua atenção entre a tarefa e um segundo estímulo, que, por observação direta, pode deduzir ser um telemóvel.
+Assim que o aluno liga o telemóvel (aproximadamente no instante \texttt{14:52:55}) e começa a prestar atenção a este, podemos ver que a velocidade de digitação (``Teclado (CPM)'') varia de forma mais acentuada, mostrando que o aluno está a fazer mais interrupções durante a escrita.
+A velocidade de digitação por si não permite deduzir diretamente distração - pois pode também ser provocada, por exemplo, por cansaço - contudo, o tutor pode também observar que o aluno desvia o olhar frequentemente para fora do ecrã (representado no gráfico ``A olhar para o ecrã?'' por sucessivos intervalos de cor vermelha), o que sugere que o aluno está a alternar a sua atenção entre a tarefa e um segundo estímulo (sendo a origem provável um telemóvel).
 
-Finalmente, a aproximadamente 30s do final da simulação, foi simulado um aviso do tutor ao aluno, que o leva a desligar o telemóvel (olhando para este durante cerca de 1s para o fazer) e retoma o foco na tarefa.
+Finalmente, a aproximadamente 30s do final da simulação (no instante \texttt{14:54:25}), foi simulado um aviso do tutor ao aluno, que o leva a desligar o telemóvel (olhando para este durante cerca de 1s para o fazer) e retoma o foco na tarefa.
 
 Apesar de se tratar de uma simulação e não um teste em ambiente real, conseguimos comprovar que esta prova de conceito permite ao tutor observar a mudança no estado de um aluno em tempo real.
 
