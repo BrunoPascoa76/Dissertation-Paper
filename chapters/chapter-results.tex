@@ -146,6 +146,35 @@ Em termos de privacidade, apesar do teclado não permitir identificar diretament
 Felizmente, como o objetivo geral é monitorizar a dinâmica de digitação em si e não o conteúdo do texto, é possível anonimizar os dados ao atribuir uma categoria a cada tecla (alfanumérico, caractere especial, \textit{whitespace} ou \textit{delete/backspace}). 
 Esta abordagem foi considerada suficiente, pois evita a reconstrução do conteúdo digitado sem afetar o cálculo de métricas como velocidade de digitação.
 
+\subsection{Mensagens}
+
+Em termos da formatação das mensagens, apesar de cada fonte de dados ter a flexibilidade de definir a quantidade de valores a enviar por mensagem, bem como o nome e tipo de dados desses campos, todas as medições ingeridas têm de cumprir os seguintes requisitos:
+\begin{itemize}
+    \item As mensagens têm de utilizar o formato \ac{JSON}.
+    \item As medições são inseridas num tópico com o prefixo \texttt{sensors/} (por exemplo, \texttt{/sensors/face}). Contudo, é permitido o uso de outros tópicos para outros propósitos como, por exemplo, para comunicar com um sensor externo.
+    \item Não é permitido o uso de listas, \textit{sets} ou outras estruturas de dados não suportadas pelo InfluxDB.
+    \item A identificação do tipo de sensor (geralmente, o nome do tópico) tem de estar presente no campo \texttt{measurement} e não pode ser alterada.
+    \item O \ac{UUID} (v4) do utilizador tem de estar presente no campo \texttt{uuid} em formato \textit{String}.
+    \item O instante em que a medição foi registada tem de estar presente no campo \texttt{timestamp} em \textit{epoch ms}.
+    \item Os restantes valores serão considerados métricas, sendo que o \textit{label} de cada valor deverá ser consistente entre os vários sensores do mesmo tipo.
+\end{itemize}
+
+Na Listagem~\ref{code:message_format}, podemos encontrar um exemplo mínimo com os campos obrigatórios de uma mensagem.
+
+\begin{figure}[h!]
+\centering
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[language=json, caption={Contrato mínimo de uma medição}, label={code:message_format}]
+{
+  "uuid": "Ocbaf439-c9c1-457e-affb-99458c96df2d",
+  "measurement": "sensors/face",
+  "timestamp": 1780233835301,
+  ...
+}
+\end{lstlisting}
+\end{minipage}
+\end{figure}
+
 \subsection{Visualização}
 
 Finalmente, para o \textit{dashboard} utilizado pelo tutor foi escolhido o Grafana (Figura~\ref{fig:grafana}), pela sua facilidade de uso e compatibilidade com o InfluxDB.
@@ -267,7 +296,7 @@ Como o referido anteriormente, como o cenário de monitorização contínua util
 
 Neste cenário de referência, o sistema visa fornecer informação adicional ao tutor - complementando a observação direta - facilitando a avaliação do estado atual do aluno.
 Para ilustrar esta utilidade, foi simulado um cenário de 3 fases (Tabela~\ref{tab:distraction_phases}) com uma duração total de 3 minutos para simular um momento de distração com o telemóvel (sendo utilizado o YouTube Shorts para simular esta distração).
-Após a recolha, foram analizadas as métricas presentes no Dashboard (Figura~\ref{fig:distraction_results}), de modo a avaliar se a variação nas métricas permite ao tutor inferir visualmente que existiu uma mudança no estado do aluno.
+Após a recolha, foram analisadas as métricas presentes no Dashboard (Figura~\ref{fig:distraction_results}), de modo a avaliar se a variação nas métricas permite ao tutor inferir visualmente que existiu uma mudança no estado do aluno.
 
 \begin{table}[h]
     \centering
