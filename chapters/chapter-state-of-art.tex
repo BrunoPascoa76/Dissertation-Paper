@@ -11,7 +11,7 @@ Adicionalmente, este capítulo analisa não só soluções de monitorização e 
 \subsection{Monitorização do \textit{Stress} em Ambiente Empresarial}
 
 Com o crescente reconhecimento do impacto do \textit{stress} na produtividade dos trabalhadores e na sua saúde mental, existe um interesse crescente na monitorização contínua do \textit{stress} do trabalhador durante o dia de trabalho.
-Historicamente, esta monitorização era realizada através de questionários subjetivos, contudo estes questionários não são fiáveis como método único de monitorização~\cite{Kafkov2024,Kallio2025}, pois, apesar de se basearem em princípios sólidos de psicologia (e visto que o \textit{stress} é naturalmente subjetivo), sofrem de limitações inerentes: possuem baixa frequência de amostragem devido ao esforço necessário para o seu preenchimento~\cite{Kallio2025} e exibem um viés de negatividade (\textit{negativity skew}), tendendo a atribuir maior peso a experiências negativas do que a positivas~\cite{Kallio2025}.
+Historicamente, esta monitorização era realizada através de questionários subjetivos~\cite{Kafkov2024,Kallio2025}, contudo estes questionários não são fiáveis como método único de monitorização~\cite{Kafkov2024,Kallio2025}, pois, apesar de se basearem em princípios sólidos de psicologia (e visto que o \textit{stress} é naturalmente subjetivo)~\cite{Kafkov2024,Kallio2025}, sofrem de limitações inerentes: possuem baixa frequência de amostragem devido ao esforço necessário para o seu preenchimento~\cite{Kallio2025} e exibem um viés de negatividade (\textit{negativity skew}), tendendo a atribuir maior peso a experiências negativas do que a positivas~\cite{Kallio2025}.
 
 Por esta razão, a monitorização utilizando métricas de atividade ou dados fisiológicos apresenta-se como uma alternativa atrativa para monitorizar o \textit{stress}, pois a monitorização contínua em tempo real permite não só detetar e tratar sintomas inicias de \textit{burnout}, mas também, por exemplo, identificar trabalhadores que necessitem de auxílio com a tarefa atual.
 Contudo, apesar de existirem sensores fisiológicos capazes de produzir estes dados com elevada precisão, o custo de cada sensor e o desconforto durante o uso~\cite{Kallio2025} impedem a sua adoção em larga escala.
@@ -21,10 +21,10 @@ Ao analisar expressões faciais através de uma \textit{webcam}~\cite{facial_hrv
 
 \subsection{Monitorização da Atenção durante o Ensino Remoto}\label{sec:scenario_school}
 
-Durante a pandemia de COVID-19, a necessidade de minimizar a progressão da doença levou à adoção obrigatória de aulas de forma remota.
+Durante a pandemia de COVID-19, a necessidade de minimizar a progressão da doença levou à adoção obrigatória de aulas de forma remota~\cite{online_classes_sharma}.
 
-Esta transição, embora necessária, introduziu problemas específicos que não se verificavam com a mesma intensidade no ensino presencial, como a dificuldade de o docente monitorizar todos os alunos em simultâneo.
-Esta limitação torna-se particularmente evidente durante a partilha de ecrã, momento em que o docente deixa de conseguir observar diretamente todos os participantes. Além disso, estando os alunos no seu próprio ambiente e tendo acesso ao telemóvel e ao computador, existe uma maior facilidade para se distraírem durante a aula~\cite{online_classes_sharma}.
+Esta transição, embora necessária, introduziu problemas específicos que não se verificavam com a mesma intensidade no ensino presencial, como a dificuldade de o docente monitorizar todos os alunos em simultâneo~\cite{online_classes_sharma}.
+Esta limitação torna-se particularmente evidente durante a partilha de ecrã, momento em que o docente deixa de conseguir observar diretamente todos os participantes~\cite{online_classes_sharma}. Além disso, estando os alunos no seu próprio ambiente e tendo acesso ao telemóvel e ao computador, existe uma maior facilidade para se distraírem durante a aula~\cite{online_classes_sharma}.
 
 Neste cenário, a monitorização da atenção através de métricas como a direção do olhar (\textit{gaze tracking})~\cite{online_classes_sharma} permite ao docente não só ter uma estimativa do nível de interesse da turma em geral, mas também separando alunos atentos ou totalmente desinteressados na aula (que exigem menor atenção), de alunos com dificuldades em compreender ou se concentrar, que necessitam de observação direta.
 
@@ -129,8 +129,8 @@ Por exemplo, o telemóvel foi excluído por exigir que o utilizador segure e int
 Como referido anteriormente, os questionários foram historicamente utilizados para monitorizar o estado do utilizador, sendo especialmente importantes para monitorizar os níveis de \textit{stress}, visto que ambos partilham uma natureza subjetiva~\cite{Kafkov2024}.
 Adicionalmente, estes questionários funcionam frequentemente para estabelecer uma \textit{ground truth} que permite validar a precisão das estimativas geradas por outras fontes~\cite{Kallio2025} (sendo por isso particularmente útil durante a fase de conceção).
 
-Contudo, estes questionários continuam a ser um método de recolha ativo (ou seja, que requer esforço do utilizador), o que limita a frequência de realização destes questionários (e, consequentemente, o número de amostras obtidas).
-Adicionalmente, estes questionários estão sujeitos a ``viés de negatividade'', em que o sujeito tende a atribuir mais peso a momentos e emoções negativas do que a positivas\cite{Kallio2025}, o que frequentemente leva a uma sobrestimação dos níveis de \textit{stress} reportados.
+Contudo, estes questionários continuam a ser um método de recolha ativo (ou seja, que requer esforço do utilizador), o que limita a frequência de realização destes questionários (e, consequentemente, o número de amostras obtidas)~\cite{Kallio2025}.
+Adicionalmente, estes questionários estão sujeitos a ``viés de negatividade'', em que o sujeito tende a atribuir mais peso a momentos e emoções negativas do que a positivas~\cite{Kallio2025}, o que frequentemente leva a uma sobrestimação dos níveis de \textit{stress} reportados.
 
 \subsection{Sensores Fisiológicos Especializados}
 
@@ -168,13 +168,13 @@ Finalmente, outra fonte de dados frequentemente utilizada é a atividade ocular.
 \subsection{Desvantagens Principais dos Sensores Convencionais}
 
 Este tipo de sensores fisiológicos, apesar de precisos, possuem alguns problemas em termos de escalabilidade e aplicabilidade em situações reais. 
-Apesar de a maioria destes dispositivos terem versões suficientemente portáteis para o uso quotidiano, o desconforto durante o uso (em particular de sensores na face ou peito) e o facto que os utilizadores necessitam de manter os dispositivos carregados leva a um elevado abandono destes dispositivos~\cite{Kallio2025}.
+Apesar de a maioria destes dispositivos terem versões suficientemente portáteis para o uso quotidiano~\cite{Kallio2025}, o desconforto durante o uso (em particular de sensores na face ou peito) e o facto que os utilizadores necessitam de manter os dispositivos carregados leva a um elevado abandono destes dispositivos~\cite{Kallio2025}.
 Adicionalmente, para além da dificuldade de adoção, estes dispositivos estão ainda sujeitos a imprecisões de dados causadas pelo uso de forma incorreta ou até mesmos pelos movimentos normalmente realizados durante o quotidiano~\cite{Kallio2025}.
 
 \subsection{Dispositivos \textit{Wearable} de Uso Geral}
 
 Com o avanço numa tecnologia \textit{wearable}~\cite{Kafkov2024}, dispositivos comerciais como \textit{smartwatches} ou \textit{smartrings} apresentam-se agora fonte de dados fisiológicos alternativa aos sensores convencionais.
-A adoção destes dispositivos \textit{wearable} é geralmente maior que a dos sensores fisiológicos convencionais não só por serem mais confortáveis~\cite{Kallio2025}, já que se assemelham em forma e peso a relógios e anéis convencionais, mas também por oferecerem funcionalidades como atendimento de chamadas ou \textit{fitness tracking} que incentivam os utilizadores a utilizá-los e a mantê-los carregado.
+A adoção destes dispositivos \textit{wearable} é geralmente maior que a dos sensores fisiológicos convencionais~\cite{Kallio2025} não só por serem mais confortáveis~\cite{Kallio2025}, já que se assemelham em forma e peso a relógios e anéis convencionais, mas também por oferecerem funcionalidades como atendimento de chamadas ou \textit{fitness tracking} que incentivam os utilizadores a utilizá-los e a mantê-los carregado.
 Contudo, o preço destes dispositivos continua a ser o principal entrave, já que a maioria dos \textit{wearables} de baixo custo não permitem o acesso aos dados por parte de terceiros, sendo por isso o uso de \textit{wearables} viável apenas em cenários de menor escala ou recorrendo aos dispositivos adquiridos previamente pelos próprios utilizadores.
 
 \subsection{Computador}
@@ -188,8 +188,8 @@ Adicionalmente, como estes métodos focam-se mais frequentemente nos padrões em
 Além disso, as \textit{webcams} do computador, por já se encontrarem presentes na maioria dos portáteis (e por serem relativamente acessíveis de adquirir, no caso de \textit{desktops}), podem fornecer também dados como expressões faciais, postura, direção do olhar ou dilatação das pupilas~\cite{Kallio2025,online_classes_sharma}.
 Apesar deste método ter uma boa taxa de precisão em ambientes laboratoriais, a perda de privacidade causada pela captação constante de imagens torna este método difícil de aplicar na prática~\cite{Kallio2025}.
 
-Apesar da literatura já comprovar a eficácia e precisão destas abordagens em ambientes controlados de laboratório, a investigação realizada em situações reais é ainda relativamente escassa~\cite{Kallio2025}.
-Devido a esta lacuna, e tendo em conta a maior complexidade e imprevisibilidade do ambiente real, considero que ainda não existem exemplos suficientes para confirmar a aplicabilidade destes métodos em ambiente real, sendo por isso necessária a realização de mais estudos em ambiente real.
+Apesar da literatura já comprovar a eficácia e precisão destas abordagens em ambientes controlados de laboratório~\cite{Kallio2025}, a investigação realizada em situações reais é ainda relativamente escassa~\cite{Kallio2025}.
+Devido a esta lacuna, e tendo em conta a maior complexidade e imprevisibilidade do ambiente real, considera-se que ainda não existem exemplos suficientes para confirmar a aplicabilidade destes métodos em ambiente real, sendo por isso necessária a realização de mais estudos em ambiente real.
 
 Finalmente, também é possível monitorizar a telemetria dos programas utilizados ou a comunicação utilizando o computador (como \textit{e-mails}). Contudo, o uso de telemetria é demasiado específico à ferramenta em si e a monitorização de \textit{e-mails} representa uma quebra de privacidade grave, sendo por isso pouco viáveis em prática na maioria das situações.
 
@@ -197,10 +197,8 @@ Finalmente, também é possível monitorizar a telemetria dos programas utilizad
 
 Finalmente, com recentes estudos que estabelecem correlações as condições ambientais do espaço e fatores como a produtividade e saúde de trabalhadores~\cite{Kallio2025}, uma nova possibilidade é a de monitorizar não só o utilizador, mas também as condições do espaço que se encontra, como qualidade do ar, temperatura, humidade relativa, luminosidade e níveis de barulho.
 
-Uma vantagem específica deste método é que, apesar de ter os seus custos de instalação e manutenção e de ser limitada a espaços interiores, o número de sensores aplicado aumenta com base no número e tamanho das divisões e não no número de ocupantes, sendo por isso particularmente útil em ambientes partilhados como escritórios.
+Uma vantagem específica deste método é que, apesar de ter os seus custos de instalação e manutenção e de ser limitada a espaços interiores, o número de sensores necessário aumenta com base no número e tamanho das divisões e não no número de ocupantes, sendo por isso particularmente útil em ambientes partilhados como escritórios.
 Contudo, a relativa escassez de estudos realizados de forma contínua nesta área~\cite{Kallio2025} leva a que não se possa garantir a sua eficácia em situações reais.
-
-
 
 
 \section{Arquitetura Geral de Recolha e Processamento de Dados}~\label{sec:udi_soa}
